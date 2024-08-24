@@ -1,0 +1,9 @@
+version: '3.9'
+services:
+  cami_uhr:
+    container_name: cami_uhr
+    build: 
+      context: ./
+      dockerfile: Dockerfile
+    ports:
+      - "28554:3000"
