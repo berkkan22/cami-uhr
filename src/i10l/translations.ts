@@ -1,0 +1,28 @@
+export default {
+  De: {
+    "language": "Deutsch",
+    "imsak": "Fadschr",
+    "gunes": "Schuruk",
+    "ogle": "Dhuhr",
+    "ikindi": "Asr",
+    "aksam": "Maghrib",
+    "yatsi": "Ischaa",
+    "todayDate": "Heutiges Datum",
+    "islamicDate": "Hidschri Kalender",
+    "currentTime": "Aktuelle Zeit",
+    "nextPrayer": "Verbleibende Zeit",
+  },
+  Tr: {
+    "language": "Türkçe",
+    "imsak": "İmsak",
+    "gunes": "Güneş",
+    "ogle": "Öğle",
+    "ikindi": "İkindi",
+    "aksam": "Akşam",
+    "yatsi": "Yatsı",
+    "todayDate": "Bugünün Tarihi",
+    "islamicDate": "Hicri Tarih",
+    "currentTime": "Güncel Zaman",
+    "nextPrayer": "Kalan Süre",
+  },
+};

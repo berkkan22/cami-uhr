@@ -18,6 +18,8 @@
 		getRandomQuote
 	} from '$lib/prayer';
 
+	import { t, locale, locales } from '../i10l/i10l';
+
 	// load prayr times from csv
 	// load date and hijri date from file
 	// create class
@@ -36,6 +38,7 @@
 	let quaotOfTheDay: Quote;
 
 	onMount(async () => {
+		$locale = 'De';
 		let prayerTimesRaw = await fetchPrayerTimes();
 		let datesRaw = await fetchDates();
 		let quotesRaw = await fetchQuotes();
@@ -81,55 +84,63 @@
 				}
 			}
 		}, 1000);
+
+		setInterval(() => {
+			if ($locale === 'De') {
+				$locale = 'Tr';
+			} else {
+				$locale = 'De';
+			}
+		}, 10000);
 	});
 </script>
 
-<h1>Gebetszeiten</h1>
+<h1>Osman Bey Cami</h1>
 
 {#if currentPrayer !== undefined}
 	<!-- content here -->
 	<div id="current-time-container">
 		<div id="islamic-date">
-			<div class="time-title">Islamisches Datum</div>
+			<div class="time-title">{$t('islamicDate')}</div>
 			<div class="time-value" id="islamic-date-value">{currentPrayer.hicriDate}</div>
 		</div>
 		<div id="today-date">
-			<div class="time-title">Heutiges Datum</div>
+			<div class="time-title">{$t('todayDate')}</div>
 			<div class="time-value" id="today-date-value">{formatDate(currentPrayer.date)}</div>
 		</div>
 		<div id="current-time">
-			<div class="time-title">Aktuelle Zeit</div>
+			<div class="time-title">{$t('currentTime')}</div>
 			<div class="time-value">{currentTime}</div>
 		</div>
 		<div id="next-prayer-time">
-			<div class="time-title">Verbleibende Zeit</div>
+			<div class="time-title">{$t('nextPrayer')}</div>
 			<div class="time-value">{remainingTime}</div>
 		</div>
 	</div>
 
 	<div id="prayer-times">
 		<div class="prayer-time {currentPayerTime == 'imsak' ? 'current-prayer' : ''}">
-			<div class="prayer-label">Imsak</div>
+			<div class="prayer-label">{$t('imsak')}</div>
 			<div class="prayer-time-value">{formatTime(currentPrayer.imsak)}</div>
 		</div>
 		<div class="prayer-time {currentPayerTime == 'gunes' ? 'current-prayer' : ''}">
-			<div class="prayer-label">Günes</div>
+			<div class="prayer-label">{$t('gunes')}</div>
 			<div class="prayer-time-value">{formatTime(currentPrayer.gunes)}</div>
 		</div>
 		<div class="prayer-time {currentPayerTime == 'oglen' ? 'current-prayer' : ''}">
-			<div class="prayer-label">Öglen</div>
+			<div class="prayer-label">{$t('ogle')}</div>
 			<div class="prayer-time-value">{formatTime(currentPrayer.ogle)}</div>
 		</div>
 		<div class="prayer-time {currentPayerTime == 'ikindi' ? 'current-prayer' : ''}">
-			<div class="prayer-label">Ikindi</div>
+			<div class="prayer-label">{$t('ikindi')}</div>
 			<div class="prayer-time-value">{formatTime(currentPrayer.ikindi)}</div>
 		</div>
 		<div class="prayer-time {currentPayerTime == 'aksam' ? 'current-prayer' : ''}">
-			<div class="prayer-label">Aksam</div>
+			<div class="prayer-label">{$t('aksam')}</div>
 			<div class="prayer-time-value">{formatTime(currentPrayer.aksam)}</div>
 		</div>
 		<div class="prayer-time {currentPayerTime == 'yatzi' ? 'current-prayer' : ''}">
-			<div class="prayer-label">yatsi</div>
+			<div class="prayer-label">{$t('yatsi')}</div>
 			<div class="prayer-time-value">{formatTime(currentPrayer.yatsi)}</div>
 		</div>
 	</div>
