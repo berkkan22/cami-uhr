@@ -37,8 +37,8 @@
 
 	let quaotOfTheDay: Quote;
 
+	$locale = 'De';
 	onMount(async () => {
-		$locale = 'De';
 		let prayerTimesRaw = await fetchPrayerTimes();
 		let datesRaw = await fetchDates();
 		let quotesRaw = await fetchQuotes();
@@ -95,7 +95,7 @@
 	});
 </script>
 
-<h1>Osman Bey Cami</h1>
+<h1>{$t('title')}</h1>
 
 {#if currentPrayer !== undefined}
 	<!-- content here -->
