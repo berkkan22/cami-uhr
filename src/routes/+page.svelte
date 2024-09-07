@@ -2,7 +2,8 @@
 	import { onMount } from 'svelte';
 	import cami from '$lib/001-removebg-preview.png';
 	import ditib from '$lib/ditib_logo.png';
-	// import kiswah from '$lib/kiswah.jpg';
+	import kiswah from '$lib/kiswah.jpg';
+
 	import {
 		fetchPrayerTimes,
 		fetchDates,
@@ -100,7 +101,7 @@
 
 {#if currentPrayer !== undefined}
 	<div class="content">
-		<div class="background-image"></div>
+		<div class="background-image" style="background-image: url({kiswah});"></div>
 		<div class="header">
 			<img src={cami} alt="" class="background" />
 			<h1 class="title">{$t('title')}</h1>
@@ -177,7 +178,7 @@
 		background-position: center;
 		top: 0;
 		left: 0;
-		background-image: url('kiswah.jpg');
+		/* background-image: url('kiswah.jpg'); */
 		width: 100%;
 		height: 100vh;
 		object-fit: contain;
