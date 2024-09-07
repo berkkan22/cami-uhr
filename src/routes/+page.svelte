@@ -1,5 +1,7 @@
 <script lang="ts">
 	import { onMount } from 'svelte';
+	import cami from '$lib/001-removebg-preview.png';
+	import ditib from '$lib/ditib_logo.png';
 	import {
 		fetchPrayerTimes,
 		fetchDates,
@@ -95,78 +97,162 @@
 	});
 </script>
 
-<h1>{$t('title')}</h1>
-
 {#if currentPrayer !== undefined}
-	<!-- content here -->
-	<div id="current-time-container">
-		<div id="islamic-date">
-			<div class="time-title">{$t('islamicDate')}</div>
-			<div class="time-value" id="islamic-date-value">{currentPrayer.hicriDate}</div>
+	<div class="content">
+		<div class="background-image"></div>
+		<div class="header">
+			<img src={cami} alt="" class="background" />
+			<h1 class="title">{$t('title')}</h1>
 		</div>
-		<div id="today-date">
-			<div class="time-title">{$t('todayDate')}</div>
-			<div class="time-value" id="today-date-value">{formatDate(currentPrayer.date)}</div>
+
+		<div class="main-content">
+			<div class="date-time-container">
+				<div id="islamic-date" class="date">
+					<div class="time-title">{$t('islamicDate')}</div>
+					<div class="time-value" id="islamic-date-value">{currentPrayer.hicriDate}</div>
+				</div>
+				<div id="today-date" class="date">
+					<div class="time-title">{$t('todayDate')}</div>
+					<div class="time-value" id="today-date-value">{formatDate(currentPrayer.date)}</div>
+				</div>
+				<div id="current-time" class="date">
+					<div class="time-title">{$t('currentTime')}</div>
+					<div class="time-value">{currentTime}</div>
+				</div>
+				<div id="next-prayer-time" class="date">
+					<div class="time-title">{$t('nextPrayer')}</div>
+					<div class="time-value">{remainingTime}</div>
+				</div>
+			</div>
+			<div class="prayer-times">
+				<div class="prayer-time {currentPayerTime == 'imsak' ? 'current-prayer' : ''}">
+					<div class="prayer-label">{$t('imsak')}</div>
+					<div class="prayer-time-value">{formatTime(currentPrayer.imsak)}</div>
+				</div>
+				<div class="prayer-time {currentPayerTime == 'gunes' ? 'current-prayer' : ''}">
+					<div class="prayer-label">{$t('gunes')}</div>
+					<div class="prayer-time-value">{formatTime(currentPrayer.gunes)}</div>
+				</div>
+				<div class="prayer-time {currentPayerTime == 'oglen' ? 'current-prayer' : ''}">
+					<div class="prayer-label">{$t('ogle')}</div>
+					<div class="prayer-time-value">{formatTime(currentPrayer.ogle)}</div>
+				</div>
+				<div class="prayer-time {currentPayerTime == 'ikindi' ? 'current-prayer' : ''}">
+					<div class="prayer-label">{$t('ikindi')}</div>
+					<div class="prayer-time-value">{formatTime(currentPrayer.ikindi)}</div>
+				</div>
+				<div class="prayer-time {currentPayerTime == 'aksam' ? 'current-prayer' : ''}">
+					<div class="prayer-label">{$t('aksam')}</div>
+					<div class="prayer-time-value">{formatTime(currentPrayer.aksam)}</div>
+				</div>
+				<div class="prayer-time {currentPayerTime == 'yatzi' ? 'current-prayer' : ''}">
+					<div class="prayer-label">{$t('yatsi')}</div>
+					<div class="prayer-time-value">{formatTime(currentPrayer.yatsi)}</div>
+				</div>
+			</div>
+			{#if quaotOfTheDay !== undefined}
+				content here
+				<div id="quote-container">
+					<div id="quote-text">{quaotOfTheDay.quote}</div>
+					<div id="quote-author">{quaotOfTheDay.author}</div>
+				</div>
+			{/if}
 		</div>
-		<div id="current-time">
-			<div class="time-title">{$t('currentTime')}</div>
-			<div class="time-value">{currentTime}</div>
-		</div>
-		<div id="next-prayer-time">
-			<div class="time-title">{$t('nextPrayer')}</div>
-			<div class="time-value">{remainingTime}</div>
+		<div class="ditib-logo">
+			<img src={ditib} alt="" srcset="" />
 		</div>
 	</div>
-
-	<div id="prayer-times">
-		<div class="prayer-time {currentPayerTime == 'imsak' ? 'current-prayer' : ''}">
-			<div class="prayer-label">{$t('imsak')}</div>
-			<div class="prayer-time-value">{formatTime(currentPrayer.imsak)}</div>
-		</div>
-		<div class="prayer-time {currentPayerTime == 'gunes' ? 'current-prayer' : ''}">
-			<div class="prayer-label">{$t('gunes')}</div>
-			<div class="prayer-time-value">{formatTime(currentPrayer.gunes)}</div>
-		</div>
-		<div class="prayer-time {currentPayerTime == 'oglen' ? 'current-prayer' : ''}">
-			<div class="prayer-label">{$t('ogle')}</div>
-			<div class="prayer-time-value">{formatTime(currentPrayer.ogle)}</div>
-		</div>
-		<div class="prayer-time {currentPayerTime == 'ikindi' ? 'current-prayer' : ''}">
-			<div class="prayer-label">{$t('ikindi')}</div>
-			<div class="prayer-time-value">{formatTime(currentPrayer.ikindi)}</div>
-		</div>
-		<div class="prayer-time {currentPayerTime == 'aksam' ? 'current-prayer' : ''}">
-			<div class="prayer-label">{$t('aksam')}</div>
-			<div class="prayer-time-value">{formatTime(currentPrayer.aksam)}</div>
-		</div>
-		<div class="prayer-time {currentPayerTime == 'yatzi' ? 'current-prayer' : ''}">
-			<div class="prayer-label">{$t('yatsi')}</div>
-			<div class="prayer-time-value">{formatTime(currentPrayer.yatsi)}</div>
-		</div>
-	</div>
-	<!-- Hier werden die Gebetszeiten angezeigt -->
-
-	{#if quaotOfTheDay !== undefined}
-		<!-- content here -->
-		<div id="quote-container">
-			<div id="quote-text">{quaotOfTheDay.quote}</div>
-			<div id="quote-author">{quaotOfTheDay.author}</div>
-		</div>
-	{/if}
-{:else}
-	<h1>Error</h1>
 {/if}
 
 <style>
-	h1 {
-		margin-bottom: 50px; /* Abstand zwischen Titel und restlichem Inhalt */
+	.content {
+		width: 100%;
+		margin-top: 20px;
+		text-align: center;
 	}
 
-	#prayer-times {
+	.background-image {
+		position: absolute;
+		background-position: center;
+		top: 0;
+		left: 0;
+		background-image: url('src/lib/kiswah.jpg');
+		width: 100%;
+		height: 100vh;
+		object-fit: contain;
+		z-index: -1;
+	}
+
+	.background-image::after {
+		content: '';
+		position: absolute;
+		top: 0;
+		left: 0;
+		width: 100%;
+		height: 100%;
+		background-color: rgba(0, 0, 0, 0.4);
+		backdrop-filter: blur(1px);
+	}
+
+	.header {
+		position: relative;
+	}
+
+	.header > img {
+		width: 15%;
+		height: auto;
+	}
+
+	.title {
+		position: relative;
+		left: 50vw;
+		transform: translate(-50%, -1.7vw);
+		color: white;
+		border-top: 2px solid white;
+		width: fit-content;
+		padding: 3px;
+		font-size: 1.5rem;
+	}
+
+	.date-time-container {
 		display: flex;
 		justify-content: center;
-		gap: 20px; /* Standardabstand zwischen den Gebetszeiten */
-		padding: 0 20px; /* Zusätzlicher Abstand zum Rand */
+		gap: 0vw;
+		margin-top: 20px;
+		margin-bottom: 40px;
+		color: white;
+	}
+
+	.date {
+		display: flex;
+		flex-direction: column;
+		align-items: center;
+		width: 250px;
+		/* padding: 10px 30px 10px 30px; top right bottom left */
+		/* background-color: gray; */
+		/* border-radius: 10px; */
+		color: white;
+		transition:
+			transform 0.3s ease,
+			margin 0.3s ease;
+	}
+
+	.time-title {
+		font-size: 1.25rem;
+		margin-bottom: 5px;
+	}
+
+	.time-value {
+		font-size: 1.5rem;
+	}
+
+	.prayer-times {
+		display: flex;
+		justify-content: center;
+		gap: 20px;
+		padding: 0 20px;
+		margin-top: 30px;
+		color: white;
 	}
 
 	.prayer-time {
@@ -174,57 +260,31 @@
 		flex-direction: column;
 		align-items: center;
 		width: 150px;
-		padding: 15px;
-		border-radius: 5px;
-		background-color: #008b8b; /* Dunklerer Türkis-Ton */
+		padding: 10px 30px 10px 30px; /* top right bottom left */
+		background-color: gray;
+		border-radius: 10px;
 		color: white;
 		transition:
 			transform 0.3s ease,
 			margin 0.3s ease;
-		box-sizing: border-box;
 	}
 
 	.prayer-label {
-		font-size: 20px; /* Größere Schriftgröße für die Bezeichnung */
+		font-size: 1.25rem;
 		margin-bottom: 5px;
 	}
 
 	.prayer-time-value {
-		font-size: 24px; /* Größere Schriftgröße für die Zeit */
+		font-size: 1.5rem;
 		font-weight: bold;
 	}
 
 	.current-prayer {
-		background-color: #ff6347; /* Hervorhebung der aktuellen Gebetszeit */
-		transform: scale(1.2); /* Vergrößert die Gebetszeit noch mehr */
-		transform-origin: center; /* Vergrößert zentriert */
-		margin: 0 40px; /* Zusätzlicher Abstand für die vergrößerte Gebetszeit */
-	}
-
-	#current-time-container {
-		display: flex;
-		justify-content: center;
-		margin-bottom: 40px; /* Größerer Abstand zum Gebetszeiten-Bereich */
-		font-size: 24px;
-		color: white;
-	}
-
-	#current-time,
-	#next-prayer-time,
-	#today-date,
-	#islamic-date {
-		text-align: center;
-		margin: 0 20px;
-	}
-
-	.time-title {
-		font-size: 24px;
-		font-weight: bold;
-		margin-bottom: 5px;
-	}
-
-	.time-value {
-		font-size: 24px;
+		/* background-color: #ff6347; */
+		background-color: #89001c;
+		transform: scale(1.3);
+		transform-origin: center;
+		margin: 0 25px;
 	}
 
 	#quote-container {
@@ -233,12 +293,27 @@
 	}
 
 	#quote-text {
-		font-size: 24px;
+		font-size: 1.5rem;
 	}
 
 	#quote-author {
-		font-size: 20px;
+		font-size: 1.25rem;
 		font-style: italic;
 		margin-top: 10px;
+	}
+
+	#quote-author::after,
+	#quote-author::before {
+		content: ' ~ ';
+		font-style: italic;
+	}
+
+	.ditib-logo > img {
+		position: absolute;
+		bottom: 0;
+		right: 0;
+		margin: 14px;
+		width: 120px;
+		height: auto;
 	}
 </style>
