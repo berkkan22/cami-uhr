@@ -2,6 +2,7 @@
 	import { onMount } from 'svelte';
 	import cami from '$lib/001-removebg-preview.png';
 	import ditib from '$lib/ditib_logo.png';
+	// import kiswah from '$lib/kiswah.jpg';
 	import {
 		fetchPrayerTimes,
 		fetchDates,
@@ -176,7 +177,7 @@
 		background-position: center;
 		top: 0;
 		left: 0;
-		background-image: url('src/lib/kiswah.jpg');
+		background-image: url('kiswah.jpg');
 		width: 100%;
 		height: 100vh;
 		object-fit: contain;
