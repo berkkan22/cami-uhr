@@ -153,7 +153,6 @@
 				</div>
 			</div>
 			{#if quaotOfTheDay !== undefined}
-				content here
 				<div id="quote-container">
 					<div id="quote-text">{quaotOfTheDay.quote}</div>
 					<div id="quote-author">{quaotOfTheDay.author}</div>
