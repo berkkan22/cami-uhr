@@ -228,7 +228,8 @@
 		display: flex;
 		flex-direction: column;
 		align-items: center;
-		width: 300px;
+		min-width: 300px;
+		max-width: 500px;
 		/* padding: 10px 30px 10px 30px; top right bottom left */
 		/* background-color: gray; */
 		/* border-radius: 10px; */
@@ -283,7 +284,7 @@
 	.current-prayer {
 		/* background-color: #ff6347; */
 		background-color: #89001c;
-		transform: scale(1.5);
+		transform: scale(1.4);
 		transform-origin: center;
 		margin: 0 30px;
 	}
@@ -294,7 +295,7 @@
 	}
 
 	#quote-text {
-		font-size: 2.5rem;
+		font-size: 2rem;
 	}
 
 	#quote-author {
