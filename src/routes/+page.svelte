@@ -59,7 +59,7 @@
 		// get the current time and update it every second
 		// update the remaining time every second
 		remainingTime = '00:00:00';
-		currentTime = currentDate.toLocaleTimeString();
+		currentTime = currentDate.toLocaleTimeString('de-DE');
 
 		quaotOfTheDay = getRandomQuote(quotes);
 
