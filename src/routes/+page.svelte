@@ -228,7 +228,7 @@
 		display: flex;
 		flex-direction: column;
 		align-items: center;
-		width: 250px;
+		width: 300px;
 		/* padding: 10px 30px 10px 30px; top right bottom left */
 		/* background-color: gray; */
 		/* border-radius: 10px; */
@@ -239,12 +239,12 @@
 	}
 
 	.time-title {
-		font-size: 1.25rem;
-		margin-bottom: 5px;
+		font-size: 1.5rem;
+		margin-bottom: 14px;
 	}
 
 	.time-value {
-		font-size: 1.5rem;
+		font-size: 2rem;
 	}
 
 	.prayer-times {
@@ -283,24 +283,24 @@
 	.current-prayer {
 		/* background-color: #ff6347; */
 		background-color: #89001c;
-		transform: scale(1.3);
+		transform: scale(1.5);
 		transform-origin: center;
-		margin: 0 25px;
+		margin: 0 30px;
 	}
 
 	#quote-container {
-		margin-top: 50px;
+		margin-top: 16vh;
 		color: white;
 	}
 
 	#quote-text {
-		font-size: 1.5rem;
+		font-size: 2.5rem;
 	}
 
 	#quote-author {
-		font-size: 1.25rem;
+		font-size: 1.5rem;
 		font-style: italic;
-		margin-top: 10px;
+		margin-top: 20px;
 	}
 
 	#quote-author::after,
