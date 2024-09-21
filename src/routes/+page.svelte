@@ -248,6 +248,17 @@
 		font-size: 2rem;
 	}
 
+	#next-prayer-time > .time-value {
+		font-size: 2.5rem;
+		color: #89001c;
+		font-weight: bold;
+		text-shadow:
+			-1px 0 white,
+			0 1px white,
+			1px 0 white,
+			0 -1px white;
+	}
+
 	.prayer-times {
 		display: flex;
 		justify-content: center;
@@ -263,7 +274,7 @@
 		align-items: center;
 		width: 150px;
 		padding: 10px 30px 10px 30px; /* top right bottom left */
-		background-color: gray;
+		background-color: rgb(36, 36, 36);
 		border-radius: 10px;
 		color: white;
 		transition:
