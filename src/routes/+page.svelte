@@ -1,16 +1,12 @@
 <script lang="ts">
 	import { onMount } from 'svelte';
-	import cami from '$lib/001-removebg-preview.png';
-	import ditib from '$lib/ditib_logo.png';
-	import kiswah from '$lib/kiswah.jpg';
+
+	import { config } from '$lib/config/config';
 
 	import {
 		fetchPrayerTimes,
 		fetchDates,
 		combineTimeAndDate,
-		getHijriDateFromGregorian,
-		formatTime,
-		formatDate,
 		calculateRemainingTime,
 		checkWhichPrayerTime,
 		type Prayers,
@@ -22,19 +18,13 @@
 		getRandomQuote
 	} from '$lib/prayer';
 
-	import { t, locale, locales } from '../i10l/i10l';
+	import { t, locale } from '$lib/i10l/i10l';
+	import OsmanBeyCami from './layout/osman_bey/OsmanBeyCami.svelte';
+	import WinsenLuheCami from './layout/wisen_luhe/WinsenLuheCami.svelte';
 
-	// load prayr times from csv
-	// load date and hijri date from file
-	// create class
-	// add then to a list of the objects
-	// on start up get the current date and display the current prayer times and date and hijri date
-	// on aksam namazi change hijri date to the next date
-	// on midnight change everything prayer times dates and quaot
-	// quoates erst später zuerst die zeiten
-
+	let prayerTimesRaw: any;
 	let currentPrayer: Prayers | undefined;
-	let currentPayerTime = ''; // TODO: auo
+	let currentPayerTime = '';
 
 	let remainingTime: string;
 	let currentTime: string;
@@ -42,8 +32,14 @@
 	let quaotOfTheDay: Quote;
 
 	$locale = 'De';
+
 	onMount(async () => {
-		let prayerTimesRaw = await fetchPrayerTimes();
+		prayerTimesRaw = await fetchPrayerTimes(config.prayerJson);
+
+		if (prayerTimesRaw === null) {
+			return;
+		}
+
 		let datesRaw = await fetchDates();
 		let quotesRaw = await fetchQuotes();
 
@@ -70,7 +66,6 @@
 			if (currentPrayer !== undefined) {
 				remainingTime = calculateRemainingTime(currentPrayer, currentDate);
 				currentPayerTime = checkWhichPrayerTime(currentPrayer, currentDate);
-				// console.log(currentPayerTime);
 
 				// check if it is aksam then change the hijri date to the next day
 				if (currentPayerTime === 'aksam') {
@@ -100,233 +95,70 @@
 </script>
 
 {#if currentPrayer !== undefined}
-	<div class="content">
-		<div class="background-image" style="background-image: url({kiswah});"></div>
-		<div class="header">
-			<img src={cami} alt="" class="background" />
-			<h1 class="title">{$t('title')}</h1>
-		</div>
+	{#if config.cami !== 'osman_bey'}
+		<WinsenLuheCami
+			{currentPrayer}
+			{currentTime}
+			{remainingTime}
+			{currentPayerTime}
+			{quaotOfTheDay}
+		/>
+	{:else}
+		<OsmanBeyCami
+			{currentPrayer}
+			{currentTime}
+			{remainingTime}
+			{currentPayerTime}
+			{quaotOfTheDay}
+		/>
+	{/if}
+{/if}
 
-		<div class="main-content">
-			<div class="date-time-container">
-				<div id="islamic-date" class="date">
-					<div class="time-title">{$t('islamicDate')}</div>
-					<div class="time-value" id="islamic-date-value">{currentPrayer.hicriDate}</div>
-				</div>
-				<div id="today-date" class="date">
-					<div class="time-title">{$t('todayDate')}</div>
-					<div class="time-value" id="today-date-value">{formatDate(currentPrayer.date)}</div>
-				</div>
-				<div id="current-time" class="date">
-					<div class="time-title">{$t('currentTime')}</div>
-					<div class="time-value">{currentTime}</div>
-				</div>
-				<div id="next-prayer-time" class="date">
-					<div class="time-title">{$t('nextPrayer')}</div>
-					<div class="time-value">{remainingTime}</div>
-				</div>
-			</div>
-			<div class="prayer-times">
-				<div class="prayer-time {currentPayerTime == 'imsak' ? 'current-prayer' : ''}">
-					<div class="prayer-label">{$t('imsak')}</div>
-					<div class="prayer-time-value">{formatTime(currentPrayer.imsak)}</div>
-				</div>
-				<div class="prayer-time {currentPayerTime == 'gunes' ? 'current-prayer' : ''}">
-					<div class="prayer-label">{$t('gunes')}</div>
-					<div class="prayer-time-value">{formatTime(currentPrayer.gunes)}</div>
-				</div>
-				<div class="prayer-time {currentPayerTime == 'oglen' ? 'current-prayer' : ''}">
-					<div class="prayer-label">{$t('ogle')}</div>
-					<div class="prayer-time-value">{formatTime(currentPrayer.ogle)}</div>
-				</div>
-				<div class="prayer-time {currentPayerTime == 'ikindi' ? 'current-prayer' : ''}">
-					<div class="prayer-label">{$t('ikindi')}</div>
-					<div class="prayer-time-value">{formatTime(currentPrayer.ikindi)}</div>
-				</div>
-				<div class="prayer-time {currentPayerTime == 'aksam' ? 'current-prayer' : ''}">
-					<div class="prayer-label">{$t('aksam')}</div>
-					<div class="prayer-time-value">{formatTime(currentPrayer.aksam)}</div>
-				</div>
-				<div class="prayer-time {currentPayerTime == 'yatzi' ? 'current-prayer' : ''}">
-					<div class="prayer-label">{$t('yatsi')}</div>
-					<div class="prayer-time-value">{formatTime(currentPrayer.yatsi)}</div>
-				</div>
-			</div>
-			{#if quaotOfTheDay !== undefined}
-				<div id="quote-container">
-					<div id="quote-text">{quaotOfTheDay.quote}</div>
-					<div id="quote-author">{quaotOfTheDay.author}</div>
-				</div>
-			{/if}
-		</div>
-		<div class="ditib-logo">
-			<img src={ditib} alt="" srcset="" />
-		</div>
+{#if prayerTimesRaw === null}
+	<div class="error-container">
+		<h1>Error 404</h1>
+		<p>Prayer time json file not found</p>
+		<!-- <h1>{t('error.title')}</h1> -->
+		<!-- <p>{t('error.message')}</p> -->
 	</div>
 {/if}
 
 <style>
-	.content {
-		width: 100%;
-		margin-top: 20px;
-		text-align: center;
-	}
-
-	.background-image {
-		position: absolute;
-		background-position: center;
-		top: 0;
-		left: 0;
-		/* background-image: url('kiswah.jpg'); */
-		width: 100%;
+	.error-container {
+		display: flex;
+		flex-direction: column;
+		align-items: center;
+		justify-content: center;
 		height: 100vh;
-		object-fit: contain;
-		z-index: -1;
+		text-align: center;
+		background-color: #f8d7da;
+		color: #721c24;
+		padding: 20px;
+		border: 1px solid #f5c6cb;
+		border-radius: 5px;
 	}
 
-	.background-image::after {
-		content: '';
-		position: absolute;
-		top: 0;
-		left: 0;
-		width: 100%;
-		height: 100%;
-		background-color: rgba(0, 0, 0, 0.4);
-		backdrop-filter: blur(1px);
-	}
-
-	.header {
-		position: relative;
-	}
-
-	.header > img {
-		width: 15%;
-		height: auto;
-	}
-
-	.title {
-		position: relative;
-		left: 50vw;
-		transform: translate(-50%, -1.7vw);
-		color: white;
-		border-top: 2px solid white;
-		width: fit-content;
-		padding: 3px;
-		font-size: 1.5rem;
-	}
-
-	.date-time-container {
-		display: flex;
-		justify-content: center;
-		gap: 0vw;
-		margin-top: 20px;
-		margin-bottom: 40px;
-		color: white;
-	}
-
-	.date {
-		display: flex;
-		flex-direction: column;
-		align-items: center;
-		min-width: 300px;
-		max-width: 500px;
-		/* padding: 10px 30px 10px 30px; top right bottom left */
-		/* background-color: gray; */
-		/* border-radius: 10px; */
-		color: white;
-		transition:
-			transform 0.3s ease,
-			margin 0.3s ease;
-	}
-
-	.time-title {
-		font-size: 1.5rem;
-		margin-bottom: 14px;
-	}
-
-	.time-value {
+	.error-container h1 {
 		font-size: 2rem;
+		margin-bottom: 1rem;
 	}
 
-	#next-prayer-time > .time-value {
-		font-size: 2.5rem;
-		color: #89001c;
-		font-weight: bold;
-		text-shadow:
-			-1px 0 white,
-			0 1px white,
-			1px 0 white,
-			0 -1px white;
+	.error-container p {
+		font-size: 1.2rem;
+		margin-bottom: 1.5rem;
 	}
 
-	.prayer-times {
-		display: flex;
-		justify-content: center;
-		gap: 20px;
-		padding: 0 20px;
-		margin-top: 30px;
-		color: white;
+	.error-container button {
+		background-color: #721c24;
+		color: #fff;
+		border: none;
+		padding: 10px 20px;
+		font-size: 1rem;
+		cursor: pointer;
+		border-radius: 5px;
 	}
 
-	.prayer-time {
-		display: flex;
-		flex-direction: column;
-		align-items: center;
-		width: 150px;
-		padding: 10px 30px 10px 30px; /* top right bottom left */
-		background-color: rgb(36, 36, 36);
-		border-radius: 10px;
-		color: white;
-		transition:
-			transform 0.3s ease,
-			margin 0.3s ease;
-	}
-
-	.prayer-label {
-		font-size: 1.25rem;
-		margin-bottom: 5px;
-	}
-
-	.prayer-time-value {
-		font-size: 1.5rem;
-		font-weight: bold;
-	}
-
-	.current-prayer {
-		/* background-color: #ff6347; */
-		background-color: #89001c;
-		transform: scale(1.4);
-		transform-origin: center;
-		margin: 0 30px;
-	}
-
-	#quote-container {
-		margin-top: 16vh;
-		color: white;
-	}
-
-	#quote-text {
-		font-size: 2rem;
-	}
-
-	#quote-author {
-		font-size: 1.5rem;
-		font-style: italic;
-		margin-top: 20px;
-	}
-
-	#quote-author::after,
-	#quote-author::before {
-		content: ' ~ ';
-		font-style: italic;
-	}
-
-	.ditib-logo > img {
-		position: absolute;
-		bottom: 0;
-		right: 0;
-		margin: 14px;
-		width: 120px;
-		height: auto;
+	.error-container button:hover {
+		background-color: #a94442;
 	}
 </style>

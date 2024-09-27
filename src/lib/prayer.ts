@@ -16,14 +16,15 @@ export interface Quote {
 }
 
 
-export async function fetchPrayerTimes() {
+export async function fetchPrayerTimes(file: string) {
   try {
-    const response = await fetch('./prayer_times.json');
+    const response = await fetch(file);
     const data = await response.json();
     return data;
   } catch (error) {
     console.error('Error fetching prayer times:', error);
-    throw error;
+    return null;
+    // throw error;
   }
 }
 
@@ -117,7 +118,7 @@ export function formatDate(date: string) {
   return String(date).split('-').reverse().join('.');
 }
 
-export function formatTime(time: Date) {
+export function formatTime(time: Date): string {
   return time.toLocaleTimeString('tr-TR', { hour: '2-digit', minute: '2-digit' });
 }
 
