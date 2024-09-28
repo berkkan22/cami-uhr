@@ -1,16 +1,13 @@
 <script>
-	import cami from '$lib/001-removebg-preview.png';
 	import ditib from '$lib/ditib_logo.png';
 	import kiswah from '$lib/kiswah.jpg';
 	import PrayerTimes from './PrayerTimes.svelte';
 	import DateTimeDisplay from './DateTimeDisplay.svelte';
-	import { t } from '$lib/i10l/i10l';
 
 	export let currentPrayer;
 	export let currentTime;
 	export let remainingTime;
 	export let currentPayerTime;
-	export let quaotOfTheDay;
 </script>
 
 <div class="content">

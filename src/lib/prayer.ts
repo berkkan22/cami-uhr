@@ -139,7 +139,7 @@ export function checkWhichPrayerTime(currentPrayer: Prayers, currentTime: Date):
     return "aksam";
   } else {
     // Covers the time after yatsi until the next imsak
-    return "yatzi";
+    return "yatsi";
   }
 }
 

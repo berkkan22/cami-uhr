@@ -2,12 +2,11 @@
 	import { formatTime, type Prayers } from '$lib/prayer';
 	import { t } from '$lib/i10l/i10l';
 
-	import { config } from '$lib/config/config';
-
 	export let currentPrayer: Prayers;
 	export let currentPayerTime: string;
 </script>
 
+{currentPayerTime}
 <div class="prayer-times">
 	{#each ['imsak', 'gunes', 'ogle', 'ikindi', 'aksam', 'yatsi'] as prayer}
 		<div class="prayer-time {currentPayerTime == prayer ? 'current-prayer' : ''}">
