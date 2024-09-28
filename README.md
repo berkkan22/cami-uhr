@@ -116,6 +116,11 @@ sudo crontab -e
 ```
 This will execute the script every 5 min.
 
+10. Check which public IP address you have
+```bash
+curl http://whatismyip.akamai.com
+```
+
 ## Environment Variables
 
 To run this project, you will need to add the following environment variables to your `src\lib\config\config.ts` file
