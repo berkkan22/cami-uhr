@@ -24,3 +24,6 @@ vite.config.ts.timestamp-*
 .vscode
 
 src\lib\config\config.ts
+
+api\backend\.venv
+__pycache__
