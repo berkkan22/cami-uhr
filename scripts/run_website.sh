@@ -2,7 +2,7 @@
 
 # Variables
 SESSION_NAME="prayer_times"
-COMMAND="source ~/.bashrc && cd /home/pi/cami-uhr && npm run dev"
+COMMAND="cd /home/pi/cami-uhr && npm run dev"
 
 # Check if tmux session exists
 tmux has-session -t $SESSION_NAME 2>/dev/null
