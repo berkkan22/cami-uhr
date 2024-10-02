@@ -40,8 +40,8 @@
 		display: flex;
 		flex-direction: column;
 		align-items: center;
-		min-width: 300px;
-		max-width: 500px;
+		min-width: 400px;
+		max-width: 600px;
 		/* padding: 10px 30px 10px 30px; top right bottom left */
 		/* background-color: gray; */
 		/* border-radius: 10px; */
@@ -49,19 +49,19 @@
 		transition:
 			transform 0.3s ease,
 			margin 0.3s ease;
+		margin-bottom: 50px;
 	}
 
 	.time-title {
-		font-size: 1.5rem;
+		font-size: 2rem;
 		margin-bottom: 14px;
 	}
 
 	.time-value {
-		font-size: 2rem;
+		font-size: 4rem;
 	}
 
 	#next-prayer-time > .time-value {
-		font-size: 2.5rem;
 		color: #89001c;
 		font-weight: bold;
 		text-shadow:

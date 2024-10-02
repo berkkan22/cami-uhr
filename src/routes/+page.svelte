@@ -19,8 +19,7 @@
 	} from '$lib/prayer';
 
 	import { t, locale } from '$lib/i10l/i10l';
-	import OsmanBeyCami from './layout/osman_bey/OsmanBeyCami.svelte';
-	import WinsenLuheCami from './layout/wisen_luhe/WinsenLuheCami.svelte';
+	import OsmanBeyCami from './components/OsmanBeyCami.svelte';
 
 	let prayerTimesRaw: any;
 	let currentPrayer: Prayers | undefined;
@@ -95,23 +94,7 @@
 </script>
 
 {#if currentPrayer !== undefined}
-	{#if config.cami !== 'osman_bey'}
-		<WinsenLuheCami
-			{currentPrayer}
-			{currentTime}
-			{remainingTime}
-			{currentPayerTime}
-			{quaotOfTheDay}
-		/>
-	{:else}
-		<OsmanBeyCami
-			{currentPrayer}
-			{currentTime}
-			{remainingTime}
-			{currentPayerTime}
-			{quaotOfTheDay}
-		/>
-	{/if}
+	<OsmanBeyCami {currentPrayer} {currentTime} {remainingTime} {currentPayerTime} {quaotOfTheDay} />
 {/if}
 
 {#if prayerTimesRaw === null}

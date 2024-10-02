@@ -1,29 +1,37 @@
 <script>
+	import cami from '$lib/001-removebg-preview.png';
 	import ditib from '$lib/ditib_logo.png';
 	import kiswah from '$lib/kiswah.jpg';
 	import PrayerTimes from './PrayerTimes.svelte';
 	import DateTimeDisplay from './DateTimeDisplay.svelte';
+	import { config } from '$lib/config/config';
+	import { t } from '$lib/i10l/i10l';
 
 	export let currentPrayer;
 	export let currentTime;
 	export let remainingTime;
 	export let currentPayerTime;
+	export let quaotOfTheDay;
 </script>
 
 <div class="content">
 	<div class="background-image" style="background-image: url({kiswah});"></div>
+	<div class="header">
+		<img src={cami} alt="" class="background" />
+		<h1 class="title">{$t('title', { name: config.camiName })}</h1>
+	</div>
 
 	<div class="main-content">
 		<DateTimeDisplay {currentPrayer} {currentTime} {remainingTime} />
 
 		<PrayerTimes {currentPrayer} {currentPayerTime} />
 
-		<!-- {#if quaotOfTheDay !== undefined}
+		{#if quaotOfTheDay !== undefined}
 			<div id="quote-container">
 				<div id="quote-text">{quaotOfTheDay.quote}</div>
 				<div id="quote-author">{quaotOfTheDay.author}</div>
 			</div>
-		{/if} -->
+		{/if}
 	</div>
 	<div class="ditib-logo">
 		<img src={ditib} alt="" srcset="" />
@@ -33,7 +41,7 @@
 <style>
 	.content {
 		width: 100%;
-		margin-top: 50px;
+		margin-top: 20px;
 		text-align: center;
 	}
 
@@ -64,10 +72,6 @@
 		position: relative;
 	}
 
-	.remove {
-		display: none;
-	}
-
 	.header > img {
 		width: 15%;
 		height: auto;
@@ -85,16 +89,17 @@
 	}
 
 	#quote-container {
-		margin-top: 16vh;
+		margin-top: 9vh;
 		color: white;
+		padding: 64px;
 	}
 
 	#quote-text {
-		font-size: 2rem;
+		font-size: 3rem;
 	}
 
 	#quote-author {
-		font-size: 1.5rem;
+		font-size: 2rem;
 		font-style: italic;
 		margin-top: 20px;
 	}
@@ -110,7 +115,7 @@
 		bottom: 0;
 		right: 0;
 		margin: 14px;
-		width: 120px;
+		width: 200px;
 		height: auto;
 	}
 </style>

@@ -132,7 +132,7 @@ export function checkWhichPrayerTime(currentPrayer: Prayers, currentTime: Date):
   } else if (currentTime >= currentPrayer.gunes && currentTime < currentPrayer.ogle) {
     return "gunes";
   } else if (currentTime >= currentPrayer.ogle && currentTime < currentPrayer.ikindi) {
-    return "oglen";
+    return "ogle";
   } else if (currentTime >= currentPrayer.ikindi && currentTime < currentPrayer.aksam) {
     return "ikindi";
   } else if (currentTime >= currentPrayer.aksam && currentTime < currentPrayer.yatsi) {

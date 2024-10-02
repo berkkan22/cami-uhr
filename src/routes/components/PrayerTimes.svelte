@@ -4,9 +4,11 @@
 
 	export let currentPrayer: Prayers;
 	export let currentPayerTime: string;
+
+	console.log(currentPrayer);
+	console.log(currentPayerTime);
 </script>
 
-{currentPayerTime}
 <div class="prayer-times">
 	{#each ['imsak', 'gunes', 'ogle', 'ikindi', 'aksam', 'yatsi'] as prayer}
 		<div class="prayer-time {currentPayerTime == prayer ? 'current-prayer' : ''}">
@@ -25,14 +27,13 @@
 		margin-top: 30px;
 		color: white;
 		align-items: center;
-		flex-direction: column;
 	}
 
 	.prayer-time {
 		display: flex;
 		flex-direction: column;
 		align-items: center;
-		width: 150px;
+		width: 250px;
 		padding: 10px 30px 10px 30px; /* top right bottom left */
 		background-color: rgb(36, 36, 36);
 		border-radius: 10px;
@@ -43,12 +44,12 @@
 	}
 
 	.prayer-label {
-		font-size: 1.25rem;
+		font-size: 2.5rem;
 		margin-bottom: 5px;
 	}
 
 	.prayer-time-value {
-		font-size: 1.5rem;
+		font-size: 3rem;
 		font-weight: bold;
 	}
 
@@ -57,6 +58,6 @@
 		background-color: #89001c;
 		transform: scale(1.4);
 		transform-origin: center;
-		margin: 30px 30px;
+		margin: 0 60px;
 	}
 </style>

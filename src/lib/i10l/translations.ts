@@ -1,7 +1,7 @@
 export default {
   De: {
     "language": "Deutsch",
-    "title": "Osman Bey Moschee",
+    "title": "{{name}} Moschee",
     "imsak": "Fadschr",
     "gunes": "Schuruk",
     "ogle": "Dhuhr",
@@ -15,7 +15,7 @@ export default {
   },
   Tr: {
     "language": "Türkçe",
-    "title": "Osman Bey Cami",
+    "title": "{{name}} Cami",
     "imsak": "İmsak",
     "gunes": "Güneş",
     "ogle": "Öğle",
