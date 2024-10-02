@@ -28,6 +28,4 @@ src\lib\config\config.ts
 .venv
 __pycache__
 
-database.ini
-api\backend\database.ini
-
+/api/backend/database.ini
