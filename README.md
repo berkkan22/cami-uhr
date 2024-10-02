@@ -42,7 +42,7 @@ To deploy this project on a Raspberry Pi and run it in kiosk mode. It consists o
 1. **Clone the repository:**
 
 ```bash
-git clone https://github.com/your-repo/prayer-time-display.git
+git clone https://github.com/berkkan22/cami-uhr.git
 cd prayer-time-display
 ```
 
@@ -159,3 +159,99 @@ This project is used by the following mosques:
 
 - Osman Bey Cami Finkenwerder
 
+
+
+
+
+
+
+
+---
+
+update:
+sudo apt-get update
+sudo apt-get upgrade -y
+
+sudo apt-get install git -y
+sudo apt-get install tmux -y
+
+bis hier hin alles gut 
+
+install node:
+curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.40.0/install.sh | bash
+
+export NVM_DIR="$HOME/.nvm"
+[ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
+[ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"  # This loads nvm bash_completion
+
+nvm install 20
+node -v
+npm -v
+
+git clone https://github.com/berkkan22/cami-uhr.git
+
+cd cami-uhr
+npm install
+
+
+setup kiosk mode:
+sudo apt-get install --no-install-recommends xserver-xorg x11-xserver-utils xinit openbox xdotool
+
+sudo apt-get install --no-install-recommends chromium-browser
+
+sudo nano /etc/xdg/openbox/autostart
+
+xset -dpms            # turn off display power management system
+xset s noblank        # turn off screen blanking
+xset s off            # turn off screen saver
+
+# Remove exit errors from the config files that could trigger a warning
+sed -i 's/"exited_cleanly":false/"exited_cleanly":true/' ~/.config/chromium/'Local State'
+sed -i 's/"exited_cleanly":false/"exited_cleanly":true/; s/"exit_type":"[^"]\+"/"exit_type":"Normal"/' ~/.config/chromium/Default/Preferences
+
+# Run Chromium in kiosk mode
+chromium-browser  --noerrdialogs --check-for-update-interval=31536000 --disable-infobars --kiosk $KIOSK_URL &
+
+sudo nano /etc/xdg/openbox/environment
+
+export KIOSK_URL=https://DEINE_HA_URL
+
+sudo nano ~/.bash_profile
+[[ -z $DISPLAY && $XDG_VTNR -eq 1 ]] && startx -- -nocursor
+
+
+
+ nano run-prayer-monitor.sh
+
+ modify the script to execute npm install if needed 
+
+ #!/bin/bash
+
+# Variables
+SESSION_NAME="prayer_times"
+COMMAND="source ~/.bashrc && cd /home/pi/cami-uhr && npm run dev"
+
+# Check if tmux session exists
+tmux has-session -t $SESSION_NAME 2>/dev/null
+
+if [ $? != 0 ]; then
+  # If session doesn't exist, create a new one and run the command
+  tmux new-session -d -s $SESSION_NAME
+  tmux send-keys -t $SESSION_NAME "$COMMAND" C-m
+else
+  # If session exists, send the command to the existing session
+  tmux send-keys -t $SESSION_NAME "$COMMAND" C-m
+fi
+
+# Attach to the session (optional)
+# tmux attach -t $SESSION_NAME
+
+chmod +x run-prayer-monitor.sh
+
+/home/pi/run-prayer-monitor.sh
+
+in .bash_profile 
+
+
+sudo iw dev wlan0 scan | grep SSID:
+sudo nmcli dev wifi connect "SSID" password "password"
