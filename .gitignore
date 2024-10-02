@@ -29,3 +29,5 @@ src\lib\config\config.ts
 __pycache__
 
 database.ini
+api\backend\database.ini
+
