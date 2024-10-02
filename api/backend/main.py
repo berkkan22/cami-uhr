@@ -1,4 +1,5 @@
 import psycopg2
+from config import load_config
 from fastapi.security.api_key import APIKeyHeader
 from fastapi import FastAPI, Security, HTTPException, status
 from fastapi import FastAPI, Request
@@ -31,13 +32,11 @@ api_key_header = APIKeyHeader(name=API_KEY_NAME, auto_error=False)
 def validate_api_key(api_key: str) -> bool:
     try:
         # Connect to PostgreSQL
-        conn = psycopg2.connect(
-            dbname="prayer_times",
-            user="XXX",
-            password="XXX",
-            host="XXX",
-            port="XXX"
-        )
+        config = load_config()
+
+        conn = psycopg2.connect(**config)
+        print("Connected to PostgreSQL database")
+
         cursor = conn.cursor()
 
         # Query to check if the key exists and is active
@@ -95,13 +94,11 @@ async def submit_data(request: Request, api_key: str = Security(get_api_key)):
         print(f"Data received: {deutsch}, {turkisch}, {quelle}")
 
         # Connect to PostgreSQL
-        conn = psycopg2.connect(
-            dbname="prayer_times",
-            user="XXX",
-            password="XXX",
-            host="XXX",
-            port="XXX"
-        )
+        config = load_config()
+
+        conn = psycopg2.connect(**config)
+        print("Connected to PostgreSQL database")
+
         cursor = conn.cursor()
 
         # Insert data into the database
