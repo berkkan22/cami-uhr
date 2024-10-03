@@ -161,6 +161,7 @@ This will create a file `time_data.json`. Now you need to move this into this fo
 This project is used by the following mosques:
 
 - Osman Bey Cami Finkenwerder
+- Winsen (Luhe) Muradiye Cami
 
 
 
