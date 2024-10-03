@@ -1,12 +1,9 @@
 <script lang="ts">
-	import { formatTime, type Prayers } from '$lib/prayer';
+	import { formatTime } from '$lib/prayer';
 	import { t } from '$lib/i10l/i10l';
 
-	export let currentPrayer: Prayers;
+	export let currentPrayer;
 	export let currentPayerTime: string;
-
-	console.log(currentPrayer);
-	console.log(currentPayerTime);
 </script>
 
 <div class="prayer-times">

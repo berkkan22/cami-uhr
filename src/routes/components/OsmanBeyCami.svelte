@@ -1,6 +1,6 @@
 <script>
-	import ditib from '$lib/ditib_logo.png';
-	import kiswah from '$lib/kiswah.jpg';
+	import ditib from '$lib/images/ditib_logo.png';
+	import kiswah from '$lib/images/kiswah.jpg';
 	import PrayerTimes from './PrayerTimes.svelte';
 	import DateTimeDisplay from './DateTimeDisplay.svelte';
 	import { config } from '$lib/config/config';

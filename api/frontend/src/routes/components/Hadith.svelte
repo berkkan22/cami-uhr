@@ -13,8 +13,6 @@
 			turkisch: hadithTurkisch,
 			quelle: quelle
 		};
-		console.log(hadithData);
-		console.log(JSON.stringify(hadithData));
 
 		try {
 			const response = await fetch('http://localhost:8000/submitHadith', {

@@ -1,9 +1,9 @@
 <script lang="ts">
 	import { config } from '$lib/config/config';
 	import { t } from '$lib/i10l/i10l';
-	import cami from '$lib/001-removebg-preview.png';
-	import allah from '$lib/allah_trans.png';
-	import muhammed from '$lib/muhammed_trans.png';
+	import cami from '$lib/images/001-removebg-preview.png';
+	import allah from '$lib/images/allah_trans.png';
+	import muhammed from '$lib/images/muhammed_trans.png';
 </script>
 
 {#if config.header}

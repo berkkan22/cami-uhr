@@ -101,8 +101,6 @@
 	<div class="error-container">
 		<h1>Error 404</h1>
 		<p>Prayer time json file not found</p>
-		<!-- <h1>{t('error.title')}</h1> -->
-		<!-- <p>{t('error.message')}</p> -->
 	</div>
 {/if}
 
@@ -129,19 +127,5 @@
 	.error-container p {
 		font-size: 1.2rem;
 		margin-bottom: 1.5rem;
-	}
-
-	.error-container button {
-		background-color: #721c24;
-		color: #fff;
-		border: none;
-		padding: 10px 20px;
-		font-size: 1rem;
-		cursor: pointer;
-		border-radius: 5px;
-	}
-
-	.error-container button:hover {
-		background-color: #a94442;
 	}
 </style>
