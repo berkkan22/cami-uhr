@@ -1,13 +1,11 @@
 <script>
-	import cami from '$lib/001-removebg-preview.png';
 	import ditib from '$lib/ditib_logo.png';
 	import kiswah from '$lib/kiswah.jpg';
 	import PrayerTimes from './PrayerTimes.svelte';
 	import DateTimeDisplay from './DateTimeDisplay.svelte';
 	import { config } from '$lib/config/config';
-	import { t } from '$lib/i10l/i10l';
-	import allah from '$lib/allah_trans.png';
-	import muhammed from '$lib/muhammed_trans.png';
+	import Quotes from './Quotes.svelte';
+	import Header from './Header.svelte';
 
 	export let currentPrayer;
 	export let currentTime;
@@ -18,30 +16,21 @@
 
 <div class="content">
 	<div class="background-image" style="background-image: url({kiswah});"></div>
-	<div class="header">
-		<img class="arab" src={muhammed} alt="Muhammed" />
-		<div class="header-title">
-			<img src={cami} alt="" class="background" />
-			<h1 class="title">{$t('title', { name: config.camiName })}</h1>
-		</div>
-		<img class="arab" src={allah} alt="Allah" />
-	</div>
+	<Header />
 
 	<div class="main-content">
 		<DateTimeDisplay {currentPrayer} {currentTime} {remainingTime} />
 
 		<PrayerTimes {currentPrayer} {currentPayerTime} />
 
-		{#if quaotOfTheDay !== undefined}
-			<div id="quote-container">
-				<div id="quote-text">{quaotOfTheDay.quote}</div>
-				<div id="quote-author">{quaotOfTheDay.author}</div>
-			</div>
-		{/if}
+		<Quotes {quaotOfTheDay} />
 	</div>
-	<div class="ditib-logo">
-		<img src={ditib} alt="" srcset="" />
-	</div>
+
+	{#if config.ditib}
+		<div class="ditib-logo">
+			<img src={ditib} alt="" srcset="" />
+		</div>
+	{/if}
 </div>
 
 <style>
@@ -56,7 +45,6 @@
 		background-position: center;
 		top: 0;
 		left: 0;
-		/* background-image: url('kiswah.jpg'); */
 		width: 100%;
 		height: 100vh;
 		object-fit: contain;
@@ -72,64 +60,6 @@
 		height: 100%;
 		background-color: rgba(0, 0, 0, 0.4);
 		backdrop-filter: blur(1px);
-	}
-
-	.header {
-		display: flex;
-		justify-content: space-between;
-		align-items: center;
-		padding: 20px;
-	}
-
-	.arab {
-		width: 20%;
-		height: auto;
-	}
-
-	.header-title {
-		/* position: relative; */
-		display: flex;
-		justify-content: center;
-		align-items: center;
-		flex-direction: column;
-	}
-
-	.header-title > img {
-		width: 15%;
-		height: auto;
-	}
-
-	.title {
-		/* position: relative; */
-		/* left: 50vw; */
-		/* transform: translate(-50%, -1.7vw); */
-		color: white;
-		border-top: 2px solid white;
-		width: fit-content;
-		padding: 3px;
-		font-size: 1.5rem;
-	}
-
-	#quote-container {
-		margin-top: 9vh;
-		color: white;
-		padding: 64px;
-	}
-
-	#quote-text {
-		font-size: 3rem;
-	}
-
-	#quote-author {
-		font-size: 2rem;
-		font-style: italic;
-		margin-top: 20px;
-	}
-
-	#quote-author::after,
-	#quote-author::before {
-		content: ' ~ ';
-		font-style: italic;
 	}
 
 	.ditib-logo > img {

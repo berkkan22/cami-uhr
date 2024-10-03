@@ -12,6 +12,7 @@ export default {
     "islamicDate": "Hidschri Kalender",
     "currentTime": "Aktuelle Zeit",
     "nextPrayer": "Verbleibende Zeit",
+    "noApiKey": "Kein API-Key gefunden",
   },
   Tr: {
     "language": "Türkçe",
@@ -26,5 +27,6 @@ export default {
     "islamicDate": "Hicri Tarih",
     "currentTime": "Güncel Zaman",
     "nextPrayer": "Kalan Süre",
+    "noApiKey": "API anahtarı bulunamadı",
   },
 };
