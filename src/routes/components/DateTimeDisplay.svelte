@@ -42,9 +42,6 @@
 		align-items: center;
 		min-width: 400px;
 		max-width: 600px;
-		/* padding: 10px 30px 10px 30px; top right bottom left */
-		/* background-color: gray; */
-		/* border-radius: 10px; */
 		color: white;
 		transition:
 			transform 0.3s ease,

@@ -4,9 +4,11 @@ from fastapi.security.api_key import APIKeyHeader
 from fastapi import FastAPI, Security, HTTPException, status
 from fastapi import FastAPI, Request
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi import WebSocket, WebSocketDisconnect
 
 
 app = FastAPI()
+connections = []
 
 # Configure CORS
 origins = [
@@ -118,3 +120,22 @@ async def submit_data(request: Request, api_key: str = Security(get_api_key)):
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
             detail="Error saving data"
         )
+
+
+@app.websocket("/ws")
+async def websocket_endpoint(websocket: WebSocket):
+    await websocket.accept()
+    print("Client connected")
+    connections.append(websocket)
+    try:
+        while True:
+            data = await websocket.receive_text()
+            await websocket.send_text(f"Message text was: {data}")
+            print(f"Message received: {data}")
+            for connection in connections:
+                if connection != websocket:
+                    await connection.send_text(f"{data}")
+    except WebSocketDisconnect:
+        print("Client disconnected")
+        connections.remove(websocket)
+        print("Client disconnected")

@@ -1,14 +1,76 @@
 <script lang="ts">
+	import { onMount } from 'svelte';
+
+	let deutsch = '';
+	let tuerkisch = '';
+	let starttime = new Date()
+		.toLocaleString('sv-SE', { timeZone: 'Europe/Berlin' })
+		.replace(' ', 'T');
+	let endtime = '';
+	let socket: WebSocket;
+
+	onMount(() => {
+		socket = new WebSocket('ws://127.0.0.1:8000/ws');
+
+		// Connection opened
+		socket.addEventListener('open', function (event) {
+			console.log("It's open");
+		});
+
+		socket.addEventListener('disconnect', () => {
+			console.log('Disconnected from WebSocket server');
+		});
+
+		socket.addEventListener('message', (event) => {
+			console.log('Message from server ', event.data);
+		});
+	});
+
+	function handleSubmit(event: Event) {
+		event.preventDefault();
+
+		const data = {
+			deutsch,
+			tuerkisch,
+			starttime,
+			endtime
+		};
+
+		socket.send(JSON.stringify(data));
+	}
 </script>
 
 <section id="ankuendigung">
 	<h2>Ankündigung</h2>
-	<!-- Content for Ankündigung -->
+
+	<form>
+		<div>
+			<label for="deutsch">Deutsch</label>
+			<input type="text" id="deutsch" name="deutsch" bind:value={deutsch} />
+		</div>
+		<div>
+			<label for="tuerkisch">Türkisch</label>
+			<input type="text" id="tuerkisch" name="tuerkisch" bind:value={tuerkisch} />
+		</div>
+		<div>
+			<label for="starttime">Start Time</label>
+			<input type="datetime-local" id="starttime" name="starttime" bind:value={starttime} />
+		</div>
+		<div>
+			<label for="endtime">End Time</label>
+			<input type="datetime-local" id="endtime" name="endtime" bind:value={endtime} />
+		</div>
+		<button type="submit" on:click={handleSubmit}>Submit</button>
+	</form>
 </section>
 
 <style>
 	section {
 		margin-bottom: 40px;
+	}
+
+	h2 {
+		margin-bottom: 20px;
 	}
 
 	form div {
@@ -20,11 +82,18 @@
 		margin-bottom: 5px;
 		font-size: 0.9em;
 		color: #333;
-
 	}
 
 	input[type='text'] {
 		width: 100%;
+		padding: 10px;
+		border: 1px solid #ccc;
+		border-radius: 4px;
+		box-sizing: border-box;
+		font-size: 1em;
+	}
+
+	input[type='datetime-local'] {
 		padding: 10px;
 		border: 1px solid #ccc;
 		border-radius: 4px;

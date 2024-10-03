@@ -20,6 +20,7 @@
 
 	import { t, locale } from '$lib/i10l/i10l';
 	import OsmanBeyCami from './components/OsmanBeyCami.svelte';
+	import Announcements from './components/announcements.svelte';
 
 	let prayerTimesRaw: any;
 	let currentPrayer: Prayers | undefined;
@@ -96,6 +97,8 @@
 {#if currentPrayer !== undefined}
 	<OsmanBeyCami {currentPrayer} {currentTime} {remainingTime} {currentPayerTime} {quaotOfTheDay} />
 {/if}
+
+<Announcements />
 
 {#if prayerTimesRaw === null}
 	<div class="error-container">
