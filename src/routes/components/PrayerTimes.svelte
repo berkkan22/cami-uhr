@@ -33,7 +33,7 @@
 		display: flex;
 		flex-direction: column;
 		align-items: center;
-		width: 250px;
+		width: 270px;
 		padding: 10px 30px 10px 30px; /* top right bottom left */
 		background-color: rgb(36, 36, 36);
 		border-radius: 10px;
@@ -44,12 +44,12 @@
 	}
 
 	.prayer-label {
-		font-size: 2.5rem;
+		font-size: 3.5rem;
 		margin-bottom: 5px;
 	}
 
 	.prayer-time-value {
-		font-size: 3rem;
+		font-size: 4rem;
 		font-weight: bold;
 	}
 

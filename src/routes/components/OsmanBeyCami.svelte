@@ -21,7 +21,7 @@
 	<div class="header">
 		<img class="arab" src={muhammed} alt="Muhammed" />
 		<div class="header-title">
-			<img src={cami} alt="" class="background" />
+			<img src={cami} alt="" class="background cami" />
 			<h1 class="title">{$t('title', { name: config.camiName })}</h1>
 		</div>
 		<img class="arab" src={allah} alt="Allah" />
@@ -49,6 +49,7 @@
 		width: 100%;
 		margin-top: 20px;
 		text-align: center;
+		background: linear-gradient(rgba(0, 0, 0, 0.55), rgba(0, 0, 0, 0.55));
 	}
 
 	.background-image {
@@ -76,13 +77,13 @@
 
 	.header {
 		display: flex;
-		justify-content: space-between;
+		justify-content: space-evenly;
 		align-items: center;
 		padding: 20px;
 	}
 
 	.arab {
-		width: 20%;
+		width: 10%;
 		height: auto;
 	}
 
@@ -95,7 +96,7 @@
 	}
 
 	.header-title > img {
-		width: 15%;
+		width: 50%;
 		height: auto;
 	}
 
@@ -111,7 +112,7 @@
 	}
 
 	#quote-container {
-		margin-top: 9vh;
+		margin-top: 5vh;
 		color: white;
 		padding: 64px;
 	}
