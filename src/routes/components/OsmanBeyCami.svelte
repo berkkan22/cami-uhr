@@ -31,6 +31,7 @@
 			<img src={ditib} alt="" srcset="" />
 		</div>
 	{/if}
+	
 </div>
 
 <style>

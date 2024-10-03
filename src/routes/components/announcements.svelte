@@ -31,8 +31,53 @@
 </script>
 
 {#if announcement != undefined}
-	<p>{announcement.deutsch}</p>
+	<div class="wrapper">
+		<div class="marquee">
+			<p>
+				{announcement.deutsch}
+			</p>
+			<p class="spacer">---</p>
+			<p>
+				{announcement.tuerkisch}
+			</p>
+		</div>
+	</div>
 {/if}
 
 <style>
+	.wrapper {
+		position: absolute;
+		bottom: 0;
+		width: 100%;
+		overflow: hidden;
+		font-size: 2rem;
+		background-color: gold;
+		z-index: -1;
+		padding: 8px;
+	}
+
+	.marquee {
+		background-color: gold;
+		white-space: nowrap;
+		overflow: hidden;
+		animation: marquee 20s linear infinite;
+	}
+
+	.marquee p {
+		display: inline-block;
+	}
+
+	@keyframes marquee {
+		0% {
+			transform: translateX(100%);
+		}
+		100% {
+			transform: translateX(calc(-100%));
+		}
+	}
+
+	.spacer {
+		padding-left: 20px;
+		padding-right: 20px;
+	}
 </style>
