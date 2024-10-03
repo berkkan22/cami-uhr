@@ -3,6 +3,9 @@
 
 This application displays real-time prayer times on a TV, using a Raspberry Pi for easy installation and setup. Designed for simplicity and convenience.
 
+> [!NOTE]
+> This project is still in an early state and development is ongoing. Bugs may be present. If you notice any issues, please submit an issue.
+
 
 ## Demo
 
