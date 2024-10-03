@@ -8,6 +8,7 @@
 		endtime: string;
 	}
 	let announcement: Announcement;
+	let showAnnouncement = false;
 
 	onMount(() => {
 		const socket = new WebSocket('ws://127.0.0.1:8000/ws');
@@ -27,21 +28,44 @@
 		socket.addEventListener('disconnect', () => {
 			console.log('Disconnected from WebSocket server');
 		});
+
+		// TODO: if mounted check backend database if there are any announcements
+		// if there are any announcements, display them
+    
+		setInterval(() => {
+			if (announcement) {
+				shouldAnnouncementBeDisplayed(announcement);
+			}
+		}, 1000);
 	});
+
+	let currentTime: Date;
+	let startTime: Date;
+	let endTime: Date;
+
+	$: showAnnouncement = currentTime && startTime && endTime && currentTime >= startTime && currentTime <= endTime;
+
+	function shouldAnnouncementBeDisplayed(announcement: Announcement) {
+		currentTime = new Date();
+		startTime = new Date(announcement.starttime);
+		endTime = new Date(announcement.endtime);
+	}
 </script>
 
 {#if announcement != undefined}
-	<div class="wrapper">
-		<div class="marquee">
-			<p>
-				{announcement.deutsch}
-			</p>
-			<p class="spacer">---</p>
-			<p>
-				{announcement.tuerkisch}
-			</p>
+	{#if showAnnouncement}
+		<div class="wrapper">
+			<div class="marquee">
+				<p>
+					{announcement.deutsch}
+				</p>
+				<p class="spacer">---</p>
+				<p>
+					{announcement.tuerkisch}
+				</p>
+			</div>
 		</div>
-	</div>
+	{/if}
 {/if}
 
 <style>
