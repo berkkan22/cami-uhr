@@ -6,6 +6,8 @@
 	import DateTimeDisplay from './DateTimeDisplay.svelte';
 	import { config } from '$lib/config/config';
 	import { t } from '$lib/i10l/i10l';
+	import allah from '$lib/allah_trans.png';
+	import muhammed from '$lib/muhammed_trans.png';
 
 	export let currentPrayer;
 	export let currentTime;
@@ -17,8 +19,12 @@
 <div class="content">
 	<div class="background-image" style="background-image: url({kiswah});"></div>
 	<div class="header">
-		<img src={cami} alt="" class="background" />
-		<h1 class="title">{$t('title', { name: config.camiName })}</h1>
+		<img class="arab" src={muhammed} alt="Muhammed" />
+		<div class="header-title">
+			<img src={cami} alt="" class="background" />
+			<h1 class="title">{$t('title', { name: config.camiName })}</h1>
+		</div>
+		<img class="arab" src={allah} alt="Allah" />
 	</div>
 
 	<div class="main-content">
@@ -69,18 +75,34 @@
 	}
 
 	.header {
-		position: relative;
+		display: flex;
+		justify-content: space-between;
+		align-items: center;
+		padding: 20px;
 	}
 
-	.header > img {
+	.arab {
+		width: 20%;
+		height: auto;
+	}
+
+	.header-title {
+		/* position: relative; */
+		display: flex;
+		justify-content: center;
+		align-items: center;
+		flex-direction: column;
+	}
+
+	.header-title > img {
 		width: 15%;
 		height: auto;
 	}
 
 	.title {
-		position: relative;
-		left: 50vw;
-		transform: translate(-50%, -1.7vw);
+		/* position: relative; */
+		/* left: 50vw; */
+		/* transform: translate(-50%, -1.7vw); */
 		color: white;
 		border-top: 2px solid white;
 		width: fit-content;
