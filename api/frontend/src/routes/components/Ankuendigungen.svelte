@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { config } from '$lib/config';
 	import { onMount } from 'svelte';
 
 	let deutsch = '';
@@ -10,7 +11,7 @@
 	let socket: WebSocket;
 
 	onMount(() => {
-		socket = new WebSocket('ws://127.0.0.1:8000/ws');
+		socket = new WebSocket(`ws://127.0.0.1:8000/ws?token=${config.apiKey}`);
 
 		// Connection opened
 		socket.addEventListener('open', function (event) {
@@ -30,12 +31,14 @@
 		event.preventDefault();
 
 		const data = {
-			deutsch,
-			tuerkisch,
-			starttime,
-			endtime
+			type: 'announcement',
+			message_german: deutsch,
+			message_turkish: tuerkisch,
+			start_date: starttime,
+			end_date: endtime
 		};
 
+		console.log(data);
 		socket.send(JSON.stringify(data));
 	}
 </script>

@@ -14,6 +14,8 @@
 			quelle: quelle
 		};
 
+		console.log(hadithData);
+
 		try {
 			const response = await fetch('http://localhost:8000/submitHadith', {
 				method: 'POST',

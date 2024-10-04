@@ -1,3 +1,5 @@
+import datetime
+from typing import Annotated
 import psycopg2
 from config import load_config
 from fastapi.security.api_key import APIKeyHeader
@@ -7,12 +9,26 @@ from fastapi.middleware.cors import CORSMiddleware
 from fastapi import WebSocket, WebSocketDisconnect
 
 
+from fastapi import (
+    Cookie,
+    Depends,
+    FastAPI,
+    Query,
+    WebSocket,
+    WebSocketException,
+    status,
+)
+from fastapi.responses import HTMLResponse
+import json
+
+
 app = FastAPI()
 connections = []
 
 # Configure CORS
 origins = [
     "http://192.168.1.118:5173",  # Add your frontend URL here
+    "http://192.168.1.118:5174",  # Add the new frontend URL here
     "http://localhost:5173",      # Add localhost for development
 ]
 
@@ -58,7 +74,8 @@ def validate_api_key(api_key: str) -> bool:
         return False
 
 
-async def get_api_key(api_key_header: str = Security(api_key_header)):
+async def get_api_key_http(api_key_header: str = Depends(api_key_header)):
+    print(f"API Key Header: {api_key_header}")
     if api_key_header and validate_api_key(api_key_header):
         return api_key_header
     else:
@@ -69,7 +86,7 @@ async def get_api_key(api_key_header: str = Security(api_key_header)):
 
 
 @app.get("/protected-route")
-async def protected_route(api_key: str = Security(get_api_key)):
+async def protected_route(api_key: str = Depends(get_api_key_http)):
     return {"message": "You have access to this protected route"}
 
 
@@ -79,7 +96,7 @@ async def read_root():
 
 
 @app.post("/submitHadith")
-async def submit_data(request: Request, api_key: str = Security(get_api_key)):
+async def submit_data(request: Request, api_key: str = Depends(get_api_key_http)):
     try:
         data = await request.json()
 
@@ -122,20 +139,112 @@ async def submit_data(request: Request, api_key: str = Security(get_api_key)):
         )
 
 
+async def get_api_key_ws(token: str = None):
+    if token is None:
+        raise WebSocketException(code=status.WS_1008_POLICY_VIOLATION)
+    return token
+
+
+@app.get("/announcements")
+async def get_announcements(api_key: str = Depends(get_api_key_http)):
+    try:
+        # Connect to PostgreSQL
+        config = load_config()
+
+        conn = psycopg2.connect(**config)
+        print("Connected to PostgreSQL database")
+
+        cursor = conn.cursor()
+
+        # Query to get announcements
+        cursor.execute(
+            "SELECT * FROM announcements WHERE api_key_id = (SELECT id FROM api_keys WHERE key = %s)",
+            (api_key,)
+        )
+        announcements = cursor.fetchall()
+
+        cursor.close()
+        conn.close()
+
+        return {"announcements": announcements}
+    except Exception as e:
+        print(f"Error getting announcements: {e}")
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail="Error getting announcements"
+        )
+
+
+class MyWebsocket:
+    def __init__(self, websocket: WebSocket, token: str):
+        self.websocket = websocket
+        self.token = token
+
+
 @app.websocket("/ws")
-async def websocket_endpoint(websocket: WebSocket):
+async def websocket_endpoint(websocket: WebSocket, token: str = Depends(get_api_key_ws)):
     await websocket.accept()
     print("Client connected")
-    connections.append(websocket)
+    myWebsocket = MyWebsocket(websocket=websocket, token=token)
+    connections.append(myWebsocket)
     try:
         while True:
             data = await websocket.receive_text()
-            await websocket.send_text(f"Message text was: {data}")
-            print(f"Message received: {data}")
-            for connection in connections:
-                if connection != websocket:
-                    await connection.send_text(f"{data}")
+            try:
+                json_data = json.loads(data)
+                if (json_data.get("type") == "announcement"):
+                    await websocket.send_text(f"Announcement: {json_data}")
+                    # TODO: save announcment in database
+                    # get apikey id and save it with the announcments in the database
+
+                    try:
+                        # Connect to PostgreSQL
+                        config = load_config()
+
+                        conn = psycopg2.connect(**config)
+                        print("Connected to PostgreSQL database")
+
+                        cursor = conn.cursor()
+                        cursor.execute(
+                            "SELECT id FROM api_keys WHERE key = %s AND active = TRUE",
+                            (token,)
+                        )
+                        api_key_id = cursor.fetchone()[0]
+
+                        print(json_data.get("start_date"))
+                        cursor.execute(
+                            "INSERT INTO announcements (message_german, message_turkish, start_date, end_date, api_key_id) VALUES (%s, %s, %s, %s, %s)",
+                            (
+                                json_data.get("message_german"),
+                                json_data.get("message_turkish"),
+                                json_data.get("start_date"),
+                                json_data.get("end_date") if json_data.get(
+                                    "end_date") else datetime.datetime.now() + datetime.timedelta(days=365*10),
+                                api_key_id
+                            )
+                        )
+                        conn.commit()
+
+                        cursor.close()
+                        conn.close()
+
+                        for connection in connections:
+                            if connection.websocket != websocket and connection.token == token:
+                                await connection.websocket.send_text(f"{data}")
+                    except Exception as e:
+                        print(f"Error saving announcement: {e}")
+                        await websocket.send_text(f"Error saving announcement: {e}")
+                else:
+                    await websocket.send_text(f"Invalid type: {json_data}")
+                    return
+            except json.JSONDecodeError as e:
+                await websocket.send_text(f"Invalid JSON data: {e}")
+                return
+
     except WebSocketDisconnect:
         print("Client disconnected")
-        connections.remove(websocket)
+        for connection in connections:
+            if connection.websocket == websocket:
+                connections.remove(connection)
+                break
         print("Client disconnected")

@@ -1,17 +1,44 @@
 <script lang="ts">
 	import { onMount } from 'svelte';
+	import { config } from '$lib/config/config';
 
 	interface Announcement {
 		deutsch: string;
 		tuerkisch: string;
 		starttime: string;
 		endtime: string;
+		visible: boolean;
 	}
-	let announcement: Announcement;
+	let announcements: Announcement[] = [];
 	let showAnnouncement = false;
 
 	onMount(() => {
-		const socket = new WebSocket('ws://127.0.0.1:8000/ws');
+		fetch('http://127.0.0.1:8000/announcements', {
+			method: 'GET',
+			headers: {
+				'X-API-Key': `${config.apiKey}`
+			}
+		})
+			.then((response) => response.json())
+			.then((data) => {
+				if (data) {
+					for (let i = 0; i < data['announcements'].length; i++) {
+						let temp: Announcement = {
+							deutsch: data['announcements'][i][1],
+							tuerkisch: data['announcements'][i][2],
+							starttime: data['announcements'][i][4],
+							endtime: data['announcements'][i][5],
+							visible: data['announcements'][i][6]
+						};
+						temp.visible = false;
+						announcements = [...announcements, temp];
+					}
+					console.log();
+				}
+			})
+			.catch((error) => console.error('Error fetching announcements:', error));
+
+		const socket = new WebSocket(`ws://127.0.0.1:8000/ws?token=${config.apiKey}`);
 
 		// Connection opened
 		socket.addEventListener('open', function (event) {
@@ -21,8 +48,15 @@
 		socket.addEventListener('message', (event) => {
 			console.log('Message from server ', event.data);
 			const data = JSON.parse(event.data);
-			announcement = data;
-			console.log(announcement);
+			let temp: Announcement = {
+				deutsch: data['message_german'],
+				tuerkisch: data['message_turkish'],
+				starttime: data['start_date'],
+				endtime: data['end_date'], // ? data['end_date'] : new Date(new Date(data['start_date']).setFullYear(new Date(data['start_date']).getFullYear() + 10)).toISOString(),
+				visible: false
+			};
+			announcements = [...announcements, temp];
+			console.log(announcements);
 		});
 
 		socket.addEventListener('disconnect', () => {
@@ -31,10 +65,12 @@
 
 		// TODO: if mounted check backend database if there are any announcements
 		// if there are any announcements, display them
-    
+
 		setInterval(() => {
-			if (announcement) {
-				shouldAnnouncementBeDisplayed(announcement);
+			if (announcements != undefined && announcements.length > 0) {
+				announcements.forEach((element) => {
+					shouldAnnouncementBeDisplayed(element);
+				});
 			}
 		}, 1000);
 	});
@@ -43,29 +79,53 @@
 	let startTime: Date;
 	let endTime: Date;
 
-	$: showAnnouncement = currentTime && startTime && endTime && currentTime >= startTime && currentTime <= endTime;
-
 	function shouldAnnouncementBeDisplayed(announcement: Announcement) {
 		currentTime = new Date();
 		startTime = new Date(announcement.starttime);
-		endTime = new Date(announcement.endtime);
+		if (announcement.endtime) {
+			endTime = new Date(announcement.endtime);
+		}
+		showAnnouncement =
+			currentTime &&
+			startTime &&
+			endTime &&
+			currentTime >= startTime &&
+			(endTime != undefined ? currentTime <= endTime : true);
+		announcement.visible = showAnnouncement;
+		announcements = [...announcements];
+	}
+
+	function showAnnouncements(): boolean {
+		let visible = false;
+		for (let i = 0; i < announcements.length; i++) {
+			if (announcements[i].visible) {
+				visible = true;
+				break;
+			}
+		}
+		return visible;
 	}
 </script>
 
-{#if announcement != undefined}
-	{#if showAnnouncement}
-		<div class="wrapper">
-			<div class="marquee">
-				<p>
-					{announcement.deutsch}
-				</p>
-				<p class="spacer">---</p>
-				<p>
-					{announcement.tuerkisch}
-				</p>
-			</div>
+{#if announcements != undefined && announcements.length > 0 && showAnnouncements()}
+	<div class="wrapper">
+		<div class="marquee">
+			{#key announcements}
+				{#each announcements as announcement}
+					{#if announcement.visible}
+						<p>
+							{announcement.deutsch}
+						</p>
+						<p class="spacer">---</p>
+						<p>
+							{announcement.tuerkisch}
+						</p>
+						<p class="spacer2"></p>
+					{/if}
+				{/each}
+			{/key}
 		</div>
-	{/if}
+	</div>
 {/if}
 
 <style>
@@ -81,7 +141,6 @@
 	}
 
 	.marquee {
-		background-color: gold;
 		white-space: nowrap;
 		overflow: hidden;
 		animation: marquee 20s linear infinite;
@@ -103,5 +162,10 @@
 	.spacer {
 		padding-left: 20px;
 		padding-right: 20px;
+	}
+
+	.spacer2 {
+		padding-left: 100px;
+		padding-right: 100px;
 	}
 </style>
