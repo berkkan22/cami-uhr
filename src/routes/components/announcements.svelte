@@ -33,7 +33,7 @@
 						temp.visible = false;
 						announcements = [...announcements, temp];
 					}
-					console.log();
+					console.log(announcements);
 				}
 			})
 			.catch((error) => console.error('Error fetching announcements:', error));
@@ -75,20 +75,19 @@
 		}, 1000);
 	});
 
-	let currentTime: Date;
-	let startTime: Date;
-	let endTime: Date;
-
 	function shouldAnnouncementBeDisplayed(announcement: Announcement) {
-		currentTime = new Date();
-		startTime = new Date(announcement.starttime);
+		let currentTime = new Date();
+		let startTime = new Date(announcement.starttime);
+		let endTime: Date | undefined;
+
 		if (announcement.endtime) {
 			endTime = new Date(announcement.endtime);
+		} else {
+			endTime = undefined;
 		}
 		showAnnouncement =
 			currentTime &&
 			startTime &&
-			endTime &&
 			currentTime >= startTime &&
 			(endTime != undefined ? currentTime <= endTime : true);
 		announcement.visible = showAnnouncement;

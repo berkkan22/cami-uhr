@@ -155,11 +155,12 @@ async def get_announcements(api_key: str = Depends(get_api_key_http)):
         print("Connected to PostgreSQL database")
 
         cursor = conn.cursor()
+        date = datetime.datetime.now()
 
         # Query to get announcements
         cursor.execute(
-            "SELECT * FROM announcements WHERE api_key_id = (SELECT id FROM api_keys WHERE key = %s)",
-            (api_key,)
+            "SELECT * FROM announcements WHERE api_key_id = (SELECT id FROM api_keys WHERE key = %s) AND end_date > %s AND active = TRUE",
+            (api_key, date)
         )
         announcements = cursor.fetchall()
 
