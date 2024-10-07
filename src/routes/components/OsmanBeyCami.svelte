@@ -41,7 +41,7 @@
 				<div id="islamic-date" class="date">
 					<div class="time-value" id="islamic-date-value">{currentPrayer.hicriDate}</div>
 				</div>
-				<div class="weather"></div>
+				<div class="weather">weather</div>
 			</div>
 			<div class="spacer-date"></div>
 			<div class="time-container">
