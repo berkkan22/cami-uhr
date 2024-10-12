@@ -61,10 +61,5 @@
 	#next-prayer-time > .time-value {
 		color: #89001c;
 		font-weight: bold;
-		text-shadow:
-			-1px 0 white,
-			0 1px white,
-			1px 0 white,
-			0 -1px white;
 	}
 </style>
