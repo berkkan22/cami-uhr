@@ -30,7 +30,7 @@
 	<div class="main-content">
 		<DateTimeDisplay {currentPrayer} {currentTime} {remainingTime} />
 
-		<PrayerTimes {currentPrayer} {currentPayerTime} />
+		<PrayerTimes {currentPrayer} {currentPayerTime} {currentTime} />
 
 		{#if quaotOfTheDay !== undefined}
 			<div id="quote-container">
@@ -47,7 +47,7 @@
 <style>
 	.content {
 		width: 100%;
-		margin-top: 20px;
+		/* margin-top: 20px; */
 		text-align: center;
 		background: linear-gradient(rgba(0, 0, 0, 0.55), rgba(0, 0, 0, 0.55));
 	}
@@ -57,7 +57,6 @@
 		background-position: center;
 		top: 0;
 		left: 0;
-		/* background-image: url('kiswah.jpg'); */
 		width: 100%;
 		height: 100vh;
 		object-fit: contain;
@@ -71,18 +70,20 @@
 		left: 0;
 		width: 100%;
 		height: 100%;
-		background-color: rgba(0, 0, 0, 0.4);
+
 		backdrop-filter: blur(1px);
 	}
 
 	.header {
 		display: flex;
+		/* justify-content: center; */
 		justify-content: space-evenly;
 		align-items: center;
 		padding: 20px;
 	}
 
 	.arab {
+		/* position: absolute; */
 		width: 10%;
 		height: auto;
 	}
@@ -96,14 +97,14 @@
 	}
 
 	.header-title > img {
-		width: 50%;
+		/* width: 50%; */
+		width: 225px;
 		height: auto;
 	}
 
 	.title {
-		/* position: relative; */
-		/* left: 50vw; */
-		/* transform: translate(-50%, -1.7vw); */
+		position: relative;
+		top: -25px;
 		color: white;
 		border-top: 2px solid white;
 		width: fit-content;
