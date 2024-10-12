@@ -1,5 +1,5 @@
 <script>
-	import ditib from '$lib/images/ditib_logo.png';
+	import ditib from '$lib/images/ditib_logo_rgb.png';
 	import kiswah from '$lib/images/kiswah.jpg';
 	import PrayerTimes from './PrayerTimes.svelte';
 	import DateTimeDisplay from './DateTimeDisplay.svelte';
@@ -41,7 +41,7 @@
 				<div id="islamic-date" class="date">
 					<div class="time-value" id="islamic-date-value">{currentPrayer.hicriDate}</div>
 				</div>
-				<div class="weather">weather</div>
+				<!-- <div class="weather">weather</div> -->
 			</div>
 			<div class="spacer-date"></div>
 			<div class="time-container">
@@ -209,7 +209,7 @@
 	}
 
 	.spacer-date {
-		width: 30%;
+		width: 10%;
 	}
 
 	.weather {
