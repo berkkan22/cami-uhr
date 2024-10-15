@@ -38,7 +38,7 @@
 			})
 			.catch((error) => console.error('Error fetching announcements:', error));
 
-		const socket = new WebSocket(`ws://127.0.0.1:8000/ws?token=${config.apiKey}`);
+		const socket = new WebSocket(`ws://prayer-time.berkkan.de/api//ws?token=${config.apiKey}`);
 
 		// Connection opened
 		socket.addEventListener('open', function (event) {
