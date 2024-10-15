@@ -1,0 +1,27 @@
+version: '3.9'
+services:
+  backend:
+    container_name: prayer_times_hadith_and_annocunment_backend
+    build: 
+      context: ./backend/
+      dockerfile: Dockerfile
+    ports:
+      - "12825:3000"
+    networks:
+      - intern
+
+  frontend:
+    container_name: prayer_times_hadith_and_annocunment_frontend
+    build: 
+      context: ./frontend/
+      dockerfile: Dockerfile
+    ports:
+      - "31428:3000"
+    networks:
+      - intern
+
+
+
+networks:
+  intern:
+    external: true
