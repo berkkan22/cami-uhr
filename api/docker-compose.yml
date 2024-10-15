@@ -6,7 +6,7 @@ services:
       context: ./backend/
       dockerfile: Dockerfile
     ports:
-      - "12825:3000"
+      - "12825:80"
     restart: unless-stopped
     networks:
       - intern
