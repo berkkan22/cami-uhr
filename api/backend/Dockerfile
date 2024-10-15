@@ -4,7 +4,7 @@ FROM python:3.9
 
 WORKDIR /code
 
-
+RUN pwd
 COPY ./requirements.txt /code/requirements.txt
 
 
