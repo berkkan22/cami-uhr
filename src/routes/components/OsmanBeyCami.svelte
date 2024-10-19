@@ -47,6 +47,7 @@
 <style>
 	.content {
 		width: 100%;
+		height: 100vh;
 		/* margin-top: 20px; */
 		text-align: center;
 		background: linear-gradient(rgba(0, 0, 0, 0.55), rgba(0, 0, 0, 0.55));
