@@ -83,8 +83,7 @@
 	}
 
 	.arab {
-		/* position: absolute; */
-		width: 10%;
+		width: 12%;
 		height: auto;
 	}
 
