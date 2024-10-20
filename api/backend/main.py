@@ -153,6 +153,40 @@ async def submit_data(request: Request, api_key: str = Depends(get_api_key_http)
         )
 
 
+@app.get("/randomHadith")
+async def get_random_hadith(api_key: str = Depends(get_api_key_http)):
+    try:
+        # Connect to PostgreSQL
+        config = load_config()
+
+        conn = psycopg2.connect(**config)
+        print("Connected to PostgreSQL database")
+
+        cursor = conn.cursor()
+
+        # Query to get a random hadith
+        cursor.execute(
+            "SELECT deutsch, turkisch, quelle FROM hadiths ORDER BY RANDOM() LIMIT 1"
+        )
+        hadith = cursor.fetchone()
+
+        cursor.close()
+        conn.close()
+
+        if hadith:
+            return {"deutsch": hadith[0], "turkisch": hadith[1], "quelle": hadith[2]}
+        else:
+            raise HTTPException(
+                status_code=status.HTTP_404_NOT_FOUND,
+                detail="No hadith found"
+            )
+    except Exception as e:
+        print(f"Error getting random hadith: {e}")
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail="Error getting random hadith"
+        )
+
 async def get_api_key_ws(token: str = None):
     if token is None:
         raise WebSocketException(code=status.WS_1008_POLICY_VIOLATION)
