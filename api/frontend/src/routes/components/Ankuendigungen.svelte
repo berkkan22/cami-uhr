@@ -11,7 +11,7 @@
 	let socket: WebSocket;
 
 	onMount(() => {
-		socket = new WebSocket(`ws://cms.prayer-time.berkkan.de/api//ws?token=${config.apiKey}`);
+		socket = new WebSocket(`wss://cms.prayer-time.berkkan.de/api//ws?token=${config.apiKey}`);
 
 		// Connection opened
 		socket.addEventListener('open', function (event) {
