@@ -27,10 +27,10 @@ connections = []
 
 # Configure CORS
 origins = [
-    # "http://192.168.1.118:5173",  # Add your frontend URL here
+    "https://cms.prayer-time.berkkan.de/",  # Add your frontend URL here
     # "http://192.168.1.118:5174",  # Add the new frontend URL here
     # "http://localhost:5173",      # Add localhost for development
-    "*"
+    # "*"
 ]
 
 app.add_middleware(

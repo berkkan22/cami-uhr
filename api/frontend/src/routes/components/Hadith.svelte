@@ -1,5 +1,6 @@
 <script lang="ts">
 	import { writable } from 'svelte/store';
+	import { config } from '$lib/config';
 
 	let hadithDeutsch = '';
 	let hadithTurkisch = '';
@@ -17,11 +18,11 @@
 		console.log(hadithData);
 
 		try {
-			const response = await fetch('http://localhost:8000/submitHadith', {
+			const response = await fetch('https://cms.prayer-time.berkkan.de/submitHadith', {
 				method: 'POST',
 				headers: {
 					'Content-Type': 'application/json',
-					'X-API-Key': 's2jQa-5ZAM33iuQnrMyGKdKgAiEKEK6yGez5Ws2eQIk'
+					'X-API-Key': `${config.apiKey}`
 				},
 				body: JSON.stringify(hadithData)
 			});
