@@ -1,5 +1,7 @@
 from configparser import ConfigParser
 
+# todo: make error handeling better if file does not exist
+
 
 def load_config(filename="database.ini", section="postgresql"):
     parser = ConfigParser()

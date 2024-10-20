@@ -23,6 +23,7 @@ from fastapi.responses import HTMLResponse
 import json
 
 
+# todo: make error handeling better
 def check_prerequisites():
     try:
         if not os.path.isfile("database.ini"):
