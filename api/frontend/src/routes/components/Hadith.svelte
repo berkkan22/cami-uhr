@@ -10,13 +10,18 @@
 	async function handleSubmit(event: Event) {
 		event.preventDefault();
 
+		if (hadithDeutsch.trim() === '' || hadithTurkisch.trim() === '' || quelle.trim() === '') {
+			toast.error('Please fill all fields.', {
+				position: 'bottom-center'
+			});
+			return;
+		}
+
 		const hadithData = {
 			deutsch: hadithDeutsch,
 			turkisch: hadithTurkisch,
 			quelle: quelle
 		};
-
-		console.log(hadithData);
 
 		try {
 			const response = await fetch('https://api.cms.prayer-time.berkkan.de/submitHadith', {
@@ -29,6 +34,9 @@
 			});
 
 			if (!response.ok) {
+				toast.error('Network response was not ok', {
+					position: 'bottom-center'
+				});
 				throw new Error('Network response was not ok');
 			}
 
@@ -37,12 +45,19 @@
 			toast.success('Hadith was submitted successfully.', {
 				position: 'bottom-center'
 			});
+			clearInputs();
 		} catch (error) {
 			console.error('Error:', error);
-			toast.success(`Something went wrong ${error}`, {
+			toast.error(`Something went wrong ${error}`, {
 				position: 'bottom-center'
 			});
 		}
+	}
+
+	function clearInputs() {
+		hadithDeutsch = '';
+		hadithTurkisch = '';
+		quelle = '';
 	}
 </script>
 

@@ -1,6 +1,7 @@
 <script lang="ts">
 	import { config } from '$lib/config';
 	import { onMount } from 'svelte';
+	import toast, { Toaster } from 'svelte-french-toast';
 
 	let deutsch = '';
 	let tuerkisch = '';
@@ -40,6 +41,17 @@
 
 		console.log(data);
 		socket.send(JSON.stringify(data));
+		toast.success('Announcement submitted successfully.', {
+			position: 'bottom-center'
+		});
+		clearInputs();
+	}
+
+	function clearInputs() {
+		deutsch = '';
+		tuerkisch = '';
+		starttime = new Date().toLocaleString('sv-SE', { timeZone: 'Europe/Berlin' }).replace(' ', 'T');
+		endtime = '';
 	}
 </script>
 
@@ -66,6 +78,7 @@
 		<button type="submit" on:click={handleSubmit}>Submit</button>
 	</form>
 </section>
+<Toaster />
 
 <style>
 	section {
