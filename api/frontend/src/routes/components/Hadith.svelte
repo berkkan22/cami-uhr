@@ -33,9 +33,28 @@
 
 			const result = await response.json();
 			console.log('Success:', result);
+			showSnackbar('Hadith successfully submitted!');
 		} catch (error) {
 			console.error('Error:', error);
+			showSnackbar('Something went wrong! {error}');
 		}
+	}
+
+	function showSnackbar(arg0: string) {
+		const snackbar = document.createElement('div');
+		snackbar.className = 'snackbar';
+		snackbar.textContent = arg0;
+		document.body.appendChild(snackbar);
+
+		setTimeout(() => {
+			snackbar.classList.add('show');
+			setTimeout(() => {
+				snackbar.classList.remove('show');
+				setTimeout(() => {
+					document.body.removeChild(snackbar);
+				}, 300);
+			}, 3000);
+		}, 100);
 	}
 </script>
 
