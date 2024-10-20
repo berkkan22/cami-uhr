@@ -6,6 +6,7 @@
 	let hadithDeutsch = '';
 	let hadithTurkisch = '';
 	let quelle = '';
+	let hadithList: any[] = [];
 
 	async function handleSubmit(event: Event) {
 		event.preventDefault();
@@ -55,23 +56,29 @@
 	}
 
 	async function showAllHadith() {
-		const response = await fetch('https://api.cms.prayer-time.berkkan.de/getAllHadith', {
-			method: 'GET',
-			headers: {
-				'Content-Type': 'application/json',
-				'X-API-Key': `${config.apiKey}`
-			}
-		});
+		try {
+			const response = await fetch('https://api.cms.prayer-time.berkkan.de/getAllHadith', {
+				method: 'GET',
+				headers: {
+					'Content-Type': 'application/json',
+					'X-API-Key': `${config.apiKey}`
+				}
+			});
 
-		if (!response.ok) {
-			toast.error('Network response was not ok', {
+			if (!response.ok) {
+				toast.error('Network response was not ok', {
+					position: 'bottom-center'
+				});
+				throw new Error('Network response was not ok');
+			}
+
+			const result = await response.json();
+			hadithList = result['hadiths'];
+		} catch (error) {
+			toast.error(`Something went wrong ${error}`, {
 				position: 'bottom-center'
 			});
-			throw new Error('Network response was not ok');
 		}
-
-		const result = await response.json();
-		console.log('Success:', result);
 	}
 
 	function clearInputs() {
@@ -97,8 +104,22 @@
 			<input type="text" id="quelle" bind:value={quelle} />
 		</div>
 		<button type="submit" on:click={handleSubmit}>Speichern</button>
-		<button type="submit" on:click={showAllHadith}>Show all hadith</button>
+		<button type="submit" class="second" on:click={showAllHadith}>Show all hadith</button>
 	</form>
+
+	{#if hadithList.length > 0}
+		<div class="allHadith">
+			<ul>
+				{#each hadithList as hadith}
+					<li>
+						<p><strong>Deutsch:</strong> {hadith.deutsch}</p>
+						<p><strong>Türkisch:</strong> {hadith.turkisch}</p>
+						<p><strong>Quelle:</strong> {hadith.quelle}</p>
+					</li>
+				{/each}
+			</ul>
+		</div>
+	{/if}
 </section>
 <Toaster />
 
@@ -151,7 +172,37 @@
 		cursor: pointer;
 	}
 
+	.second {
+		background-color: #6c757d;
+		margin-left: 10px;
+	}
+
 	button:hover {
 		background-color: #0056b3;
+	}
+
+	.allHadith {
+		margin-top: 20px;
+	}
+
+	ul {
+		list-style-type: none;
+		padding: 0;
+	}
+
+	li {
+		background-color: #f9f9f9;
+		margin-bottom: 10px;
+		padding: 15px;
+		border: 1px solid #ddd;
+		border-radius: 4px;
+	}
+
+	li p {
+		margin: 5px 0;
+	}
+
+	li p strong {
+		color: #333;
 	}
 </style>
