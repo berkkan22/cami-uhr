@@ -27,9 +27,10 @@ connections = []
 
 # Configure CORS
 origins = [
-    "http://192.168.1.118:5173",
-    "http://localhost:5173",
-    "https://prayer-time.berkkan.de/",
+    # "http://192.168.1.118:5173",
+    # "http://localhost:5173",
+    # "https://prayer-time.berkkan.de/",
+    "*"
 ]
 
 app.add_middleware(
