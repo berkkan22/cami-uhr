@@ -32,6 +32,7 @@ def check_prerequisites():
         print(f"Error checking prerequisites: {e}")
         return False
 
+check_prerequisites()
 
 app = FastAPI()
 connections = []
