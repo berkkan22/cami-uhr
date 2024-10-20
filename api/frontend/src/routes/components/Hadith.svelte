@@ -1,6 +1,13 @@
 <script lang="ts">
 	import { writable } from 'svelte/store';
 	import { config } from '$lib/config';
+	import Snackbar, { Label, Actions } from '@smui/snackbar';
+	import IconButton from '@smui/icon-button';
+	import Button from '@smui/button';
+
+	let snackbarSuccess: Snackbar;
+	let snackbarError: Snackbar;
+	let errorMessage = '';
 
 	let hadithDeutsch = '';
 	let hadithTurkisch = '';
@@ -33,28 +40,12 @@
 
 			const result = await response.json();
 			console.log('Success:', result);
-			showSnackbar('Hadith successfully submitted!');
+			snackbarSuccess.open();
 		} catch (error) {
 			console.error('Error:', error);
-			showSnackbar('Something went wrong! {error}');
+			errorMessage = `Something went wrong ${error.message}`;
+			snackbarError.open();
 		}
-	}
-
-	function showSnackbar(arg0: string) {
-		const snackbar = document.createElement('div');
-		snackbar.className = 'snackbar';
-		snackbar.textContent = arg0;
-		document.body.appendChild(snackbar);
-
-		setTimeout(() => {
-			snackbar.classList.add('show');
-			setTimeout(() => {
-				snackbar.classList.remove('show');
-				setTimeout(() => {
-					document.body.removeChild(snackbar);
-				}, 300);
-			}, 3000);
-		}, 100);
 	}
 </script>
 
@@ -76,6 +67,18 @@
 		<button type="submit" on:click={handleSubmit}>Speichern</button>
 	</form>
 </section>
+<Snackbar bind:this={snackbarSuccess} class="demo-success">
+	<Label>Hadith was submitted successfully</Label>
+	<Actions>
+		<IconButton class="material-icons" title="Dismiss">close</IconButton>
+	</Actions>
+</Snackbar>
+<Snackbar bind:this={snackbarError} labelText={errorMessage} class="demo-error">
+	<Label></Label>
+	<Actions>
+		<IconButton class="material-icons" title="Dismiss">close</IconButton>
+	</Actions>
+</Snackbar>
 
 <style>
 	section {
@@ -128,25 +131,5 @@
 
 	button:hover {
 		background-color: #0056b3;
-	}
-
-	.snackbar {
-		position: fixed;
-		left: 50%;
-		transform: translateX(-50%);
-		bottom: 30px;
-		background-color: #333;
-		color: #fff;
-		padding: 16px;
-		border-radius: 4px;
-		font-size: 1em;
-		opacity: 0;
-		transition: opacity 0.3s, bottom 0.3s;
-		z-index: 1000;
-	}
-
-	.snackbar.show {
-		opacity: 1;
-		bottom: 50px;
 	}
 </style>
