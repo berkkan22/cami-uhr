@@ -17,9 +17,9 @@
 	}
 
 	function showSabahBG() {
-		const [hours, minutes, seconds] = currentTime.split(':').map(Number);
+		const [hours, minutes] = currentTime.split(':').map(Number);
 		const currentDate = new Date();
-		currentDate.setHours(hours, minutes, seconds, 0);
+		currentDate.setHours(hours, minutes);
 		showSabahBackgroundColor = isGunesPassed(currentPrayer, currentDate);
 	}
 

@@ -144,7 +144,7 @@ export function checkWhichPrayerTime(currentPrayer: Prayers, currentTime: Date):
 }
 
 export function isGunesPassed(currentPrayer: Prayers, currentTime: Date): boolean {
-  return currentTime >= currentPrayer.gunes;
+    return currentTime >= currentPrayer.gunes;
 }
 
 export function convertToLocalIsoDate(date: Date) {

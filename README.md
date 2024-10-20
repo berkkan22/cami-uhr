@@ -62,6 +62,7 @@ npm run dev
 
 1. **Setup Kisok mode on Raspberry Pi**
 Follow this guide https://www.techox.de/blog/einrichten-des-kiosk-modus-raspberry-pi/
+https://smarthomeyourself.de/wiki/raspberrypi/kiosk-modus-auf-touchscreen-am-raspberry-pi-mit-automatischer-anmeldung-im-browser/
 
 2. **Done**
 Now if you plug in the raspi into the TV it should automaticly start in kiosk mode and show the prayer times
@@ -158,6 +159,7 @@ This will create a file `time_data.json`. Now you need to move this into this fo
 This project is used by the following mosques:
 
 - Osman Bey Cami Finkenwerder
+- Winsen (Luhe) Muradiye Cami
 
 
 
