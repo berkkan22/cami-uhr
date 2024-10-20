@@ -18,7 +18,7 @@
 		console.log(hadithData);
 
 		try {
-			const response = await fetch('https://cms.prayer-time.berkkan.de/submitHadith', {
+			const response = await fetch('https://cms.prayer-time.berkkan.de/api/submitHadith', {
 				method: 'POST',
 				headers: {
 					'Content-Type': 'application/json',
