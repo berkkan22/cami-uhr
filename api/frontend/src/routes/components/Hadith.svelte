@@ -54,6 +54,26 @@
 		}
 	}
 
+	async function showAllHadith() {
+		const response = await fetch('https://api.cms.prayer-time.berkkan.de/getAllHadith', {
+			method: 'GET',
+			headers: {
+				'Content-Type': 'application/json',
+				'X-API-Key': `${config.apiKey}`
+			}
+		});
+
+		if (!response.ok) {
+			toast.error('Network response was not ok', {
+				position: 'bottom-center'
+			});
+			throw new Error('Network response was not ok');
+		}
+
+		const result = await response.json();
+		console.log('Success:', result);
+	}
+
 	function clearInputs() {
 		hadithDeutsch = '';
 		hadithTurkisch = '';
@@ -77,6 +97,7 @@
 			<input type="text" id="quelle" bind:value={quelle} />
 		</div>
 		<button type="submit" on:click={handleSubmit}>Speichern</button>
+		<button type="submit" on:click={showAllHadith}>Show all hadith</button>
 	</form>
 </section>
 <Toaster />

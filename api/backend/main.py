@@ -187,6 +187,32 @@ async def get_random_hadith(api_key: str = Depends(get_api_key_http)):
             detail="Error getting random hadith"
         )
 
+@app.get("/getAllHadith")
+async def get_all_hadiths(api_key: str = Depends(get_api_key_http)):
+    try:
+        # Connect to PostgreSQL
+        config = load_config()
+
+        conn = psycopg2.connect(**config)
+        print("Connected to PostgreSQL database")
+
+        cursor = conn.cursor()
+
+        # Query to get all hadiths
+        cursor.execute("SELECT deutsch, turkisch, quelle FROM hadiths")
+        hadiths = cursor.fetchall()
+
+        cursor.close()
+        conn.close()
+
+        return {"hadiths": [{"deutsch": h[0], "turkisch": h[1], "quelle": h[2]} for h in hadiths]}
+    except Exception as e:
+        print(f"Error getting all hadiths: {e}")
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail="Error getting all hadiths"
+        )
+
 async def get_api_key_ws(token: str = None):
     if token is None:
         raise WebSocketException(code=status.WS_1008_POLICY_VIOLATION)
