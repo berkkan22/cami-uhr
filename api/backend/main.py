@@ -1,4 +1,5 @@
 import datetime
+import os
 from typing import Annotated
 import psycopg2
 from config import load_config
@@ -20,6 +21,16 @@ from fastapi import (
 )
 from fastapi.responses import HTMLResponse
 import json
+
+
+def check_prerequisites():
+    try:
+        if not os.path.isfile("database.ini"):
+            print(f"The file database.ini does not exist.")
+            exit(1)
+    except Exception as e:
+        print(f"Error checking prerequisites: {e}")
+        return False
 
 
 app = FastAPI()
