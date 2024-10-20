@@ -1,13 +1,7 @@
 <script lang="ts">
 	import { writable } from 'svelte/store';
 	import { config } from '$lib/config';
-	import Snackbar, { Label, Actions } from '@smui/snackbar';
-	import IconButton from '@smui/icon-button';
-	import Button from '@smui/button';
-
-	let snackbarSuccess: Snackbar;
-	let snackbarError: Snackbar;
-	let errorMessage = '';
+	import toast, { Toaster } from 'svelte-french-toast';
 
 	let hadithDeutsch = '';
 	let hadithTurkisch = '';
@@ -40,11 +34,14 @@
 
 			const result = await response.json();
 			console.log('Success:', result);
-			snackbarSuccess.open();
+			toast.success('Hadith was submitted successfully.', {
+				position: 'bottom-center'
+			});
 		} catch (error) {
 			console.error('Error:', error);
-			errorMessage = `Something went wrong ${error.message}`;
-			snackbarError.open();
+			toast.success(`Something went wrong ${error}`, {
+				position: 'bottom-center'
+			});
 		}
 	}
 </script>
@@ -67,18 +64,7 @@
 		<button type="submit" on:click={handleSubmit}>Speichern</button>
 	</form>
 </section>
-<Snackbar bind:this={snackbarSuccess} class="demo-success">
-	<Label>Hadith was submitted successfully</Label>
-	<Actions>
-		<IconButton class="material-icons" title="Dismiss">close</IconButton>
-	</Actions>
-</Snackbar>
-<Snackbar bind:this={snackbarError} labelText={errorMessage} class="demo-error">
-	<Label></Label>
-	<Actions>
-		<IconButton class="material-icons" title="Dismiss">close</IconButton>
-	</Actions>
-</Snackbar>
+<Toaster />
 
 <style>
 	section {
