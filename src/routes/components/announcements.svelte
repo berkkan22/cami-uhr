@@ -13,7 +13,7 @@
 	let showAnnouncement = false;
 
 	onMount(() => {
-		fetch('https://cms.prayer-time.berkkan.de/api/announcements', {
+		fetch('https://api.cms.prayer-time.berkkan.de/announcements', {
 			method: 'GET',
 			headers: {
 				'X-API-Key': `${config.apiKey}`
