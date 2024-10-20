@@ -129,4 +129,24 @@
 	button:hover {
 		background-color: #0056b3;
 	}
+
+	.snackbar {
+		position: fixed;
+		left: 50%;
+		transform: translateX(-50%);
+		bottom: 30px;
+		background-color: #333;
+		color: #fff;
+		padding: 16px;
+		border-radius: 4px;
+		font-size: 1em;
+		opacity: 0;
+		transition: opacity 0.3s, bottom 0.3s;
+		z-index: 1000;
+	}
+
+	.snackbar.show {
+		opacity: 1;
+		bottom: 50px;
+	}
 </style>
