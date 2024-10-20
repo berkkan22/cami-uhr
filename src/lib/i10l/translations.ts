@@ -13,6 +13,7 @@ export default {
     "currentTime": "Aktuelle Zeit",
     "nextPrayer": "Verbleibende Zeit",
     "noApiKey": "Kein API-Key gefunden",
+    "hadith": "{{name}}",
   },
   Tr: {
     "language": "Türkçe",
@@ -28,5 +29,7 @@ export default {
     "currentTime": "Güncel Zaman",
     "nextPrayer": "Kalan Süre",
     "noApiKey": "API anahtarı bulunamadı",
+    "hadith": "{{name}}",
+
   },
 };

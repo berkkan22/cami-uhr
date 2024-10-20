@@ -41,10 +41,8 @@
 		}
 
 		let datesRaw = await fetchDates();
-		let quotesRaw = await fetchQuotes();
 
 		let res = combineTimeAndDate(prayerTimesRaw, datesRaw);
-		let quotes = convertToQuotes(quotesRaw);
 
 		let currentDate = new Date();
 		let timeOffset = 0;
@@ -57,9 +55,10 @@
 		remainingTime = '00:00:00';
 		currentTime = currentDate.toLocaleTimeString('de-DE');
 
-		quaotOfTheDay = getRandomQuote(quotes);
+		console.log('get random');
+		quaotOfTheDay = await getRandomQuote();
 
-		setInterval(() => {
+		setInterval(async () => {
 			currentDate = new Date(Date.now() + timeOffset * convertMS);
 
 			currentTime = currentDate.toLocaleTimeString('de-DE');
@@ -79,7 +78,7 @@
 					currentDate.getSeconds() === 0
 				) {
 					currentPrayer = res.find((prayer) => prayer.date === convertToLocalIsoDate(currentDate));
-					quaotOfTheDay = getRandomQuote(quotes);
+					quaotOfTheDay = await getRandomQuote();
 				}
 			}
 		}, 1000);

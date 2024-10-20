@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { config } from '$lib/config/config';
-	import { t } from '$lib/i10l/i10l';
+	import { t, locale } from '$lib/i10l/i10l';
 
 	export let quaotOfTheDay;
 </script>
@@ -11,7 +11,9 @@
 	{/if}
 	{#if config.quotes && config.apiKey.trim() !== ''}
 		{#if quaotOfTheDay !== undefined}
-			<div id="quote-text">{quaotOfTheDay.quote}</div>
+			<div id="quote-text">
+				{$t('hadith', { name: $locale == 'De' ? quaotOfTheDay.quoteDe : quaotOfTheDay.quoteTr })}
+			</div>
 			<div id="quote-author">{quaotOfTheDay.author}</div>
 		{/if}
 	{/if}
