@@ -26,11 +26,11 @@ import json
 def check_prerequisites():
     try:
         if not os.path.isfile("database.ini"):
-            print(f"The file database.ini does not exist.")
-            exit(1)
+            raise FileNotFoundError(f"The file database.ini does not exist.")
     except Exception as e:
         print(f"Error checking prerequisites: {e}")
         return False
+
 
 check_prerequisites()
 
