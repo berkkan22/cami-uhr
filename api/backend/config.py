@@ -1,7 +1,10 @@
 from configparser import ConfigParser
+import os
 
 
 def load_config(filename="database.ini", section="postgresql"):
+    if not os.path.isfile(filename):
+        raise FileNotFoundError(f"The file {filename} does not exist.")
     parser = ConfigParser()
     parser.read(filename)
 
