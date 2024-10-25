@@ -169,7 +169,7 @@
 	}
 
 	#islamic-date-value {
-		font-size: 2.5rem;
+		font-size: 3rem;
 		color: #cacaca;
 		margin-top: 10px;
 	}
@@ -180,13 +180,13 @@
 	}
 
 	.time-value {
-		font-size: 4rem;
+		font-size: 5rem;
 	}
 
 	#next-prayer-time > .time-value {
 		color: #89001c;
 		font-weight: bold;
-		font-size: 3.75rem;
+		font-size: 5rem;
 		/* text-shadow:
 			-1px 0 white,
 			0 1px white,
@@ -195,7 +195,7 @@
 	}
 
 	#next-prayer-time > .time-title {
-		font-size: 1.75rem;
+		font-size: 2.5rem;
 		margin-bottom: 0px;
 	}
 
@@ -204,7 +204,8 @@
 	} */
 
 	#current-time > .time-value {
-		font-size: 5rem;
+		margin-top: 50px;
+		font-size: 8rem;
 		margin-bottom: 15px;
 	}
 
