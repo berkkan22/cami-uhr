@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { signOut } from '@auth/sveltekit/client';
 	import Ankuendigungen from './components/Ankuendigungen.svelte';
 	import Hadith from './components/Hadith.svelte';
 
@@ -37,6 +38,13 @@
 			}
 		};
 	}
+
+	function logout() {
+		console.log('logging out');
+		document.cookie = 'session=; Max-Age=0; path=/';
+
+		signOut();
+	}
 </script>
 
 <div class="container">
@@ -55,6 +63,9 @@
 					href="#ankuendigung"
 					on:click={() => showContent('ankuendigung')}>Ankündigung</a
 				>
+			</li>
+			<li>
+				<a class={showHadith ? '' : 'cur'} href="#ankuendigung" on:click={() => logout()}>Logout</a>
 			</li>
 		</ul>
 	</div>

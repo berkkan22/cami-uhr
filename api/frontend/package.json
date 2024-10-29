@@ -36,6 +36,7 @@
 	},
 	"type": "module",
 	"dependencies": {
+		"@auth/sveltekit": "^1.7.2",
 		"svelte-french-toast": "^1.2.0"
 	}
 }
