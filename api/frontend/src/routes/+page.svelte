@@ -2,6 +2,24 @@
 	import { signOut } from '@auth/sveltekit/client';
 	import Ankuendigungen from './components/Ankuendigungen.svelte';
 	import Hadith from './components/Hadith.svelte';
+	import toast, { Toaster } from 'svelte-french-toast';
+	import { onMount } from 'svelte';
+	import { config } from '$lib/config';
+	import { page } from '$app/stores';
+
+	onMount(async () => {
+		console.log($page.data.session);
+		try {
+			const response = await fetch(`${config.apiUrl}`);
+			if (!response.ok) {
+				throw new Error('Network response was not ok');
+			}
+		} catch (error) {
+			toast.error(`Error pinging server: ${error}`, {
+				position: 'bottom-center'
+			});
+		}
+	});
 
 	let isMenuOpen = false;
 	let showHadith = true;
@@ -65,7 +83,7 @@
 				>
 			</li>
 			<li>
-				<a class={showHadith ? '' : 'cur'} href="#ankuendigung" on:click={() => logout()}>Logout</a>
+				<a class={''} href="#logout" on:click={() => logout()}>Logout</a>
 			</li>
 		</ul>
 	</div>
@@ -90,6 +108,7 @@
 		{/if}
 	</div>
 </div>
+<Toaster />
 
 <style>
 	.container {

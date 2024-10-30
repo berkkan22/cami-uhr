@@ -1,7 +1,9 @@
 import datetime
 import os
 from typing import Annotated
+import jwt
 import psycopg2
+from pydantic import BaseModel
 from config import load_config
 from fastapi.security.api_key import APIKeyHeader
 from fastapi import FastAPI, Security, HTTPException, status
@@ -22,8 +24,13 @@ from fastapi import (
 from fastapi.responses import HTMLResponse
 import json
 
+from jwt import ExpiredSignatureError, InvalidTokenError, InvalidSignatureError
+import requests
+from dotenv import load_dotenv
 
 # todo: make error handeling better
+
+
 def check_prerequisites():
     try:
         if not os.path.isfile("database.ini"):
@@ -37,6 +44,7 @@ check_prerequisites()
 
 app = FastAPI()
 connections = []
+listen_connections = []
 
 # Configure CORS
 origins = [
@@ -55,48 +63,108 @@ app.add_middleware(
 )
 
 
-API_KEY_NAME = "X-API-Key"
+API_KEY_NAME = "X-TOKEN"
 api_key_header = APIKeyHeader(name=API_KEY_NAME, auto_error=False)
 
 # Function to validate API key from database
 
 
-def validate_api_key(api_key: str) -> bool:
+def validate_jwt_token(jwt_token: str) -> bool:
+    # Fetch the JWKS from Authentik
+    jwks = get_jwks()
+
+    # Decode the JWT header to get the 'kid' (Key ID)
+    unverified_header = jwt.get_unverified_header(jwt_token)
+    kid = unverified_header['kid']
+
+    # Get the public key based on 'kid' from JWKS
+    public_key = get_public_key(jwks, kid)
+
+    # Verify the JWT with the public key
+    # print("\n--- Verifying JWT with the public key ---")
+    return verify_jwt(jwt_token, public_key)
+
+
+# Endpoint for fetching the JWKS from Authentik
+JWKS_URL = "https://auth.berkkan.de/application/o/hadith-api/jwks/"
+
+
+def get_jwks():
+    """Fetch the JWKS from the Authentik endpoint."""
+    response = requests.get(JWKS_URL)
+    if response.status_code == 200:
+        return response.json()
+    else:
+        raise Exception(f"Failed to fetch JWKS: {response.status_code}")
+
+
+def get_public_key(jwks, kid):
+    """Extract the public key corresponding to the JWT's 'kid'."""
+    for key in jwks['keys']:
+        if key['kid'] == kid:
+            return jwt.algorithms.RSAAlgorithm.from_jwk(key)
+    raise Exception(f"Public key not found for kid: {kid}")
+
+
+def verify_jwt(token, public_key):
+    """Decode and verify the JWT using the public key."""
     try:
-        # Connect to PostgreSQL
-        config = load_config()
-
-        conn = psycopg2.connect(**config)
-        print("Connected to PostgreSQL database")
-
-        cursor = conn.cursor()
-
-        # Query to check if the key exists and is active
-        cursor.execute(
-            "SELECT COUNT(*) FROM api_keys WHERE key = %s AND active = TRUE",
-            (api_key,)
-        )
-        result = cursor.fetchone()[0]
-
-        cursor.close()
-        conn.close()
-
-        return result > 0
-
-    except Exception as e:
-        print(f"Error validating API key: {e}")
+        unverified_token = decode_jwt_unverified(token)
+        aud = unverified_token.get("aud")
+        verified_token = jwt.decode(token, public_key, algorithms=[
+                                    "RS256"], audience=aud, options={"verify_exp": True})
+        # print("Verified Token Payload:", verified_token)
+        return True
+    except ExpiredSignatureError:
+        print("Token has expired")
+        return False
+    except InvalidSignatureError:
+        print("Invalid signature")
+        return False
+    except InvalidTokenError as e:
+        print(f"Invalid token: {e}")
         return False
 
 
+def decode_jwt_unverified(token):
+    return jwt.decode(token, options={"verify_signature": False})
+
+
+def decode_jwt(token):
+    # Fetch the JWKS from Authentik
+    jwks = get_jwks()
+
+    # Decode the JWT header to get the 'kid' (Key ID)
+    unverified_header = jwt.get_unverified_header(token)
+    kid = unverified_header['kid']
+
+    # Get the public key based on 'kid' from JWKS
+    public_key = get_public_key(jwks, kid)
+
+    unverified_token = decode_jwt_unverified(token)
+    aud = unverified_token.get("aud")
+
+    # Verify the JWT with the public key
+    return jwt.decode(token, public_key, algorithms=["RS256"], audience=aud, options={"verify_exp": True})
+
+
 async def get_api_key_http(api_key_header: str = Depends(api_key_header)):
-    print(f"API Key Header: {api_key_header}")
-    if api_key_header and validate_api_key(api_key_header):
+    if api_key_header and validate_jwt_token(api_key_header):
         return api_key_header
     else:
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
             detail="Invalid or missing API Key",
         )
+
+
+def getMosque(jwt):
+    decode = decode_jwt(jwt)
+    group = decode.get("groups")
+    for g in group:
+        if "mosque" in g:
+            return g
+    return None
 
 
 @app.get("/protected-route")
@@ -109,6 +177,80 @@ async def read_root():
     return {"message": "backend server is up and running..."}
 
 
+class TokenRefreshRequest(BaseModel):
+    refresh_token: str
+
+
+@app.post("/refresh-token")
+async def refresh_token(request: TokenRefreshRequest):
+    try:
+        load_dotenv()
+
+        response = requests.post("https://auth.berkkan.de/application/o/token/", data={
+            "grant_type": "refresh_token",
+            "refresh_token": request.refresh_token,
+            "client_id": os.getenv("CLIENT_ID"),
+            "client_secret": os.getenv("CLIENT_SECRET"),
+        })
+
+        if response.status_code != 200:
+            raise HTTPException(status_code=response.status_code,
+                                detail="Failed to refresh token")
+
+        return response.json()
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+
+@app.get("/checkUserLogin")
+async def check_user_login(api_key: str = Depends(get_api_key_http)):
+    decode = decode_jwt(api_key)
+    group = decode.get("groups")
+    if ("first-login" in group):
+        try:
+            load_dotenv()
+
+            username = decode.get("preferred_username")
+            user_response = requests.get(
+                f"https://auth.berkkan.de/api/v3/core/users/?username={
+                    username}",
+                headers={"accept": "application/json",
+                         "authorization": f"Bearer {os.getenv('API_KEY')}"},
+            )
+
+            if user_response.status_code != 200:
+                raise HTTPException(
+                    status_code=user_response.status_code, detail="Failed to fetch user details")
+
+            user_data = user_response.json()
+            user_pk = user_data["results"][0]['pk']
+
+            group_uuid = os.getenv("FIRST_LOGIN_GROUP_UUID")
+            remove_user_response = requests.post(
+                f"https://auth.berkkan.de/api/v3/core/groups/{
+                    group_uuid}/remove_user/",
+                headers={"accept": "application/json",
+                         "content-type": "application/json",
+                         "authorization": f"Bearer {os.getenv('API_KEY')}"},
+                json={"pk": user_pk}
+            )
+
+            if remove_user_response.content:
+                print(remove_user_response.json())
+            else:
+                print("No content in response")
+
+        except Exception as e:
+            print(f"Error removing user from group: {e}")
+            raise HTTPException(
+                status_code=500, detail="Failed to remove user from group")
+        if remove_user_response.status_code != 200:
+            raise HTTPException(status_code=remove_user_response.status_code,
+                                detail="Failed to remove user from group")
+
+    return {"message": "User is logged in"}
+
+
 @app.post("/submitHadith")
 async def submit_data(request: Request, api_key: str = Depends(get_api_key_http)):
     try:
@@ -117,6 +259,7 @@ async def submit_data(request: Request, api_key: str = Depends(get_api_key_http)
         deutsch = data.get("deutsch")
         turkisch = data.get("turkisch")
         quelle = data.get("quelle")
+        mosque = getMosque(api_key)
 
         if not all([deutsch, turkisch, quelle]):
             raise HTTPException(
@@ -124,7 +267,7 @@ async def submit_data(request: Request, api_key: str = Depends(get_api_key_http)
                 detail="Missing data in request"
             )
 
-        print(f"Data received: {deutsch}, {turkisch}, {quelle}")
+        print(f"Data received: {deutsch}, {turkisch}, {quelle}, {mosque}")
 
         # Connect to PostgreSQL
         config = load_config()
@@ -136,8 +279,8 @@ async def submit_data(request: Request, api_key: str = Depends(get_api_key_http)
 
         # Insert data into the database
         cursor.execute(
-            "INSERT INTO hadiths (deutsch, turkisch, quelle) VALUES (%s, %s, %s)",
-            (deutsch, turkisch, quelle)
+            "INSERT INTO hadiths (deutsch, turkisch, quelle, mosque) VALUES (%s, %s, %s, %s)",
+            (deutsch, turkisch, quelle, mosque)
         )
         conn.commit()
 
@@ -153,9 +296,12 @@ async def submit_data(request: Request, api_key: str = Depends(get_api_key_http)
         )
 
 
-@app.get("/randomHadith")
-async def get_random_hadith(api_key: str = Depends(get_api_key_http)):
+@app.post("/randomHadith")
+async def get_random_hadith(request: Request):
     try:
+        data = await request.json()
+        mosque = data.get("mosque")
+
         # Connect to PostgreSQL
         config = load_config()
 
@@ -166,7 +312,8 @@ async def get_random_hadith(api_key: str = Depends(get_api_key_http)):
 
         # Query to get a random hadith
         cursor.execute(
-            "SELECT deutsch, turkisch, quelle FROM hadiths ORDER BY RANDOM() LIMIT 1"
+            "SELECT deutsch, turkisch, quelle FROM hadiths WHERE mosque = %s ORDER BY RANDOM() LIMIT 1",
+            (mosque,)
         )
         hadith = cursor.fetchone()
 
@@ -187,9 +334,12 @@ async def get_random_hadith(api_key: str = Depends(get_api_key_http)):
             detail="Error getting random hadith"
         )
 
+
 @app.get("/getAllHadith")
 async def get_all_hadiths(api_key: str = Depends(get_api_key_http)):
     try:
+        mosque = getMosque(api_key)
+
         # Connect to PostgreSQL
         config = load_config()
 
@@ -199,7 +349,10 @@ async def get_all_hadiths(api_key: str = Depends(get_api_key_http)):
         cursor = conn.cursor()
 
         # Query to get all hadiths
-        cursor.execute("SELECT deutsch, turkisch, quelle FROM hadiths")
+        cursor.execute(
+            "SELECT deutsch, turkisch, quelle FROM hadiths WHERE mosque = %s",
+            (mosque,)
+        )
         hadiths = cursor.fetchall()
 
         cursor.close()
@@ -213,15 +366,20 @@ async def get_all_hadiths(api_key: str = Depends(get_api_key_http)):
             detail="Error getting all hadiths"
         )
 
+
 async def get_api_key_ws(token: str = None):
     if token is None:
         raise WebSocketException(code=status.WS_1008_POLICY_VIOLATION)
-    return token
+    if validate_jwt_token(token):
+        return token
 
 
-@app.get("/announcements")
-async def get_announcements(api_key: str = Depends(get_api_key_http)):
+@app.post("/announcements")
+async def get_announcements(request: Request):
     try:
+        data = await request.json()
+        mosque = data.get("mosque")
+
         # Connect to PostgreSQL
         config = load_config()
 
@@ -233,8 +391,8 @@ async def get_announcements(api_key: str = Depends(get_api_key_http)):
 
         # Query to get announcements
         cursor.execute(
-            "SELECT * FROM announcements WHERE api_key_id = (SELECT id FROM api_keys WHERE key = %s) AND end_date > %s AND active = TRUE",
-            (api_key, date)
+            "SELECT * FROM announcements WHERE mosque = %s AND end_date > %s AND active = TRUE",
+            (mosque, date)
         )
         announcements = cursor.fetchall()
 
@@ -256,6 +414,27 @@ class MyWebsocket:
         self.token = token
 
 
+class ListenWebsocket:
+    def __init__(self, websocket: WebSocket, mosque: str):
+        self.websocket = websocket
+        self.mosque = mosque
+
+
+@app.websocket("/ws-listen")
+async def websocket_listen_endpoint(websocket: WebSocket, mosque: str):
+    await websocket.accept()
+    print("Client connected to listen")
+    listenWebsocket = ListenWebsocket(websocket=websocket, mosque=mosque)
+    listen_connections.append(listenWebsocket)
+    try:
+        while True:
+            data = await websocket.receive_text()
+            print(f"Received data: {data}")
+            await websocket.send_text(f"Echo: {data}")
+    except WebSocketDisconnect:
+        print("Client disconnected from listen")
+
+
 @app.websocket("/ws")
 async def websocket_endpoint(websocket: WebSocket, token: str = Depends(get_api_key_ws)):
     await websocket.accept()
@@ -273,6 +452,8 @@ async def websocket_endpoint(websocket: WebSocket, token: str = Depends(get_api_
                     # get apikey id and save it with the announcments in the database
 
                     try:
+                        mosque = getMosque(token)
+
                         # Connect to PostgreSQL
                         config = load_config()
 
@@ -280,22 +461,17 @@ async def websocket_endpoint(websocket: WebSocket, token: str = Depends(get_api_
                         print("Connected to PostgreSQL database")
 
                         cursor = conn.cursor()
-                        cursor.execute(
-                            "SELECT id FROM api_keys WHERE key = %s AND active = TRUE",
-                            (token,)
-                        )
-                        api_key_id = cursor.fetchone()[0]
 
                         print(json_data.get("start_date"))
                         cursor.execute(
-                            "INSERT INTO announcements (message_german, message_turkish, start_date, end_date, api_key_id) VALUES (%s, %s, %s, %s, %s)",
+                            "INSERT INTO announcements (message_german, message_turkish, start_date, end_date, mosque) VALUES (%s, %s, %s, %s, %s)",
                             (
                                 json_data.get("message_german"),
                                 json_data.get("message_turkish"),
                                 json_data.get("start_date"),
                                 json_data.get("end_date") if json_data.get(
                                     "end_date") else datetime.datetime.now() + datetime.timedelta(days=365*10),
-                                api_key_id
+                                mosque
                             )
                         )
                         conn.commit()
@@ -303,8 +479,8 @@ async def websocket_endpoint(websocket: WebSocket, token: str = Depends(get_api_
                         cursor.close()
                         conn.close()
 
-                        for connection in connections:
-                            if connection.websocket != websocket and connection.token == token:
+                        for connection in listen_connections:
+                            if connection.mosque == mosque:
                                 await connection.websocket.send_text(f"{data}")
                     except Exception as e:
                         print(f"Error saving announcement: {e}")

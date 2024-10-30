@@ -13,11 +13,9 @@
 	let showAnnouncement = false;
 
 	onMount(() => {
-		fetch('https://api.cms.prayer-time.berkkan.de/announcements', {
-			method: 'GET',
-			headers: {
-				'X-API-Key': `${config.apiKey}`
-			}
+		fetch(`${config.apiUrl}/announcements`, {
+			method: 'POST',
+			body: JSON.stringify({ mosque: config.camiNameIdentifier })
 		})
 			.then((response) => response.json())
 			.then((data) => {
@@ -38,7 +36,7 @@
 			})
 			.catch((error) => console.error('Error fetching announcements:', error));
 
-		const socket = new WebSocket(`wss://api.cms.prayer-time.berkkan.de/ws?token=${config.apiKey}`);
+		const socket = new WebSocket(`${config.wsUrl}/ws-listen?mosque=${config.camiNameIdentifier}`);
 
 		// Connection opened
 		socket.addEventListener('open', function (event) {

@@ -1,3 +1,4 @@
 export const config = {
-  apiKey: "s2jQa-5ZAM33iuQnrMyGKdKgAiEKEK6yGez5Ws2eQIk",
+  apiUrl: import.meta.env.VITE_API_URL,
+  wsUrl: import.meta.env.VITE_WS_URL,
 }

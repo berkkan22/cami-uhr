@@ -1,5 +1,7 @@
 <script lang="ts">
+	import { page } from '$app/stores';
 	import { config } from '$lib/config';
+	import { getValidAccessToken } from '$lib/utils';
 	import { onMount } from 'svelte';
 	import toast, { Toaster } from 'svelte-french-toast';
 
@@ -11,8 +13,10 @@
 	let endtime = '';
 	let socket: WebSocket;
 
-	onMount(() => {
-		socket = new WebSocket(`wss://api.cms.prayer-time.berkkan.de/ws?token=${config.apiKey}`);
+	onMount(async () => {
+		const { validAccessToken } = await getValidAccessToken($page.data.session);
+
+		socket = new WebSocket(`${config.wsUrl}/ws?token=${validAccessToken}`);
 
 		// Connection opened
 		socket.addEventListener('open', function (event) {

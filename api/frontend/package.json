@@ -37,6 +37,7 @@
 	"type": "module",
 	"dependencies": {
 		"@auth/sveltekit": "^1.7.2",
+		"jwt-decode": "^4.0.0",
 		"svelte-french-toast": "^1.2.0"
 	}
 }

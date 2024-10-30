@@ -6,10 +6,7 @@
 </script>
 
 <div id="quote-container">
-	{#if config.quotes && config.apiKey.trim() === ''}
-		<h1 class="no-api-key">{$t('noApiKey')}</h1>
-	{/if}
-	{#if config.quotes && config.apiKey.trim() !== ''}
+	{#if config.quotes}
 		{#if quaotOfTheDay !== undefined}
 			<div id="quote-text">
 				{$t('hadith', { name: $locale == 'De' ? quaotOfTheDay.quoteDe : quaotOfTheDay.quoteTr })}
@@ -20,14 +17,6 @@
 </div>
 
 <style>
-	.no-api-key {
-		margin-top: 9vh;
-		color: red;
-		font-size: 2rem;
-		margin-top: 20px;
-		font-weight: bold;
-	}
-
 	#quote-container {
 		margin-top: 9vh;
 		color: white;

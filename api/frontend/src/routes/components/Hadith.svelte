@@ -2,6 +2,8 @@
 	import { writable } from 'svelte/store';
 	import { config } from '$lib/config';
 	import toast, { Toaster } from 'svelte-french-toast';
+	import { page } from '$app/stores';
+	import { getValidAccessToken } from '$lib/utils';
 
 	let hadithDeutsch = '';
 	let hadithTurkisch = '';
@@ -25,11 +27,12 @@
 		};
 
 		try {
-			const response = await fetch('https://api.cms.prayer-time.berkkan.de/submitHadith', {
+			const { validAccessToken } = await getValidAccessToken($page.data.session);
+			const response = await fetch(`${config.apiUrl}/submitHadith`, {
 				method: 'POST',
 				headers: {
 					'Content-Type': 'application/json',
-					'X-API-Key': `${config.apiKey}`
+					'X-Token': `${validAccessToken}`
 				},
 				body: JSON.stringify(hadithData)
 			});
@@ -57,11 +60,12 @@
 
 	async function showAllHadith() {
 		try {
-			const response = await fetch('https://api.cms.prayer-time.berkkan.de/getAllHadith', {
+			const { validAccessToken } = await getValidAccessToken($page.data.session);
+			const response = await fetch(`${config.apiUrl}/getAllHadith`, {
 				method: 'GET',
 				headers: {
 					'Content-Type': 'application/json',
-					'X-API-Key': `${config.apiKey}`
+					'X-Token': `${validAccessToken}`
 				}
 			});
 

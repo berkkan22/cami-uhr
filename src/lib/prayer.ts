@@ -1,5 +1,6 @@
 import { config } from "./config/config";
 
+
 export interface Prayers {
   date: string;
   hicriDate: string;
@@ -171,13 +172,13 @@ export function convertToQuotes(quotes): Quote[] {
   });
 }
 
+
+
 export async function getRandomQuote(): any {
-  // const randomIndex = Math.floor(Math.random() * quotes.length);
-  const response = await fetch('https://api.cms.prayer-time.berkkan.de/randomHadith', {
-    method: 'GET',
-    headers: {
-      'X-API-Key': `${config.apiKey}`
-    },
+
+  const response = await fetch(`${config.apiUrl}/randomHadith`, {
+    method: 'POST',
+    body: JSON.stringify({ mosque: config.camiNameIdentifier }),
   });
 
   if (!response.ok) {
@@ -185,17 +186,13 @@ export async function getRandomQuote(): any {
   }
 
   const data = await response.json();
-  // .then((data) => {
-  //   console.log(data);
+  console.log(data);
+
   return {
     quoteDe: data.deutsch,
     quoteTr: data.turkisch,
     author: data.quelle
   }
-  // })
-  // .catch((error) => {
-  //   console.error('Error fetching hadith:', error)
 
-  // });
 
 }
