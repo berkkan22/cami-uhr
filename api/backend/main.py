@@ -195,8 +195,7 @@ async def refresh_token(request: TokenRefreshRequest):
 
         if response.status_code != 200:
             raise HTTPException(status_code=response.status_code,
-                                detail="Failed to refresh token")
-
+                                detail=f"Failed to refresh token error: {response.json()}")
         return response.json()
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))

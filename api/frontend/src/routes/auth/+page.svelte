@@ -5,7 +5,7 @@
 
 <div class="login-container">
 	{#if $page.data.session}
-		<h1>Welcome, {$page.data.session.user.name}</h1>
+		<h1>Welcome, {$page.data.session.user?.name}</h1>
 		<button type="submit" on:click={() => signOut()}>Logout</button>
 	{:else}
 		<button type="submit" on:click={() => signIn('authentik')}>Login with Authentik</button>
