@@ -43,22 +43,26 @@ export const load: PageServerLoad = async (event) => {
 export const actions = {
   setCookies: async ({ request, cookies }) => {
     // Parse the incoming JSON body from the request
-    const data = await request.json();
-    console.log('Data:', data);
+    const data = await request.formData(); // Expect form data
 
-    // Assuming the data contains your new cookies
-    const newCookies = data.newCookies; // Example: { userId: '12345', sessionToken: 'abcdefg' }
+    const action = data.get('action');
 
-    // Set the cookies
-    cookies.set('session', JSON.stringify(newCookies), {
-      path: '/',
-      maxAge: 60 * 60 * 24, // 1 day
-      httpOnly: false, // Allow access via JavaScript if needed
-      sameSite: 'lax',
-      secure: true, // Set to true if you're on HTTPS
-    });
+    if (action === 'setCookies') {
+      // Assuming the data contains your new cookies
+      const newCookies = data.get('cookies'); // Example: { userId: '12345', sessionToken: 'abcdefg' }
 
-    // Optionally redirect or return a response
-    throw redirect(302, '/'); // Redirect to another page after setting the cookie
+      console.log('Setting cookies:', newCookies);
+      // Set the cookies
+      cookies.set('session', JSON.stringify(newCookies), {
+        path: '/',
+        maxAge: 60 * 60 * 24, // 1 day
+        httpOnly: false, // Allow access via JavaScript if needed
+        sameSite: 'lax',
+        secure: true, // Set to true if you're on HTTPS
+      });
+
+      // Optionally redirect or return a response
+      throw redirect(302, '/'); // Redirect to another page after setting the cookie
+    }
   },
 };
