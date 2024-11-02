@@ -51,15 +51,17 @@ export const actions = {
       // Assuming the data contains your new cookies
       const newCookies = data.get('cookies'); // Example: { userId: '12345', sessionToken: 'abcdefg' }
 
-      console.log('Setting cookies:', newCookies);
-      // Set the cookies
-      cookies.set('session', JSON.stringify(newCookies), {
-        path: '/',
-        maxAge: 60 * 60 * 24, // 1 day
-        httpOnly: false, // Allow access via JavaScript if needed
-        sameSite: 'lax',
-        secure: true, // Set to true if you're on HTTPS
-      });
+      if (!newCookies) {
+        console.log('Setting cookies:', newCookies);
+        // Set the cookies
+        cookies.set('session', newCookies ?? "", {
+          path: '/',
+          maxAge: 60 * 60 * 24, // 1 day
+          httpOnly: false, // Allow access via JavaScript if needed
+          sameSite: 'lax',
+          secure: true, // Set to true if you're on HTTPS
+        });
+      }
 
       // Optionally redirect or return a response
       throw redirect(302, '/'); // Redirect to another page after setting the cookie
