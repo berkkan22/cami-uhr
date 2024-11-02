@@ -6,7 +6,7 @@ services:
       context: ./backend/
       dockerfile: Dockerfile
     volumes:
-      - ./logs:/app/logs
+      - ./logs/logfile.log:/app/logfile.log
     ports:
       - "12825:80"
     restart: unless-stopped
