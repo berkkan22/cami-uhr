@@ -9,4 +9,4 @@ RUN pip install --no-cache-dir --upgrade -r /code/requirements.txt
 
 COPY ./ /code/
 
-CMD ["uvicorn", "main:app", "--log-config", "log.ini", "--port", "80"]
+CMD ["uvicorn", "main:app", "--log-config", "log.ini", "--host", "0.0.0.0", "--port", "80"]
