@@ -42,6 +42,11 @@ logging.basicConfig(
     datefmt='%Y-%m-%d %H:%M:%S', filename='logs.log'
 )
 
+logger = logging.getLogger(__name__)
+
+
+logger.info("App started")
+
 check_prerequisites()
 
 app = FastAPI()
@@ -97,8 +102,8 @@ def get_jwks():
     if response.status_code == 200:
         return response.json()
     else:
-        logging.error(f"Failed to fetch JWKS: {
-                      response.status_code}, {response.json()}")
+        logger.error(f"Failed to fetch JWKS: {
+            response.status_code}, {response.json()}")
         raise Exception(f"Failed to fetch JWKS: {response.status_code}")
 
 
@@ -107,7 +112,7 @@ def get_public_key(jwks, kid):
     for key in jwks['keys']:
         if key['kid'] == kid:
             return jwt.algorithms.RSAAlgorithm.from_jwk(key)
-    logging.error(f"Public key not found for kid: {kid}")
+    logger.error(f"Public key not found for kid: {kid}")
     raise Exception(f"Public key not found for kid: {kid}")
 
 
@@ -121,13 +126,13 @@ def verify_jwt(token, public_key):
         # print("Verified Token Payload:", verified_token)
         return True
     except ExpiredSignatureError:
-        logging.error("Token has expired")
+        logger.error("Token has expired")
         return False
     except InvalidSignatureError:
-        logging.error("Invalid signature")
+        logger.error("Invalid signature")
         return False
     except InvalidTokenError as e:
-        logging.error(f"Invalid token {e}")
+        logger.error(f"Invalid token {e}")
         return False
 
 
@@ -157,7 +162,7 @@ async def get_api_key_http(api_key_header: str = Depends(api_key_header)):
     if api_key_header and validate_jwt_token(api_key_header):
         return api_key_header
     else:
-        logging.error("Invalid or missing API Key")
+        logger.error("Invalid or missing API Key")
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
             detail="Invalid or missing API Key",
@@ -170,7 +175,7 @@ def getMosque(jwt):
     for g in group:
         if "mosque" in g:
             return g
-    logging.warning("No mosque group found in token")
+    logger.warning("No mosque group found in token")
     return None
 
 
@@ -190,7 +195,7 @@ class TokenRefreshRequest(BaseModel):
 
 @app.post("/refresh-token")
 async def refresh_token(request: TokenRefreshRequest):
-    logging.info(f"Refreshing token: {request.refresh_token}")
+    logger.info(f"Refreshing token: {request.refresh_token}")
     try:
         load_dotenv()
 
@@ -202,13 +207,13 @@ async def refresh_token(request: TokenRefreshRequest):
         })
 
         if response.status_code != 200:
-            logging.error(f"Failed to refresh token error: {response.json()}")
+            logger.error(f"Failed to refresh token error: {response.json()}")
             raise HTTPException(status_code=response.status_code,
                                 detail=f"Failed to refresh token error: {response.json()}")
-        logging.info(f"Token refreshed: {response.json()}")
+        logger.info(f"Token refreshed: {response.json()}")
         return response.json()
     except Exception as e:
-        logging.error(f"Failed to refresh token error: {e}, {response.json()}")
+        logger.error(f"Failed to refresh token error: {e}, {response.json()}")
         raise HTTPException(status_code=500, detail=str(e))
 
 
@@ -251,7 +256,7 @@ async def check_user_login(api_key: str = Depends(get_api_key_http)):
                 print("No content in response")
 
         except Exception as e:
-            logging.error(f"Error removing user from group: {e}")
+            logger.error(f"Error removing user from group: {e}")
             raise HTTPException(
                 status_code=500, detail="Failed to remove user from group")
 
@@ -269,7 +274,7 @@ async def submit_data(request: Request, api_key: str = Depends(get_api_key_http)
         mosque = getMosque(api_key)
 
         if not all([deutsch, turkisch, quelle]):
-            logging.warning("Missing data in request")
+            logger.warning("Missing data in request")
             raise HTTPException(
                 status_code=status.HTTP_400_BAD_REQUEST,
                 detail="Missing data in request"
@@ -297,7 +302,7 @@ async def submit_data(request: Request, api_key: str = Depends(get_api_key_http)
 
         return {"message": "Data saved successfully"}
     except Exception as e:
-        logging.error(f"Error saving data: {e}")
+        logger.error(f"Error saving data: {e}")
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
             detail="Error saving data"
@@ -331,13 +336,13 @@ async def get_random_hadith(request: Request):
         if hadith:
             return {"deutsch": hadith[0], "turkisch": hadith[1], "quelle": hadith[2]}
         else:
-            logging.warning("No hadith found")
+            logger.warning("No hadith found")
             raise HTTPException(
                 status_code=status.HTTP_404_NOT_FOUND,
                 detail="No hadith found"
             )
     except Exception as e:
-        logging.error(f"Error getting random hadith: {e}")
+        logger.error(f"Error getting random hadith: {e}")
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
             detail="Error getting random hadith"
@@ -369,7 +374,7 @@ async def get_all_hadiths(api_key: str = Depends(get_api_key_http)):
 
         return {"hadiths": [{"deutsch": h[0], "turkisch": h[1], "quelle": h[2]} for h in hadiths]}
     except Exception as e:
-        logging.error(f"Error getting all hadiths: {e}")
+        logger.error(f"Error getting all hadiths: {e}")
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
             detail="Error getting all hadiths"
@@ -410,7 +415,7 @@ async def get_announcements(request: Request):
 
         return {"announcements": announcements}
     except Exception as e:
-        logging.error(f"Error getting announcements: {e}")
+        logger.error(f"Error getting announcements: {e}")
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
             detail="Error getting announcements"
@@ -492,14 +497,14 @@ async def websocket_endpoint(websocket: WebSocket, token: str = Depends(get_api_
                             if connection.mosque == mosque:
                                 await connection.websocket.send_text(f"{data}")
                     except Exception as e:
-                        logging.error(f"Error saving announcement: {e}")
+                        logger.error(f"Error saving announcement: {e}")
                         await websocket.send_text(f"Error saving announcement: {e}")
                 else:
-                    logging.error(f"Invalid type: {json_data}")
+                    logger.error(f"Invalid type: {json_data}")
                     await websocket.send_text(f"Invalid type: {json_data}")
                     return
             except json.JSONDecodeError as e:
-                logging.error(f"Invalid JSON data: {e}")
+                logger.error(f"Invalid JSON data: {e}")
                 await websocket.send_text(f"Invalid JSON data: {e}")
                 return
 
