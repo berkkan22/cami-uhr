@@ -7,7 +7,7 @@ services:
       dockerfile: Dockerfile
     volumes:
       - type: bind
-        source: logfile.log
+        source: ./backend/logfile.log
         target: /app/logfile.log
     ports:
       - "12825:80"
