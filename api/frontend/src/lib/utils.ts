@@ -48,7 +48,7 @@ export async function updateTokens(cookies: any, newToken: { access_token: strin
   // return cookies;
 
   // Send the form data as a POST request
-  const response = await fetch('/set-cookies', {
+  const response = await fetch('/auth?/setCookies', {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
