@@ -1,5 +1,6 @@
 import { jwtDecode } from 'jwt-decode';
 import { config } from '$lib/config';
+import { redirect } from '@sveltejs/kit';
 
 interface DecodedToken {
   exp: number;
@@ -34,8 +35,6 @@ export function isTokenExpired(token: string): boolean {
 
 export async function updateTokens(cookies: any, newToken: { access_token: string; refresh_token?: string, expires_in: number }): Promise<void> {
   console.log('Updating tokens...');
-  // console.log('Old tokens:', cookies.access_token, cookies.refresh_token, cookies.expires_at);
-  // console.log('New tokens:', newToken.access_token, newToken.refresh_token, newToken.expires_in);
   cookies.access_token = newToken.access_token;
   if (newToken.refresh_token) {
     console.log('Updating refresh token...');
@@ -44,9 +43,6 @@ export async function updateTokens(cookies: any, newToken: { access_token: strin
   console.log('Updating expires_at...');
   cookies.expires_at = Math.floor(Date.now() / 1000) + newToken.expires_in;
 
-
-  // return cookies;
-
   const formData = new FormData();
   formData.append('action', 'setCookies'); // Specify the action
   formData.append('cookies', JSON.stringify(cookies)); // Append userId
@@ -54,20 +50,16 @@ export async function updateTokens(cookies: any, newToken: { access_token: strin
   // Send the form data as a POST request
   const response = await fetch('/auth?/setCookies', {
     method: 'POST',
-    // headers: {
-    //   'Content-Type': 'application/json',
-    // },
     body: formData,
   });
 
   if (response.ok) {
     // Handle successful cookie setting (e.g., redirect or show message)
     console.log('Cookies set successfully');
-    // Optionally, refresh or navigate to another page
-    window.location.href = '/'; // Redirect to the homepage or another page
   } else {
     // Handle error
     console.error('Failed to set cookies');
+    redirect(302, '/error');
   }
 }
 

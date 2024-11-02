@@ -2,15 +2,15 @@
 	export let status = 404;
 	export let message = 'Page not found';
 
-	function goHome() {
-		window.location.href = '/';
+	function login() {
+		window.location.href = '/auth';
 	}
 </script>
 
 <div class="error-container">
 	<div class="error-code">{status}</div>
 	<div class="error-message">{message}</div>
-	<button class="home-button" on:click={goHome}>Go to Home</button>
+	<button class="home-button" on:click={login}>Please Login and try again</button>
 </div>
 
 <style>

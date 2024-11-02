@@ -8,7 +8,6 @@
 	import { page } from '$app/stores';
 
 	onMount(async () => {
-		console.log($page.data.session);
 		try {
 			const response = await fetch(`${config.apiUrl}`);
 			if (!response.ok) {

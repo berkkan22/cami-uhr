@@ -60,10 +60,6 @@ export const actions = {
         sameSite: 'lax',
         secure: true, // Set to true if you're on HTTPS
       });
-
-
-      // Optionally redirect or return a response
-      throw redirect(302, '/'); // Redirect to another page after setting the cookie
     }
   },
 };
