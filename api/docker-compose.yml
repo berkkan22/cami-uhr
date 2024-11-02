@@ -12,7 +12,6 @@ services:
     restart: unless-stopped
     networks:
       - intern
-    user: "1002:1002"  # Add this to set permissions based on the host user
 
 
   frontend:
