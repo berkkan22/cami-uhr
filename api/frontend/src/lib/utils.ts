@@ -47,17 +47,13 @@ export async function updateTokens(cookies: any, newToken: { access_token: strin
 
   // return cookies;
 
-  const formData = new FormData();
-  formData.append('action', 'setCookies'); // Specify the action
-  formData.append('cookies', JSON.stringify(cookies)); // Append userId
-
   // Send the form data as a POST request
-  const response = await fetch('/auth?/setCookies', {
+  const response = await fetch('/auth', {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
     },
-    body: formData,
+    body: JSON.stringify(cookies),
   });
 
   if (response.ok) {
