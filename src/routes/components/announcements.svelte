@@ -71,7 +71,7 @@
 					shouldAnnouncementBeDisplayed(element);
 				});
 			}
-			calculateWidth();
+			// calculateWidth();
 		}, 1000);
 	});
 
@@ -148,6 +148,7 @@
 	}
 
 	.marquee {
+		width: max-content;
 		white-space: nowrap;
 		overflow: hidden;
 		animation: marquee 20s linear infinite;
