@@ -32,6 +32,10 @@
 						announcements = [...announcements, temp];
 					}
 					console.log(announcements);
+					const element = document.querySelector('.marquee');
+					if (element) {
+						(element as HTMLElement).style.animationDuration = getRandomDuration();
+					}
 				}
 			})
 			.catch((error) => console.error('Error fetching announcements:', error));
@@ -109,6 +113,7 @@
 
 	function getRandomDuration(): string {
 		const duration = Math.floor(Math.random() * 10) + 1;
+		console.log(duration);
 		return `${duration}s`;
 	}
 </script>
