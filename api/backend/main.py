@@ -7,12 +7,12 @@ from config import load_config
 from fastapi.security.api_key import APIKeyHeader
 from fastapi.middleware.cors import CORSMiddleware
 import logging
+from fastapi.websockets import WebSocketState
 from fastapi import (
     Depends,
     FastAPI,
     WebSocket,
     WebSocketException,
-    WebSocketState,
     status,
     Request,
     HTTPException,
