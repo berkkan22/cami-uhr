@@ -32,10 +32,6 @@
 						announcements = [...announcements, temp];
 					}
 					console.log(announcements);
-					const element = document.querySelector('.marquee');
-					if (element) {
-						(element as HTMLElement).style.animationDuration = calculateDuration();
-					}
 				}
 			})
 			.catch((error) => console.error('Error fetching announcements:', error));
@@ -59,10 +55,7 @@
 			};
 			announcements = [...announcements, temp];
 			console.log(announcements);
-			const element = document.querySelector('.marquee');
-			if (element) {
-				(element as HTMLElement).style.animationDuration = calculateDuration();
-			}
+			calculateDuration();
 		});
 
 		socket.addEventListener('disconnect', () => {
@@ -78,6 +71,10 @@
 					shouldAnnouncementBeDisplayed(element);
 				});
 			}
+		}, 1000);
+
+		setTimeout(() => {
+			calculateDuration();
 		}, 1000);
 	});
 
@@ -111,18 +108,41 @@
 		return visible;
 	}
 
-	function calculateDuration(): string {
-		const maxDuration = 20;
-		const minDuration = 5;
-		const duration = maxDuration - ((announcements.length - 1) * (maxDuration - minDuration)) / 4;
-		console.log(duration);
-		return `${duration}s`;
+	function calculateDuration(): void {
+		const duration = calculateLength() * 0.256;
+
+		const element = document.querySelector('.marquee');
+		if (element) {
+			(element as HTMLElement).style.animationDuration = `${duration}s`;
+		}
+	}
+
+	function calculateLength(): number {
+		let chars = 0;
+		for (let i = 0; i < announcements.length; i++) {
+			chars += announcements[i].deutsch.length + announcements[i].tuerkisch.length;
+		}
+		return chars;
 	}
 </script>
 
 {#if announcements != undefined && announcements.length > 0 && showAnnouncements()}
 	<div class="wrapper">
 		<div class="marquee">
+			{#key announcements}
+				{#each announcements as announcement}
+					{#if announcement.visible}
+						<p>
+							{announcement.deutsch}
+						</p>
+						<p class="spacer">---</p>
+						<p>
+							{announcement.tuerkisch}
+						</p>
+						<p class="spacer2"></p>
+					{/if}
+				{/each}
+			{/key}
 			{#key announcements}
 				{#each announcements as announcement}
 					{#if announcement.visible}
