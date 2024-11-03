@@ -12,6 +12,7 @@ from fastapi import (
     FastAPI,
     WebSocket,
     WebSocketException,
+    WebSocketState,
     status,
     Request,
     HTTPException,
@@ -446,7 +447,10 @@ async def websocket_listen_endpoint(websocket: WebSocket, mosque: str):
             print(f"Received data: {data}")
             await websocket.send_text(f"Echo: {data}")
     except WebSocketDisconnect:
-        print("Client disconnected from listen")
+        listen_connections.remove(listenWebsocket)
+        logger.info(f"Length of the listen_connection): {
+                    len(listen_connections)}")
+        logger.info("Client disconnected from listen")
 
 
 @app.websocket("/ws")
@@ -461,9 +465,7 @@ async def websocket_endpoint(websocket: WebSocket, token: str = Depends(get_api_
             try:
                 json_data = json.loads(data)
                 if (json_data.get("type") == "announcement"):
-                    await websocket.send_text(f"Announcement: {json_data}")
-                    # TODO: save announcment in database
-                    # get apikey id and save it with the announcments in the database
+                    await websocket.send_text(f"You send this Announcement: {json_data}")
 
                     try:
                         mosque = getMosque(token)
@@ -492,26 +494,32 @@ async def websocket_endpoint(websocket: WebSocket, token: str = Depends(get_api_
 
                         cursor.close()
                         conn.close()
-
-                        for connection in listen_connections:
-                            if connection.mosque == mosque:
-                                await connection.websocket.send_text(f"{data}")
                     except Exception as e:
-                        logger.error(f"Error saving announcement: {e}")
-                        await websocket.send_text(f"Error saving announcement: {e}")
+                        logger.error(f"Error saving announcement to DB: {e}")
+
+                    for connection in listen_connections:
+                        if connection.mosque == mosque:
+                            if connection.websocket.application_state == WebSocketState.CONNECTED:
+                                logger.info(
+                                    f"Sending announcement to mosque: {mosque}")
+                                await connection.websocket.send_text(f"{data}")
+                                logger.info("Done")
+                            else:
+                                logger.warning(f"Connection to mosque {
+                                               mosque} is not open")
+                                logger.info(f"Length of the listen_connection): {
+                                            len(listen_connections)}")
+
                 else:
                     logger.error(f"Invalid type: {json_data}")
                     await websocket.send_text(f"Invalid type: {json_data}")
-                    return
             except json.JSONDecodeError as e:
                 logger.error(f"Invalid JSON data: {e}")
                 await websocket.send_text(f"Invalid JSON data: {e}")
-                return
-
+            except Exception as e:
+                logger.error(f"Error: {e}")
     except WebSocketDisconnect:
-        print("Client disconnected")
-        for connection in connections:
-            if connection.websocket == websocket:
-                connections.remove(connection)
-                break
-        print("Client disconnected")
+        logger.info("Client disconnected")
+        connections.remove(myWebsocket)
+    except Exception as e:
+        logger.error(f"Error: {e}")
