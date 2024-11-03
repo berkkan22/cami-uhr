@@ -11,7 +11,6 @@
 	}
 	let announcements: Announcement[] = [];
 	let showAnnouncement = false;
-	let containerWidth = 0;
 
 	onMount(() => {
 		fetch(`${config.apiUrl}/announcements`, {
@@ -56,6 +55,10 @@
 			};
 			announcements = [...announcements, temp];
 			console.log(announcements);
+			const element = document.querySelector('.marquee');
+			if (element) {
+				(element as HTMLElement).style.animationDuration = getRandomDuration();
+			}
 		});
 
 		socket.addEventListener('disconnect', () => {
@@ -71,7 +74,6 @@
 					shouldAnnouncementBeDisplayed(element);
 				});
 			}
-			// calculateWidth();
 		}, 1000);
 	});
 
@@ -105,12 +107,9 @@
 		return visible;
 	}
 
-	function calculateWidth() {
-		const marqueeElement = document.querySelector('.marquee');
-		if (marqueeElement) {
-			containerWidth = marqueeElement.scrollWidth;
-		}
-		console.log(containerWidth);
+	function getRandomDuration(): string {
+		const duration = Math.floor(Math.random() * 10) + 1;
+		return `${duration}s`;
 	}
 </script>
 
@@ -151,7 +150,11 @@
 		width: max-content;
 		white-space: nowrap;
 		overflow: hidden;
-		animation: marquee 20s linear infinite;
+		/* animation: marquee 20s linear infinite; */
+		animation-name: marquee;
+		animation-duration: 20s;
+		animation-timing-function: linear;
+		animation-iteration-count: infinite;
 	}
 
 	.marquee p {
