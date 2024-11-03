@@ -34,7 +34,7 @@
 					console.log(announcements);
 					const element = document.querySelector('.marquee');
 					if (element) {
-						(element as HTMLElement).style.animationDuration = getRandomDuration();
+						(element as HTMLElement).style.animationDuration = calculateDuration();
 					}
 				}
 			})
@@ -61,7 +61,7 @@
 			console.log(announcements);
 			const element = document.querySelector('.marquee');
 			if (element) {
-				(element as HTMLElement).style.animationDuration = getRandomDuration();
+				(element as HTMLElement).style.animationDuration = calculateDuration();
 			}
 		});
 
@@ -111,8 +111,10 @@
 		return visible;
 	}
 
-	function getRandomDuration(): string {
-		const duration = Math.floor(Math.random() * 10) + 1;
+	function calculateDuration(): string {
+		const maxDuration = 20;
+		const minDuration = 5;
+		const duration = maxDuration - ((announcements.length - 1) * (maxDuration - minDuration)) / 4;
 		console.log(duration);
 		return `${duration}s`;
 	}
