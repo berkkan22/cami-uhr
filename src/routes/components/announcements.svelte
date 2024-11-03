@@ -11,6 +11,7 @@
 	}
 	let announcements: Announcement[] = [];
 	let showAnnouncement = false;
+	let containerWidth = 0;
 
 	onMount(() => {
 		fetch(`${config.apiUrl}/announcements`, {
@@ -70,6 +71,7 @@
 					shouldAnnouncementBeDisplayed(element);
 				});
 			}
+			calculateWidth();
 		}, 1000);
 	});
 
@@ -101,6 +103,14 @@
 			}
 		}
 		return visible;
+	}
+
+	function calculateWidth() {
+		const marqueeElement = document.querySelector('.marquee');
+		if (marqueeElement) {
+			containerWidth = marqueeElement.scrollWidth;
+		}
+		console.log(containerWidth);
 	}
 </script>
 
