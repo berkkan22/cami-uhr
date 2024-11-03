@@ -152,7 +152,7 @@
 		overflow: hidden;
 		/* animation: marquee 20s linear infinite; */
 		animation-name: marquee;
-		animation-duration: 20s;
+		/* animation-duration: 20s; */
 		animation-timing-function: linear;
 		animation-iteration-count: infinite;
 	}
