@@ -2,6 +2,7 @@
 	import { page } from '$app/stores';
 	import { config } from '$lib/config';
 	import { getValidAccessToken } from '$lib/utils';
+	import { checkWebsocketConnection, connectToWebsocket } from '$lib/websocket';
 	import { onMount } from 'svelte';
 	import toast, { Toaster } from 'svelte-french-toast';
 
@@ -18,25 +19,29 @@
 	onMount(async () => {
 		const { validAccessToken } = await getValidAccessToken($page.data.session);
 
-		socket = new WebSocket(`${config.wsUrl}/ws?token=${validAccessToken}`);
+		socket = connectToWebsocket(`${config.wsUrl}/ws?token=${validAccessToken}`);
+		// socket = new WebSocket(`${config.wsUrl}/ws?token=${validAccessToken}`);
 
-		// Connection opened
-		socket.addEventListener('open', function (event) {
-			console.log("It's open");
-		});
+		// // Connection opened
+		// socket.addEventListener('open', function (event) {
+		// 	console.log("It's open");
+		// });
 
-		socket.addEventListener('disconnect', () => {
-			console.log('Disconnected from WebSocket server');
-		});
+		// socket.addEventListener('disconnect', () => {
+		// 	console.log('Disconnected from WebSocket server');
+		// });
 
-		socket.addEventListener('message', (event) => {
-			console.log('Message from server ', event.data);
-		});
+		// socket.addEventListener('message', (event) => {
+		// 	console.log('Message from server ', event.data);
+		// });
 	});
 
-	function handleSubmit(event: Event) {
+	async function handleSubmit(event: Event) {
 		isLoading = true;
 		event.preventDefault();
+
+		// check if websocket is connected else reconnect
+		socket = await checkWebsocketConnection(socket, $page.data.session);
 
 		const data = {
 			type: 'announcement',
@@ -48,6 +53,9 @@
 
 		console.log(data);
 		socket.send(JSON.stringify(data));
+		socket.onmessage = function (event) {
+			console.log('Message from server ', event.data);
+		};
 		isLoading = false;
 		toast.success('Announcement submitted successfully.', {
 			position: 'bottom-center'

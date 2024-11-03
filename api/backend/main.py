@@ -494,8 +494,12 @@ async def websocket_endpoint(websocket: WebSocket, token: str = Depends(get_api_
 
                         cursor.close()
                         conn.close()
+
+                        await websocket.send_text(f"Saving Announcement to DB successful")
+
                     except Exception as e:
                         logger.error(f"Error saving announcement to DB: {e}")
+                        await websocket.send_text(f"Error saving Announcement to DB {e}")
 
                     for connection in listen_connections:
                         if connection.mosque == mosque:
@@ -504,11 +508,14 @@ async def websocket_endpoint(websocket: WebSocket, token: str = Depends(get_api_
                                     f"Sending announcement to mosque: {mosque}")
                                 await connection.websocket.send_text(f"{data}")
                                 logger.info("Done")
+                                await websocket.send_text(f"Send announcement to mosque: {mosque} successful")
+
                             else:
                                 logger.warning(f"Connection to mosque {
                                                mosque} is not open")
                                 logger.info(f"Length of the listen_connection): {
                                             len(listen_connections)}")
+                                await websocket.send_text(f"Connection to mosque {mosque} is not open")
 
                 else:
                     logger.error(f"Invalid type: {json_data}")
@@ -518,8 +525,10 @@ async def websocket_endpoint(websocket: WebSocket, token: str = Depends(get_api_
                 await websocket.send_text(f"Invalid JSON data: {e}")
             except Exception as e:
                 logger.error(f"Error: {e}")
+                await websocket.send_text(f"Error: {e}")
     except WebSocketDisconnect:
         logger.info("Client disconnected")
         connections.remove(myWebsocket)
     except Exception as e:
         logger.error(f"Error: {e}")
+        await websocket.send_text(f"Error: {e}")
