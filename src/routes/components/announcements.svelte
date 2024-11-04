@@ -109,9 +109,8 @@
 	}
 
 	function calculateDuration(): void {
-		// const duration = calculateLength() * 0.256;
 		const minDuration = 20;
-		const calculatedDuration = calculateLength() * 0.256;
+		const calculatedDuration = calculateLength() * 0.156;
 		const duration = Math.max(minDuration, calculatedDuration);
 		console.log(duration);
 
@@ -132,60 +131,31 @@
 			const textContent = lineElement.textContent || '';
 			chars = textContent.length;
 		}
-		// let chars = 0;
-		// for (let i = 0; i < announcements.length; i++) {
-		// 	chars += announcements[i].deutsch.length + announcements[i].tuerkisch.length;
-		// }
 		console.log(chars);
 		return chars;
 	}
 </script>
 
-<!-- {#if announcements != undefined && announcements.length > 0 && showAnnouncements()} -->
-<!-- <div class="wrapper1"> -->
-<!-- <div class="wrapper"> -->
-<!-- {#each announcements as announcement} -->
-<!-- <div class="loop-text"> -->
-<!-- This -->
-<!-- {#if announcement.visible} -->
-<!-- <p> -->
-<!-- {announcement.deutsch} -->
-<!-- </p> -->
-<!-- <p class="spacer">---</p> -->
-<!-- <p> -->
-<!-- {announcement.tuerkisch} -->
-<!-- </p> -->
-<!-- <p class="spacer2"></p> -->
-<!-- {/if} -->
-<!-- </div> -->
-<!-- {/each} -->
-<!-- </div> -->
-<!-- </div> -->
-<!-- {/if} -->
 
-<!-- <div class="mymarquee-container">
-	<span class="mymarquee"
-		>Das ist ein Text Das ist ein Text Das ist ein Text Das ist ein Text Das ist ein Text Das ist
-		ein Text Das ist ein Text Das ist ein Text</span
-	>
-</div> -->
-
-<p id="PassengerNews_Scrollbar" class="microsoft mymarquee">
-	<!-- <span class="line__wrap">
-		<span class="line">|*NewsData*|</span>
-	</span> -->
-
-	<span class="line__wrap" style="top: 30px;">
-		<span class="line">
-			Baryma Mollit ex deserunt minim mollit Lorem non. Baryma Mollit ex deserunt minim mollit Lorem
-			non.Baryma Mollit ex deserunt minim mollit Lorem non.Baryma Mollit ex deserunt minim mollit
-			Lorem non.
+{#if announcements != undefined && announcements.length > 0 && showAnnouncements()}
+	<p class="marquee">
+		<span class="line__wrap" style="top: 30px;">
+			<span class="line">
+				{#each announcements as announcement}
+					{#if announcement.visible}
+						{announcement.deutsch}
+						&nbsp; • &nbsp;
+						{announcement.tuerkisch}
+						&nbsp; • &nbsp;
+					{/if}
+				{/each}
+			</span>
 		</span>
-	</span>
-</p>
+	</p>
+{/if}
 
 <style>
-	.mymarquee {
+	.marquee {
 		margin: 0 auto;
 		white-space: nowrap;
 		overflow: hidden;
@@ -200,7 +170,7 @@
 		bottom: 0;
 		font-size: 5rem;
 	}
-	.mymarquee .line__wrap {
+	.marquee .line__wrap {
 		display: block;
 		position: absolute;
 		width: auto;
@@ -209,7 +179,7 @@
 
 		font-size: 5rem;
 	}
-	.mymarquee .line {
+	.marquee .line {
 		position: relative;
 		margin-left: -100%;
 		animation: marquee linear infinite;
@@ -230,58 +200,5 @@
 			left: 0%;
 		}
 	}
-	/* .wrapper1 {
-		position: absolute;
-		bottom: 0;
-		display: flex;
-		white-space: nowrap;
-		width: 100%;
-		height: auto;
-		overflow: hidden;
-		font-family: sans-serif;
-		background-color: #f1f1f1;
-	} */
-
-	/* .wrapper {
-		position: absolute;
-		bottom: 0;
-		display: flex;
-		white-space: nowrap;
-		width: max-content; */
-	/* height: clamp(3em, 10vw, 6em); */
-	/* overflow: hidden;
-		font-family: sans-serif;
-		background-color: #f1f1f1;
-		animation: loopText 20s infinite linear; */
-	/* padding-left: 100%; */
-	/* } */
-
-	/* .loop-text {
-		font-size: 3rem;
-		font-size: clamp(2.5rem, 8vw, 5.5rem);
-		text-transform: uppercase;
-		font-weight: 700;
-		padding: 20px;
-		padding: 0 0.25em;
-		display: flex;
-	} */
-
-	/* @keyframes loopText {
-		from {
-			transform: translateX(0);
-		}
-		to {
-			transform: translateX(-100%);
-		}
-	}
-
-	.spacer {
-		padding-left: 20px;
-		padding-right: 20px;
-	}
-
-	.spacer2 {
-		padding-left: 100px;
-		padding-right: 100px;
-	} */
+	
 </style>
