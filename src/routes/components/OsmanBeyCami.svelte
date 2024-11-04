@@ -23,7 +23,10 @@
 	<div class="background-image" style="background-image: url({kiswah});"></div>
 	<!-- <Header /> -->
 	{#if config.header}
-		<div class="header">
+		<div
+			class="header"
+			style="justify-content: {!config.dateOneLiner ? 'flex-start' : 'space-evenly'};"
+		>
 			{#if config.headerNames}
 				<img class="arabic-caligrafi" src={muhammed} alt="Muhammed" />
 			{/if}
@@ -34,33 +37,38 @@
 			{#if config.headerNames}
 				<img class="arabic-caligrafi" src={allah} alt="Allah" />
 			{/if}
-			<div class="date-container">
-				<div id="today-date" class="date">
-					<div class="time-value" id="today-date-value">{formatDate(currentPrayer.date)}</div>
+			{#if !config.dateOneLiner}
+				<!-- else content here -->
+				<div class="date-container">
+					<div id="today-date" class="date">
+						<div class="time-value" id="today-date-value">{formatDate(currentPrayer.date)}</div>
+					</div>
+					<div id="islamic-date" class="date">
+						<div class="time-value" id="islamic-date-value">{currentPrayer.hicriDate}</div>
+					</div>
+					<!-- <div class="weather">weather</div> -->
 				</div>
-				<div id="islamic-date" class="date">
-					<div class="time-value" id="islamic-date-value">{currentPrayer.hicriDate}</div>
+				<div class="spacer-date"></div>
+				<div class="time-container">
+					<div id="current-time" class="date">
+						<!-- <div class="time-title">{$t('currentTime')}</div> -->
+						<div class="time-value">{currentTime}</div>
+					</div>
+					<div id="next-prayer-time" class="date">
+						<div class="time-title">{$t('nextPrayer')}</div>
+						<div class="time-value">{remainingTime}</div>
+					</div>
 				</div>
-				<!-- <div class="weather">weather</div> -->
-			</div>
-			<div class="spacer-date"></div>
-			<div class="time-container">
-				<div id="current-time" class="date">
-					<!-- <div class="time-title">{$t('currentTime')}</div> -->
-					<div class="time-value">{currentTime}</div>
-				</div>
-				<div id="next-prayer-time" class="date">
-					<div class="time-title">{$t('nextPrayer')}</div>
-					<div class="time-value">{remainingTime}</div>
-				</div>
-			</div>
+			{/if}
 		</div>
 	{:else}
 		<div class="spacer"></div>
 	{/if}
 
 	<div class="main-content">
-		<!-- <DateTimeDisplay {currentPrayer} {currentTime} {remainingTime} /> -->
+		{#if config.dateOneLiner}
+			<DateTimeDisplay {currentPrayer} {currentTime} {remainingTime} />
+		{/if}
 
 		<PrayerTimes {currentPrayer} {currentPayerTime} />
 
@@ -115,7 +123,8 @@
 	/* HEADER */
 	.header {
 		display: flex;
-		justify-content: flex-start;
+		/* justify-content: flex-start; */
+		/* justify-content: space-evenly; */
 		align-items: center;
 		padding: 20px;
 	}
