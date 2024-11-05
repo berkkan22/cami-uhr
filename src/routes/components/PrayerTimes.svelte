@@ -1,21 +1,34 @@
 <script lang="ts">
-	import { formatTime } from '$lib/prayer';
+	import { formatTime, isGunesPassed, type Prayers } from '$lib/prayer';
 	import { t } from '$lib/i10l/i10l';
-
-	export let currentPrayer;
-	export let currentPayerTime: string;
-
 	import { onMount } from 'svelte';
 
-	let showFirstDiv = true;
+	export let currentPrayer: Prayers;
+	export let currentPayerTime: string;
+	// pass the current time to test it when I set the offset
+	export let currentTime: string;
+	let showSabahBackgroundColor = false;
+
+	let showFirstDiv = false;
 
 	function toggleVisibility() {
 		showFirstDiv = !showFirstDiv;
 	}
 
+	function showSabahBG() {
+		const [hours, minutes] = currentTime.split(':').map(Number);
+		const currentDate = new Date();
+		currentDate.setHours(hours, minutes);
+		showSabahBackgroundColor = isGunesPassed(currentPrayer, currentDate);
+	}
+
 	onMount(() => {
 		const interval = setInterval(toggleVisibility, 2000);
-		return () => clearInterval(interval);
+		const sabahBG = setInterval(showSabahBG, 1000);
+		return () => {
+			clearInterval(interval);
+			clearInterval(sabahBG);
+		};
 	});
 </script>
 
@@ -28,7 +41,11 @@
 					<div class="prayer-time-value">{formatTime(currentPrayer[prayer])}</div>
 				</div>
 			{:else}
-				<div class="prayer-time {currentPayerTime == prayer ? 'current-prayer' : ''} sabah">
+				<div
+					class="prayer-time {currentPayerTime == prayer
+						? 'current-prayer'
+						: ''} sabah {showSabahBackgroundColor ? 'show' : ''}"
+				>
 					<div class="prayer-label">{$t('sabah')}</div>
 					<div class="prayer-time-value">
 						{formatTime(new Date(new Date(currentPrayer[prayer]).getTime() - 30 * 60 * 1000))}
@@ -60,8 +77,10 @@
 		flex-direction: column;
 		align-items: center;
 		justify-content: space-between;
-		min-width: 250px;
-		height: 130px;
+		min-width: 270px;
+		max-width: 270px;
+		/* height: 130px; */
+		/* height: 165px; */
 
 		padding: 10px 30px 10px 30px; /* top right bottom left */
 		background-color: rgb(36, 36, 36);
@@ -90,11 +109,17 @@
 		margin: 0 60px;
 	}
 
-	.current-prayer + .sabah {
+	.current-prayer.sabah {
 		background-color: green;
 	}
 
+	.sabah.show {
+		background-color: rgb(36, 36, 36);
+	}
+
 	.sabah > .prayer-label {
+		padding-top: 15px;
+		margin-bottom: 14px;
 		font-size: 2rem;
 		white-space: nowrap;
 		overflow: hidden;

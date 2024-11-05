@@ -93,6 +93,7 @@ export function calculateTimeDifference(currentTime: Date, prayerTime: Date): st
   const hours = Math.floor(diff / 1000 / 60 / 60);
   const minutes = Math.floor(diff / 1000 / 60 % 60);
   const seconds = Math.floor(diff / 1000 % 60);
+  // TODO: Time formating
 
   return `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
 }
@@ -131,9 +132,12 @@ export function checkWhichPrayerTime(currentPrayer: Prayers, currentTime: Date):
   // currentTime.setHours(20);
   // currentTime.setMinutes(40);
 
-  if (currentTime >= currentPrayer.imsak && currentTime < currentPrayer.gunes) {
+  // if (currentTime >= currentPrayer.imsak && currentTime < currentPrayer.gunes) {
+  //   return "imsak";
+  // } else if (currentTime >= currentPrayer.gunes && currentTime < currentPrayer.ogle) {
+  if (currentTime >= currentPrayer.imsak && currentTime < new Date(currentPrayer.gunes.getTime() - 30 * 60 * 1000)) {
     return "imsak";
-  } else if (currentTime >= currentPrayer.gunes && currentTime < currentPrayer.ogle) {
+  } else if (currentTime >= new Date(currentPrayer.gunes.getTime() - 30 * 60 * 1000) && currentTime < currentPrayer.ogle) {
     return "gunes";
   } else if (currentTime >= currentPrayer.ogle && currentTime < currentPrayer.ikindi) {
     return "ogle";
@@ -145,6 +149,10 @@ export function checkWhichPrayerTime(currentPrayer: Prayers, currentTime: Date):
     // Covers the time after yatsi until the next imsak
     return "yatsi";
   }
+}
+
+export function isGunesPassed(currentPrayer: Prayers, currentTime: Date): boolean {
+  return currentTime >= currentPrayer.gunes;
 }
 
 export function convertToLocalIsoDate(date: Date) {

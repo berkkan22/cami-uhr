@@ -45,7 +45,7 @@
 		let res = combineTimeAndDate(prayerTimesRaw, datesRaw);
 
 		let currentDate = new Date();
-		let timeOffset = 0;
+		let timeOffset = -9.8;
 		let convertMS = 3600000;
 
 		currentPrayer = res.find((prayer) => prayer.date === currentDate.toISOString().split('T')[0]);
