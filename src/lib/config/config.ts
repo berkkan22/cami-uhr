@@ -7,6 +7,7 @@ export const config = {
   prayerJson: '/osman_bey_prayer_times.json',
   quotes: true,
   ditib: true,
+  showSabahNamazi: false,
 
   camiNameIdentifier: 'osman-bey-mosque',
   apiUrl: import.meta.env.VITE_API_URL,

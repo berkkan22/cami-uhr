@@ -2,6 +2,7 @@
 	import { formatTime, isGunesPassed, type Prayers } from '$lib/prayer';
 	import { t } from '$lib/i10l/i10l';
 	import { onMount } from 'svelte';
+	import { config } from '$lib/config/config';
 
 	export let currentPrayer: Prayers;
 	export let currentPayerTime: string;
@@ -34,7 +35,7 @@
 
 <div class="prayer-times">
 	{#each ['imsak', 'gunes', 'ogle', 'ikindi', 'aksam', 'yatsi'] as prayer}
-		{#if prayer == 'gunes'}
+		{#if prayer == 'gunes' && config.showSabahNamazi}
 			{#if showFirstDiv}
 				<div class="prayer-time {currentPayerTime == prayer ? 'current-prayer' : ''}">
 					<div class="prayer-label {prayer}">{$t(prayer)}</div>
