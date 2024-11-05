@@ -37,13 +37,13 @@
 	{#each ['imsak', 'gunes', 'ogle', 'ikindi', 'aksam', 'yatsi'] as prayer}
 		{#if prayer == 'gunes' && config.showSabahNamazi}
 			{#if showFirstDiv}
-				<div class="prayer-time {currentPayerTime == prayer ? 'current-prayer' : ''}">
+				<div class="prayer-time {currentPayerTime == prayer && !showSabahBackgroundColor ? 'current-prayer' : ''}">
 					<div class="prayer-label {prayer}">{$t(prayer)}</div>
 					<div class="prayer-time-value">{formatTime(currentPrayer[prayer])}</div>
 				</div>
 			{:else}
 				<div
-					class="prayer-time {currentPayerTime == prayer
+					class="prayer-time {currentPayerTime == prayer && !showSabahBackgroundColor
 						? 'current-prayer'
 						: ''} sabah {showSabahBackgroundColor ? 'show' : ''}"
 				>
@@ -68,7 +68,7 @@
 		justify-content: center;
 		gap: 20px;
 		padding: 0 20px;
-		margin-top: 30px;
+		margin-top: 10px;
 		color: white;
 		align-items: center;
 	}
@@ -77,10 +77,10 @@
 		display: flex;
 		flex-direction: column;
 		align-items: center;
-		justify-content: space-around;
+		justify-content: space-between;
 		min-width: 270px;
 		max-width: 270px;
-		height: 141px;
+		height: 165px;
 		padding: 10px 30px 10px 30px; /* top right bottom left */
 		background-color: rgb(36, 36, 36);
 		border-radius: 10px;
@@ -91,12 +91,12 @@
 	}
 
 	.prayer-label {
-		font-size: 2.5rem;
+		font-size: 3.5rem;
 		margin-bottom: 5px;
 	}
 
 	.prayer-time-value {
-		font-size: 3rem;
+		font-size: 4rem;
 		font-weight: bold;
 	}
 
@@ -106,6 +106,15 @@
 		transform: scale(1.4);
 		transform-origin: center;
 		margin: 0 60px;
+		animation-name: blink;
+		animation-duration: 1s;
+		animation-iteration-count: 60;
+	}
+
+	@keyframes blink {
+		50% {
+			opacity: 20%;
+		}
 	}
 
 	.current-prayer.sabah {

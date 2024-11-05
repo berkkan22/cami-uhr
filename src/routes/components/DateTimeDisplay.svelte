@@ -8,10 +8,10 @@
 </script>
 
 <div class="date-time-container">
-	<div id="islamic-date" class="date">
+	<!-- <div id="islamic-date" class="date">
 		<div class="time-title">{$t('islamicDate')}</div>
 		<div class="time-value" id="islamic-date-value">{currentPrayer.hicriDate}</div>
-	</div>
+	</div> -->
 	<div id="today-date" class="date">
 		<div class="time-title">{$t('todayDate')}</div>
 		<div class="time-value" id="today-date-value">{formatDate(currentPrayer.date)}</div>
@@ -29,11 +29,12 @@
 <style>
 	.date-time-container {
 		display: flex;
-		justify-content: center;
+		justify-content: space-around;
 		gap: 0vw;
 		margin-top: 20px;
-		margin-bottom: 40px;
+		margin-bottom: 10px;
 		color: white;
+		padding: 0 32px;
 	}
 
 	.date {
@@ -46,19 +47,36 @@
 		transition:
 			transform 0.3s ease,
 			margin 0.3s ease;
-		margin-bottom: 50px;
+		margin-bottom: 60px;
 	}
 
 	.time-title {
-		font-size: 2rem;
+		font-size: 2.5rem;
 		margin-bottom: 14px;
+		font-weight: bold;
 	}
 
 	.time-value {
-		font-size: 4rem;
+		font-size: 8rem;
+	}
+
+	#current-time > .time-value {
+		font-weight: bold;
+		font-size: 8rem;
+	}
+
+	#current-time > .time-title {
+		font-weight: bold;
+		font-size: 2.5rem;
+	}
+
+	#next-prayer-time > .time-title {
+		font-weight: bold;
+		font-size: 2.5rem;
 	}
 
 	#next-prayer-time > .time-value {
+		font-size: 8rem;
 		color: #89001c;
 		font-weight: bold;
 	}
