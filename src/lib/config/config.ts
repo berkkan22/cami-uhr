@@ -8,6 +8,7 @@ export const config = {
   quotes: true,
   ditib: true,
   showSabahNamazi: false,
+  showAnnouncements: true,
 
   camiNameIdentifier: 'osman-bey-mosque',
   apiUrl: import.meta.env.VITE_API_URL,

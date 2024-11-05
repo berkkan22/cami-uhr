@@ -97,7 +97,9 @@
 	<OsmanBeyCami {currentPrayer} {currentTime} {remainingTime} {currentPayerTime} {quaotOfTheDay} />
 {/if}
 
-<Announcements />
+{#if config.showAnnouncements}
+	<Announcements />
+{/if}
 
 {#if prayerTimesRaw === null}
 	<div class="error-container">
