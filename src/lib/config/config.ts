@@ -8,10 +8,10 @@ export const config = {
   dateJson: '/hijri_dates.json',
   quotes: true,
   ditib: true,
-  showSabahNamazi: false,
-  showAnnouncements: true,
+  showSabahNamazi: true,
+  showAnnouncements: false,
 
-  camiNameIdentifier: 'test-mosque',
+  camiNameIdentifier: 'muradiye-winsen-luhe-mosque',
   apiUrl: import.meta.env.VITE_API_URL,
   wsUrl: import.meta.env.VITE_WS_URL,
 }

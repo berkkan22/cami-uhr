@@ -32,7 +32,7 @@
 		justify-content: center;
 		gap: 0vw;
 		margin-top: 20px;
-		margin-bottom: 40px;
+		margin-bottom: 10px;
 		color: white;
 	}
 
@@ -52,13 +52,30 @@
 	.time-title {
 		font-size: 2rem;
 		margin-bottom: 14px;
+		font-weight: bold;
 	}
 
 	.time-value {
 		font-size: 4rem;
 	}
 
+	#current-time > .time-value {
+		font-weight: bold;
+		font-size: 6rem;
+	}
+
+	#current-time > .time-title {
+		font-weight: bold;
+		font-size: 2.5rem;
+	}
+
+	#next-prayer-time > .time-title {
+		font-weight: bold;
+		font-size: 2.5rem;
+	}
+
 	#next-prayer-time > .time-value {
+		font-size: 6rem;
 		color: #89001c;
 		font-weight: bold;
 	}
