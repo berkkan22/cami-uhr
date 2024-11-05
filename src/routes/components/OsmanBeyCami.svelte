@@ -81,8 +81,10 @@
 <style>
 	.content {
 		width: 100%;
-		margin-top: 20px;
+		height: 100vh;
+		/* margin-top: 20px; */
 		text-align: center;
+		background: linear-gradient(rgba(0, 0, 0, 0.55), rgba(0, 0, 0, 0.55));
 	}
 
 	.background-image {
@@ -103,7 +105,6 @@
 		left: 0;
 		width: 100%;
 		height: 100%;
-		background-color: rgba(0, 0, 0, 0.4);
 		backdrop-filter: blur(1px);
 	}
 
@@ -124,7 +125,7 @@
 	}
 
 	.arabic-caligrafi {
-		width: 10%;
+		width: 12%;
 		height: auto;
 	}
 
@@ -133,23 +134,23 @@
 		justify-content: center;
 		align-items: center;
 		flex-direction: column;
-		margin-left: 50px;
-		margin-right: 100px;
+		/* margin-left: 50px;
+		margin-right: 100px; */
 	}
 
 	.header-title > img {
-		width: 90%;
+		width: 225px;
 		height: auto;
 	}
 
 	.title {
 		position: relative;
-		top: -30px;
+		top: -25px;
 		color: white;
 		border-top: 2px solid white;
 		width: fit-content;
 		padding: 3px;
-		font-size: 2rem;
+		font-size: 1.5rem;
 	}
 
 	.spacer {

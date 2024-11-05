@@ -62,7 +62,7 @@
 		setInterval(async () => {
 			currentDate = new Date(Date.now() + timeOffset * convertMS);
 
-			currentTime = currentDate.toLocaleTimeString('de-DE');
+			currentTime = currentDate.toLocaleTimeString('de-DE', { hour: '2-digit', minute: '2-digit' });
 			if (currentPrayer !== undefined) {
 				remainingTime = calculateRemainingTime(currentPrayer, currentDate);
 				currentPayerTime = checkWhichPrayerTime(currentPrayer, currentDate);
