@@ -7,7 +7,7 @@
 
 <div id="quote-container">
 	{#if config.quotes}
-		{#if quaotOfTheDay !== undefined}
+		{#if quaotOfTheDay !== undefined && quaotOfTheDay !== null}
 			<div id="quote-text">
 				{$t('hadith', { name: $locale == 'De' ? quaotOfTheDay.quoteDe : quaotOfTheDay.quoteTr })}
 			</div>

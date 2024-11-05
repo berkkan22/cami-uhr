@@ -342,6 +342,12 @@ async def get_random_hadith(request: Request):
                 status_code=status.HTTP_404_NOT_FOUND,
                 detail="No hadith found"
             )
+    except psycopg2.Error as db_error:
+        logger.error(f"Database error: {db_error}")
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail="Database error"
+        )
     except Exception as e:
         logger.error(f"Error getting random hadith: {e}")
         raise HTTPException(

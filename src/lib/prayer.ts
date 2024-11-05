@@ -180,27 +180,32 @@ export function convertToQuotes(quotes): Quote[] {
   });
 }
 
-
-
 export async function getRandomQuote(): any {
+  try {
+    const response = await fetch(`${config.apiUrl}/randomHadith`, {
+      method: 'POST',
+      body: JSON.stringify({ mosque: config.camiNameIdentifier }),
+    });
 
-  const response = await fetch(`${config.apiUrl}/randomHadith`, {
-    method: 'POST',
-    body: JSON.stringify({ mosque: config.camiNameIdentifier }),
-  });
+    if (!response.ok) {
+      if (response.status === 500) {
+        console.error('Server error:', response);
+      } else {
+        console.error('Network response was not ok');
+      }
+      return null;
+    }
 
-  if (!response.ok) {
-    throw new Error('Network response was not ok');
+    const data = await response.json();
+    console.log(data);
+
+    return {
+      quoteDe: data.deutsch,
+      quoteTr: data.turkisch,
+      author: data.quelle
+    }
+  } catch (error) {
+    console.error('Error fetching quotes:', error);
+    return null;
   }
-
-  const data = await response.json();
-  console.log(data);
-
-  return {
-    quoteDe: data.deutsch,
-    quoteTr: data.turkisch,
-    author: data.quelle
-  }
-
-
 }
