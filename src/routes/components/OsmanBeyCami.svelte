@@ -70,7 +70,7 @@
 			<DateTimeDisplay {currentPrayer} {currentTime} {remainingTime} />
 		{/if}
 
-		<PrayerTimes {currentPrayer} {currentPayerTime} />
+		<PrayerTimes {currentPrayer} {currentPayerTime} {currentTime} />
 
 		<Quotes {quaotOfTheDay} />
 	</div>
@@ -118,6 +118,7 @@
 		margin: 14px;
 		width: 200px;
 		height: auto;
+		z-index: 1;
 	}
 
 	/* HEADER */
