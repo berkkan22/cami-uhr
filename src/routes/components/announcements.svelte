@@ -136,19 +136,20 @@
 	}
 </script>
 
-
 {#if announcements != undefined && announcements.length > 0 && showAnnouncements()}
 	<p class="marquee">
 		<span class="line__wrap" style="top: 30px;">
 			<span class="line">
-				{#each announcements as announcement}
-					{#if announcement.visible}
-						{announcement.deutsch}
-						&nbsp; • &nbsp;
-						{announcement.tuerkisch}
-						&nbsp; • &nbsp;
-					{/if}
-				{/each}
+				{#key announcements}
+					{#each announcements as announcement}
+						{#if announcement.visible}
+							{announcement.deutsch}
+							&nbsp; • &nbsp;
+							{announcement.tuerkisch}
+							&nbsp; • &nbsp;
+						{/if}
+					{/each}
+				{/key}
 			</span>
 		</span>
 	</p>
@@ -200,5 +201,4 @@
 			left: 0%;
 		}
 	}
-	
 </style>
