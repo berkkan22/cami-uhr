@@ -18,17 +18,17 @@
 
 <style>
 	#quote-container {
-		margin-top: 9vh;
+		margin-top: 3vh;
 		color: white;
-		padding: 64px;
+		padding: 40px 64px 64px 64px;
 	}
 
 	#quote-text {
-		font-size: 3rem;
+		font-size: 2.5rem;
 	}
 
 	#quote-author {
-		font-size: 2rem;
+		font-size: 1.5rem;
 		font-style: italic;
 		margin-top: 20px;
 	}
