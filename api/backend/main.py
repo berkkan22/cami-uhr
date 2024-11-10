@@ -400,7 +400,27 @@ async def get_announcements(request: Request):
     try:
         data = await request.json()
         mosque = data.get("mosque")
+        if not mosque:
+            # print("Missing mosque in request")
+            token = data.get("token")
+            if not token:
+                raise HTTPException(
+                    status_code=status.HTTP_400_BAD_REQUEST,
+                    detail="Missing token in request"
+                )
+            logger.warning("Missing mosque in request")
+            decode = decode_jwt(token)
+            group = decode.get("groups")
+            for g in group:
+                if "mosque" in g:
+                    mosque = g
+            if not mosque:
+                raise HTTPException(
+                    status_code=status.HTTP_400_BAD_REQUEST,
+                    detail="Missing mosque in request"
+                )
 
+        # print(f"Data received: {mosque}")
         # Connect to PostgreSQL
         config = load_config()
 
@@ -426,6 +446,42 @@ async def get_announcements(request: Request):
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
             detail="Error getting announcements"
+        )
+
+
+class DeleteAnnouncementRequest(BaseModel):
+    id: int
+
+
+@app.post("/deleteAnnouncement")
+async def delete_announcement(request: DeleteAnnouncementRequest, api_key: str = Depends(get_api_key_http)):
+    try:
+        announcement_id = request.id
+        print(f"Data received: {announcement_id}")
+        # Connect to PostgreSQL
+        config = load_config()
+
+        conn = psycopg2.connect(**config)
+        print("Connected to PostgreSQL database")
+
+        cursor = conn.cursor()
+
+        # Delete the announcement from the database
+        cursor.execute(
+            "DELETE FROM announcements WHERE id = %s",
+            (announcement_id)
+        )
+        conn.commit()
+
+        cursor.close()
+        conn.close()
+
+        return {"message": "Announcement deleted successfully"}
+    except Exception as e:
+        logger.error(f"Error deleting announcement: {e}")
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail="Error deleting announcement"
         )
 
 
@@ -501,7 +557,7 @@ async def websocket_endpoint(websocket: WebSocket, token: str = Depends(get_api_
                         cursor.close()
                         conn.close()
 
-                        await websocket.send_text(f"Saving Announcement to DB successful")
+                        await websocket.send_text(f"Saving Announcement to DB done")
 
                     except Exception as e:
                         logger.error(f"Error saving announcement to DB: {e}")

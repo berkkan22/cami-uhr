@@ -15,28 +15,28 @@
 	let socket: WebSocket;
 
 	let isLoading: boolean = false;
+	let announcements: any[] = [];
+	let deleteOldAnnouncement = -1;
 
 	onMount(async () => {
 		const { validAccessToken } = await getValidAccessToken($page.data.session);
 
 		socket = connectToWebsocket(`${config.wsUrl}/ws?token=${validAccessToken}`);
-		// socket = new WebSocket(`${config.wsUrl}/ws?token=${validAccessToken}`);
-
-		// // Connection opened
-		// socket.addEventListener('open', function (event) {
-		// 	console.log("It's open");
-		// });
-
-		// socket.addEventListener('disconnect', () => {
-		// 	console.log('Disconnected from WebSocket server');
-		// });
-
-		// socket.addEventListener('message', (event) => {
-		// 	console.log('Message from server ', event.data);
-		// });
 	});
 
 	async function handleSubmit(event: Event) {
+		const { validAccessToken } = await getValidAccessToken($page.data.session);
+		if (deleteOldAnnouncement !== -1) {
+			await fetch(`${config.apiUrl}/deleteAnnouncement`, {
+				method: 'POST',
+				headers: {
+					'Content-Type': 'application/json',
+					'X-Token': `${validAccessToken}`,
+					id: `${deleteOldAnnouncement}`
+				}
+			});
+			deleteOldAnnouncement = -1;
+		}
 		isLoading = true;
 		event.preventDefault();
 
@@ -54,13 +54,19 @@
 		console.log(data);
 		socket.send(JSON.stringify(data));
 		socket.onmessage = function (event) {
+			if (event.data.includes('successful')) {
+				toast.success('Announcement submitted successfully.', {
+					position: 'bottom-center'
+				});
+				clearInputs();
+			} else if (event.data.includes('failed') || event.data.includes('Error')) {
+				toast.error('Failed to submit announcement.', {
+					position: 'bottom-center'
+				});
+			}
 			console.log('Message from server ', event.data);
+			isLoading = false;
 		};
-		isLoading = false;
-		toast.success('Announcement submitted successfully.', {
-			position: 'bottom-center'
-		});
-		clearInputs();
 	}
 
 	function clearInputs() {
@@ -68,6 +74,43 @@
 		tuerkisch = '';
 		starttime = new Date().toLocaleString('sv-SE', { timeZone: 'Europe/Berlin' }).replace(' ', 'T');
 		endtime = '';
+	}
+
+	async function showAllAnnouncements() {
+		isLoading = true;
+
+		try {
+			const { validAccessToken } = await getValidAccessToken($page.data.session);
+			const response = await fetch(`${config.apiUrl}/announcements`, {
+				method: 'POST',
+				body: JSON.stringify({ token: validAccessToken })
+			});
+			if (!response.ok) {
+				isLoading = false;
+				throw new Error('Failed to fetch announcements');
+			}
+			const result = await response.json();
+			announcements = result['announcements'];
+			console.log(announcements);
+			isLoading = false;
+			toast.success('Fetched all announcements successfully.', {
+				position: 'bottom-center'
+			});
+		} catch (error) {
+			isLoading = false;
+			console.error(error);
+			toast.error('Failed to fetch announcements.', {
+				position: 'bottom-center'
+			});
+		}
+	}
+
+	function editAnnouncement(announcement) {
+		deutsch = announcement[1];
+		tuerkisch = announcement[2];
+		starttime = announcement[4];
+		endtime = announcement[5];
+		deleteOldAnnouncement = announcement[0];
 	}
 </script>
 
@@ -98,7 +141,24 @@
 			<input type="datetime-local" id="endtime" name="endtime" bind:value={endtime} />
 		</div>
 		<button type="submit" on:click={handleSubmit}>Submit</button>
+		<button class="second" on:click={showAllAnnouncements}>Zeige alle Ankündigungen</button>
 	</form>
+
+	{#if announcements.length > 0}
+		<div class="announcements">
+			{#each announcements as announcement}
+				<div class="announcement">
+					<div class="announcement-text">
+						<p><strong>Deutsch:</strong> {announcement[1]}</p>
+						<p><strong>Türkisch:</strong> {announcement[2]}</p>
+						<p><strong>Start Time:</strong> {announcement[4]}</p>
+						<p><strong>End Time:</strong> {announcement[5]}</p>
+					</div>
+					<button class="edit-button" on:click={() => editAnnouncement(announcement)}> ✏️ </button>
+				</div>
+			{/each}
+		</div>
+	{/if}
 </section>
 <Toaster />
 
@@ -173,6 +233,35 @@
 		width: 60px;
 		height: 60px;
 		animation: spin 1s linear infinite;
+	}
+
+	.announcements {
+		margin-top: 20px;
+	}
+	.announcement {
+		border: 1px solid #ccc;
+		padding: 10px;
+		margin-bottom: 10px;
+		border-radius: 4px;
+		display: flex;
+		justify-content: space-between;
+		align-items: center;
+	}
+
+	.announcement-text {
+		flex-grow: 1;
+	}
+
+	.edit-button {
+		background: none;
+		border: none;
+		cursor: pointer;
+		font-size: 1.2em;
+	}
+
+	.second {
+		background-color: #6c757d;
+		margin-left: 10px;
 	}
 
 	@keyframes spin {

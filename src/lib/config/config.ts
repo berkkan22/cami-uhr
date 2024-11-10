@@ -10,7 +10,7 @@ export const config = {
   showSabahNamazi: false,
   showAnnouncements: true,
 
-  camiNameIdentifier: 'osman-bey-mosque',
+  camiNameIdentifier: 'test-mosque',
   apiUrl: import.meta.env.VITE_API_URL,
   wsUrl: import.meta.env.VITE_WS_URL,
 

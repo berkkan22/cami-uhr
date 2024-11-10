@@ -1,6 +1,7 @@
 <script lang="ts">
 	import { onMount } from 'svelte';
 	import { config } from '$lib/config/config';
+	import { goto } from '$app/navigation';
 
 	interface Announcement {
 		deutsch: string;
@@ -13,28 +14,7 @@
 	let showAnnouncement = false;
 
 	onMount(() => {
-		fetch(`${config.apiUrl}/announcements`, {
-			method: 'POST',
-			body: JSON.stringify({ mosque: config.camiNameIdentifier })
-		})
-			.then((response) => response.json())
-			.then((data) => {
-				if (data) {
-					for (let i = 0; i < data['announcements'].length; i++) {
-						let temp: Announcement = {
-							deutsch: data['announcements'][i][1],
-							tuerkisch: data['announcements'][i][2],
-							starttime: data['announcements'][i][4],
-							endtime: data['announcements'][i][5],
-							visible: data['announcements'][i][6]
-						};
-						temp.visible = false;
-						announcements = [...announcements, temp];
-					}
-					console.log(announcements);
-				}
-			})
-			.catch((error) => console.error('Error fetching announcements:', error));
+		getAllAnnouncements();
 
 		const socket = new WebSocket(`${config.wsUrl}/ws-listen?mosque=${config.camiNameIdentifier}`);
 
@@ -45,16 +25,21 @@
 
 		socket.addEventListener('message', (event) => {
 			console.log('Message from server ', event.data);
-			const data = JSON.parse(event.data);
-			let temp: Announcement = {
-				deutsch: data['message_german'],
-				tuerkisch: data['message_turkish'],
-				starttime: data['start_date'],
-				endtime: data['end_date'], // ? data['end_date'] : new Date(new Date(data['start_date']).setFullYear(new Date(data['start_date']).getFullYear() + 10)).toISOString(),
-				visible: false
-			};
-			announcements = [...announcements, temp];
+			announcements = [];
+			// const data = JSON.parse(event.data);
+			// let temp: Announcement = {
+			// 	deutsch: data['message_german'],
+			// 	tuerkisch: data['message_turkish'],
+			// 	starttime: data['start_date'],
+			// 	endtime: data['end_date'], // ? data['end_date'] : new Date(new Date(data['start_date']).setFullYear(new Date(data['start_date']).getFullYear() + 10)).toISOString(),
+			// 	visible: false
+			// };
+			// announcements = [...announcements, temp];
+			// setTimeout(() => {}, 2000);
+			getAllAnnouncements();
+			// setTimeout(() => {}, 2000);
 			console.log(announcements);
+
 			calculateDuration();
 		});
 
@@ -77,6 +62,30 @@
 			calculateDuration();
 		}, 1000);
 	});
+
+	function getAllAnnouncements() {
+		fetch(`${config.apiUrl}/announcements`, {
+			method: 'POST',
+			body: JSON.stringify({ mosque: config.camiNameIdentifier })
+		})
+			.then((response) => response.json())
+			.then((data) => {
+				if (data) {
+					for (let i = 0; i < data['announcements'].length; i++) {
+						let temp: Announcement = {
+							deutsch: data['announcements'][i][1],
+							tuerkisch: data['announcements'][i][2],
+							starttime: data['announcements'][i][4],
+							endtime: data['announcements'][i][5],
+							visible: false
+						};
+						announcements = [...announcements, temp];
+					}
+					console.log(announcements);
+				}
+			})
+			.catch((error) => console.error('Error fetching announcements:', error));
+	}
 
 	function shouldAnnouncementBeDisplayed(announcement: Announcement) {
 		let currentTime = new Date();
@@ -125,12 +134,13 @@
 	}
 
 	function calculateLength(): number {
-		const lineElement = document.querySelector('.line');
 		let chars = 0;
-		if (lineElement) {
-			const textContent = lineElement.textContent || '';
-			chars = textContent.length;
-		}
+		console.log('ann: ' + announcements);
+		announcements.forEach((announcement) => {
+			if (announcement.visible) {
+				chars += announcement.deutsch.length + announcement.tuerkisch.length + 6; // 6 for the separators
+			}
+		});
 		console.log(chars);
 		return chars;
 	}
