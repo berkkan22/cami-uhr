@@ -17,22 +17,27 @@ export const load: PageServerLoad = async (event) => {
 
     // TODO: This call needs to go to /auth page.server.ts because if the user logges in in the /auth then the group should be check and removde
     const { validAccessToken } = await getValidAccessToken(session);
-    const response = await fetch(`${config.apiUrl}/checkUserLogin`, {
-      method: 'GET',
-      headers: {
-        'Content-Type': 'application/json',
-        'X-Token': `${validAccessToken}`
+    if (validAccessToken !== "null") {
+
+      const response = await fetch(`${config.apiUrl}/checkUserLogin`, {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+          'X-Token': `${validAccessToken}`
+        }
+      });
+
+      if (!response.ok) {
+        throw new Error('Network response was not ok');
       }
-    });
 
-    if (!response.ok) {
-      throw new Error('Network response was not ok');
+      const result = await response.json();
+      console.log('Success:', result);
+
+      redirect(302, '/');
+    } else {
+      console.log('No valid access token');
     }
-
-    const result = await response.json();
-    console.log('Success:', result);
-
-    redirect(302, '/');
   }
 
   return {

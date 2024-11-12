@@ -182,6 +182,7 @@
 		font-size: 3rem;
 		color: #cacaca;
 		margin-top: 10px;
+		text-align: start;
 	}
 
 	.time-title {
@@ -221,12 +222,5 @@
 
 	.spacer-date {
 		width: 10%;
-	}
-
-	.weather {
-		margin-top: 20px;
-		background-color: antiquewhite;
-		width: 200px;
-		height: 100px;
 	}
 </style>

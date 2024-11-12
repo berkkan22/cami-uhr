@@ -13,8 +13,9 @@
 	let announcements: Announcement[] = [];
 	let showAnnouncement = false;
 
-	onMount(() => {
-		getAllAnnouncements();
+	onMount(async () => {
+		const temp = await getAllAnnouncements();
+		announcements = temp;
 
 		const socket = new WebSocket(`${config.wsUrl}/ws-listen?mosque=${config.camiNameIdentifier}`);
 
@@ -23,9 +24,8 @@
 			console.log("It's open");
 		});
 
-		socket.addEventListener('message', (event) => {
+		socket.addEventListener('message', async (event) => {
 			console.log('Message from server ', event.data);
-			announcements = [];
 			// const data = JSON.parse(event.data);
 			// let temp: Announcement = {
 			// 	deutsch: data['message_german'],
@@ -36,11 +36,16 @@
 			// };
 			// announcements = [...announcements, temp];
 			// setTimeout(() => {}, 2000);
-			getAllAnnouncements();
+			const temp = await getAllAnnouncements();
+			announcements = temp;
 			// setTimeout(() => {}, 2000);
 			console.log(announcements);
 
-			calculateDuration();
+			setTimeout(() => {
+				calculateDuration();
+			}, 1000);
+
+			// calculateDuration();
 		});
 
 		socket.addEventListener('disconnect', () => {
@@ -63,28 +68,31 @@
 		}, 1000);
 	});
 
-	function getAllAnnouncements() {
-		fetch(`${config.apiUrl}/announcements`, {
+	async function getAllAnnouncements() {
+		let tempArray: Announcement[] = [];
+		const response = await fetch(`${config.apiUrl}/announcements`, {
 			method: 'POST',
 			body: JSON.stringify({ mosque: config.camiNameIdentifier })
-		})
-			.then((response) => response.json())
-			.then((data) => {
-				if (data) {
-					for (let i = 0; i < data['announcements'].length; i++) {
-						let temp: Announcement = {
-							deutsch: data['announcements'][i][1],
-							tuerkisch: data['announcements'][i][2],
-							starttime: data['announcements'][i][4],
-							endtime: data['announcements'][i][5],
-							visible: false
-						};
-						announcements = [...announcements, temp];
-					}
-					console.log(announcements);
-				}
-			})
-			.catch((error) => console.error('Error fetching announcements:', error));
+		});
+
+		const data = await response.json();
+
+		console.log('DATA: ' + data);
+		if (data) {
+			for (let i = 0; i < data['announcements'].length; i++) {
+				let temp: Announcement = {
+					deutsch: data['announcements'][i][1],
+					tuerkisch: data['announcements'][i][2],
+					starttime: data['announcements'][i][4],
+					endtime: data['announcements'][i][5],
+					visible: false
+				};
+				tempArray.push(temp);
+			}
+			console.log(tempArray);
+		}
+
+		return tempArray;
 	}
 
 	function shouldAnnouncementBeDisplayed(announcement: Announcement) {
@@ -121,7 +129,7 @@
 		const minDuration = 20;
 		const calculatedDuration = calculateLength() * 0.156;
 		const duration = Math.max(minDuration, calculatedDuration);
-		console.log(duration);
+		console.log('DUration: ' + duration);
 
 		const element1 = document.querySelector('.line__wrap');
 		const element2 = document.querySelector('.line');
@@ -134,36 +142,40 @@
 	}
 
 	function calculateLength(): number {
+		announcements.forEach((element) => {
+			shouldAnnouncementBeDisplayed(element);
+		});
+
 		let chars = 0;
-		console.log('ann: ' + announcements);
 		announcements.forEach((announcement) => {
 			if (announcement.visible) {
 				chars += announcement.deutsch.length + announcement.tuerkisch.length + 6; // 6 for the separators
 			}
 		});
-		console.log(chars);
+		console.log('Chars:' + chars);
 		return chars;
 	}
 </script>
 
+<!-- {#key announcements} -->
 {#if announcements != undefined && announcements.length > 0 && showAnnouncements()}
 	<p class="marquee">
 		<span class="line__wrap" style="top: 30px;">
 			<span class="line">
-				{#key announcements}
-					{#each announcements as announcement}
-						{#if announcement.visible}
-							{announcement.deutsch}
-							&nbsp; • &nbsp;
-							{announcement.tuerkisch}
-							&nbsp; • &nbsp;
-						{/if}
-					{/each}
-				{/key}
+				{#each announcements as announcement}
+					{#if announcement.visible}
+						{announcement.deutsch}
+						&nbsp; • &nbsp;
+						{announcement.tuerkisch}
+						&nbsp; • &nbsp;
+					{/if}
+				{/each}
 			</span>
 		</span>
 	</p>
 {/if}
+
+<!-- {/key} -->
 
 <style>
 	.marquee {

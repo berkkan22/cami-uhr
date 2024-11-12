@@ -27,13 +27,14 @@
 	async function handleSubmit(event: Event) {
 		const { validAccessToken } = await getValidAccessToken($page.data.session);
 		if (deleteOldAnnouncement !== -1) {
+			console.log('deleting old announcement with id: ', deleteOldAnnouncement);
 			await fetch(`${config.apiUrl}/deleteAnnouncement`, {
 				method: 'POST',
 				headers: {
 					'Content-Type': 'application/json',
-					'X-Token': `${validAccessToken}`,
-					id: `${deleteOldAnnouncement}`
-				}
+					'X-Token': `${validAccessToken}`
+				},
+				body: JSON.stringify({ id: deleteOldAnnouncement })
 			});
 			deleteOldAnnouncement = -1;
 		}
@@ -51,7 +52,7 @@
 			end_date: endtime
 		};
 
-		console.log(data);
+		// console.log(data);
 		socket.send(JSON.stringify(data));
 		socket.onmessage = function (event) {
 			if (event.data.includes('successful')) {

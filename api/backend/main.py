@@ -469,7 +469,7 @@ async def delete_announcement(request: DeleteAnnouncementRequest, api_key: str =
         # Delete the announcement from the database
         cursor.execute(
             "DELETE FROM announcements WHERE id = %s",
-            (announcement_id)
+            (announcement_id,)
         )
         conn.commit()
 

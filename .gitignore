@@ -29,3 +29,4 @@ src\lib\config\config.ts
 __pycache__
 
 /api/backend/database.ini
+/api/backend/logs.log

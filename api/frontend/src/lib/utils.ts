@@ -63,16 +63,22 @@ export async function updateTokens(cookies: any, newToken: { access_token: strin
   }
 }
 
-export async function getValidAccessToken(cookies: any): Promise<{ validAccessToken: string, }> {
-  if (isTokenExpired(cookies.access_token)) {
-    console.log('Access token expired, refreshing...');
-    const newTokens = await getRefreshToken(cookies.refresh_token);
-    const newCookies = updateTokens(cookies, newTokens);
-    console.log('New cookies:', newCookies);
-    // document.cookie = `session=${JSON.stringify(newCookies)}; path=/; max-age=${60 * 60 * 24}; samesite=lax; secure=true; httponly=false;`;
+export async function getValidAccessToken(cookies: any): Promise<{ validAccessToken: string }> {
+  try {
 
-    return { validAccessToken: newTokens.access_token };
+    if (isTokenExpired(cookies.access_token)) {
+      console.log('Access token expired, refreshing...');
+      const newTokens = await getRefreshToken(cookies.refresh_token);
+      const newCookies = updateTokens(cookies, newTokens);
+      console.log('New cookies:', newCookies);
+      // document.cookie = `session=${JSON.stringify(newCookies)}; path=/; max-age=${60 * 60 * 24}; samesite=lax; secure=true; httponly=false;`;
+
+      return { validAccessToken: newTokens.access_token };
+    }
+    return { validAccessToken: cookies.access_token };
+  } catch (error) {
+    console.error('Error getting valid access token:', error);
+    return { validAccessToken: "null" };;
   }
-  return { validAccessToken: cookies.access_token };
 }
 
