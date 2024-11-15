@@ -21,7 +21,6 @@
 
 <div class="content">
 	<div class="background-image" style="background-image: url({kiswah});"></div>
-	<!-- <Header /> -->
 	{#if config.header}
 		<div
 			class="header"
@@ -38,7 +37,6 @@
 				<img class="arabic-caligrafi" src={allah} alt="Allah" />
 			{/if}
 			{#if !config.dateOneLiner}
-				<!-- else content here -->
 				<div class="date-container">
 					<div id="today-date" class="date">
 						<div class="time-value" id="today-date-value">{formatDate(currentPrayer.date)}</div>
@@ -46,12 +44,10 @@
 					<div id="islamic-date" class="date">
 						<div class="time-value" id="islamic-date-value">{currentPrayer.hicriDate}</div>
 					</div>
-					<!-- <div class="weather">weather</div> -->
 				</div>
 				<div class="spacer-date"></div>
 				<div class="time-container">
 					<div id="current-time" class="date">
-						<!-- <div class="time-title">{$t('currentTime')}</div> -->
 						<div class="time-value">{currentTime}</div>
 					</div>
 					<div id="next-prayer-time" class="date">
@@ -121,11 +117,8 @@
 		z-index: 1;
 	}
 
-	/* HEADER */
 	.header {
 		display: flex;
-		/* justify-content: flex-start; */
-		/* justify-content: space-evenly; */
 		align-items: center;
 		padding: 20px;
 	}
@@ -136,7 +129,6 @@
 	}
 
 	.header-title {
-		/* position: relative; */
 		display: flex;
 		justify-content: center;
 		align-items: center;
@@ -164,7 +156,6 @@
 		height: 120px;
 	}
 
-	/* DATE */
 	.date {
 		display: flex;
 		flex-direction: column;
@@ -175,7 +166,6 @@
 		transition:
 			transform 0.3s ease,
 			margin 0.3s ease;
-		/* margin-bottom: 20px; */
 	}
 
 	#islamic-date-value {
@@ -198,21 +188,12 @@
 		color: #89001c;
 		font-weight: bold;
 		font-size: 5rem;
-		/* text-shadow:
-			-1px 0 white,
-			0 1px white,
-			1px 0 white,
-			0 -1px white; */
 	}
 
 	#next-prayer-time > .time-title {
 		font-size: 2.5rem;
 		margin-bottom: 0px;
 	}
-
-	/* .date-container {
-		margin-right: 40%;
-	} */
 
 	#current-time > .time-value {
 		margin-top: 50px;

@@ -26,26 +26,13 @@
 
 		socket.addEventListener('message', async (event) => {
 			console.log('Message from server ', event.data);
-			// const data = JSON.parse(event.data);
-			// let temp: Announcement = {
-			// 	deutsch: data['message_german'],
-			// 	tuerkisch: data['message_turkish'],
-			// 	starttime: data['start_date'],
-			// 	endtime: data['end_date'], // ? data['end_date'] : new Date(new Date(data['start_date']).setFullYear(new Date(data['start_date']).getFullYear() + 10)).toISOString(),
-			// 	visible: false
-			// };
-			// announcements = [...announcements, temp];
-			// setTimeout(() => {}, 2000);
+
 			const temp = await getAllAnnouncements();
 			announcements = temp;
-			// setTimeout(() => {}, 2000);
-			console.log(announcements);
 
 			setTimeout(() => {
 				calculateDuration();
 			}, 1000);
-
-			// calculateDuration();
 		});
 
 		socket.addEventListener('disconnect', () => {
@@ -77,7 +64,6 @@
 
 		const data = await response.json();
 
-		console.log('DATA: ' + data);
 		if (data) {
 			for (let i = 0; i < data['announcements'].length; i++) {
 				let temp: Announcement = {
@@ -129,7 +115,6 @@
 		const minDuration = 20;
 		const calculatedDuration = calculateLength() * 0.156;
 		const duration = Math.max(minDuration, calculatedDuration);
-		console.log('DUration: ' + duration);
 
 		const element1 = document.querySelector('.line__wrap');
 		const element2 = document.querySelector('.line');
@@ -152,7 +137,6 @@
 				chars += announcement.deutsch.length + announcement.tuerkisch.length + 6; // 6 for the separators
 			}
 		});
-		console.log('Chars:' + chars);
 		return chars;
 	}
 </script>

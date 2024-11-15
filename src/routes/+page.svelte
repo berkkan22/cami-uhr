@@ -13,12 +13,10 @@
 		getTomorrowHijriDate,
 		convertToLocalIsoDate,
 		type Quote,
-		convertToQuotes,
-		fetchQuotes,
 		getRandomQuote
 	} from '$lib/prayer';
 
-	import { t, locale } from '$lib/i10l/i10l';
+	import { locale } from '$lib/i10l/i10l';
 	import OsmanBeyCami from './components/OsmanBeyCami.svelte';
 	import Announcements from './components/announcements.svelte';
 
@@ -55,7 +53,6 @@
 		remainingTime = '00:00:00';
 		currentTime = currentDate.toLocaleTimeString('de-DE');
 
-		console.log('get random');
 		quaotOfTheDay = await getRandomQuote();
 
 		setInterval(async () => {
