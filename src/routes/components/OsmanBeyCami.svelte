@@ -173,6 +173,7 @@
 		color: #cacaca;
 		margin-top: 10px;
 		text-align: start;
+		white-space: nowrap;
 	}
 
 	.time-title {
