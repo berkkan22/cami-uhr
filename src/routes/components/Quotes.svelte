@@ -18,7 +18,7 @@
 
 <style>
 	#quote-container {
-		margin-top: 9vh;
+		margin-top: 5vh;
 		color: white;
 		padding: 64px;
 	}

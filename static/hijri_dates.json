@@ -1828,5 +1828,20 @@
         "day": 30,
         "month": "Cemaziyelahir",
         "year": 1446
+    },
+    "2025-01-01": {
+        "day": 1,
+        "month": "Recep",
+        "year": 1446
+    },
+    "2025-01-02": {
+        "day": 2,
+        "month": "Recep",
+        "year": 1446
+    },
+    "2025-01-03": {
+        "day": 3,
+        "month": "Recep",
+        "year": 1446
     }
 }
