@@ -7,4 +7,12 @@ services:
       dockerfile: Dockerfile
     ports:
       - "28554:3000"
+    networks:
+      projects:
+        ipv4_address: 192.169.3.1
     restart: unless-stopped
+
+
+networks:
+  projects:
+    external: true

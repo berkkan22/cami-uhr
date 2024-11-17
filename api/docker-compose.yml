@@ -9,9 +9,11 @@ services:
       - ./logs:/code/logs/
     ports:
       - "12825:80"
-    restart: unless-stopped
     networks:
-      - intern
+      projects:
+        ipv4_address: 192.169.3.2
+      intern:
+    restart: unless-stopped
 
 
   frontend:
@@ -21,12 +23,15 @@ services:
       dockerfile: Dockerfile
     ports:
       - "31428:3000"
-    restart: unless-stopped
     networks:
-      - intern
+      projects:
+        ipv4_address: 192.169.3.3
+    restart: unless-stopped
 
 
 
 networks:
+  projects:
+    external: true
   intern:
     external: true

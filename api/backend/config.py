@@ -1,4 +1,5 @@
 from configparser import ConfigParser
+import psycopg2
 
 # todo: make error handeling better if file does not exist
 
@@ -24,3 +25,14 @@ def load_config(filename="database.ini", section="postgresql"):
 if __name__ == "__main__":
     config = load_config()
     print(config)
+    try:
+        params = config
+        connection = psycopg2.connect(**params)
+        cursor = connection.cursor()
+        cursor.execute("SELECT version();")
+        db_version = cursor.fetchone()
+        print(f"Connected to database. Database version: {db_version}")
+        cursor.close()
+        connection.close()
+    except (Exception, psycopg2.DatabaseError) as error:
+        print(f"Error: {error}")
