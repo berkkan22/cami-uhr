@@ -1,13 +1,13 @@
 
 export const config = {
-  header: true,
+  header: false,
   headerNames: false,
   dateOneLiner: false,
-  camiName: 'Osman Bey',
-  prayerJson: '/osman_bey_prayer_times.json',
+  camiName: 'Winsen (Luhe) Muradiye',
+  prayerJson: '/winsen_luhe_prayer_times.json',
   dateJson: '/hijri_dates.json',
   quotes: true,
-  ditib: true,
+  ditib: false,
   showSabahNamazi: true,
   showAnnouncements: false,
 
