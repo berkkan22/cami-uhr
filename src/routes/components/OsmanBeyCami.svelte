@@ -109,8 +109,8 @@
 
 	.ditib-logo > img {
 		position: absolute;
-		bottom: 0;
-		right: 0;
+		bottom: 6px;
+		right: 16px;
 		margin: 14px;
 		width: 200px;
 		height: auto;

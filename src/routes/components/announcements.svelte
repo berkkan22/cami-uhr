@@ -113,7 +113,7 @@
 
 	function calculateDuration(): void {
 		const minDuration = 20;
-		const calculatedDuration = calculateLength() * 0.256;
+		const calculatedDuration = calculateLength() * 0.2;
 		const duration = Math.max(minDuration, calculatedDuration);
 
 		const element1 = document.querySelector('.line__wrap');
