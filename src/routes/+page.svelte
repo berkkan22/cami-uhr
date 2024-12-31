@@ -41,12 +41,16 @@
 		let datesRaw = await fetchDates();
 
 		let res = combineTimeAndDate(prayerTimesRaw, datesRaw);
-
+		console.log(res);
 		let currentDate = new Date();
 		let timeOffset = 0;
 		let convertMS = 3600000;
 
-		currentPrayer = res.find((prayer) => prayer.date === currentDate.toISOString().split('T')[0]);
+		currentPrayer = res.find(
+			(prayer) =>
+				prayer.date ===
+				`${currentDate.getFullYear()}-${String(currentDate.getMonth() + 1).padStart(2, '0')}-${String(currentDate.getDate()).padStart(2, '0')}`
+		);
 
 		// get the current time and update it every second
 		// update the remaining time every second
