@@ -37,13 +37,13 @@
 	{#each ['imsak', 'gunes', 'ogle', 'ikindi', 'aksam', 'yatsi'] as prayer}
 		{#if prayer == 'gunes' && config.showSabahNamazi}
 			{#if showFirstDiv}
-				<div class="prayer-time {currentPayerTime == prayer ? 'current-prayer' : ''}">
+				<div class="prayer-time {currentPayerTime == prayer && !showSabahBackgroundColor ? 'current-prayer' : ''}">
 					<div class="prayer-label {prayer}">{$t(prayer)}</div>
 					<div class="prayer-time-value">{formatTime(currentPrayer[prayer])}</div>
 				</div>
 			{:else}
 				<div
-					class="prayer-time {currentPayerTime == prayer
+					class="prayer-time {currentPayerTime == prayer && !showSabahBackgroundColor
 						? 'current-prayer'
 						: ''} sabah {showSabahBackgroundColor ? 'show' : ''}"
 				>
