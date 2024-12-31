@@ -148,6 +148,8 @@ python excel_prepare.py
 ```
 This will create a file `time_data.json`. Now you need to move this into this folder `/static/` and add the file name (in this case `tim_data.json`) into the config file (see [Environment Variables](#environment-variables))
 
+TODO: add 3 days of the next years which are the first 3 days of this year so you have time to add the new prayer times and also add in the hijri date the 3 days
+
 ## Roadmap
 
 - Add automatic prayer time fetching for the next year
