@@ -34,7 +34,7 @@ export async function fetchPrayerTimes(file: string) {
 
 export async function fetchDates() {
   try {
-    const response = await fetch('./hijri_dates.json');
+    const response = await fetch(config.dateJson);
     const data = await response.json();
     return data;
   } catch (error) {

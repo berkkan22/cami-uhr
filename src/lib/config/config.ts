@@ -5,6 +5,7 @@ export const config = {
   dateOneLiner: false,
   camiName: 'Osman Bey',
   prayerJson: '/osman_bey_prayer_times.json',
+  dateJson: '/hijri_dates.json',
   quotes: true,
   ditib: true,
   showSabahNamazi: false,
