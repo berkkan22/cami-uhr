@@ -45,9 +45,8 @@ export async function fetchDates() {
 
 export function combineTimeAndDate(prayerTimes, dates): Prayers[] {
   return Object.keys(prayerTimes).map((key, index) => {
+    const prayer = prayerTimes[key];
     if (index < Object.keys(prayerTimes).length - 1) {
-      const prayer = prayerTimes[key];
-
       return {
         date: key,
         hicriDate: getHijriDateFromGregorian(dates, new Date(key)),
@@ -60,7 +59,23 @@ export function combineTimeAndDate(prayerTimes, dates): Prayers[] {
         nextImsak: new Date(`${prayerTimes[Object.keys(prayerTimes)[index + 1]]["Imsak"]}`) as Date
       }
     }
-
+    else {
+      return {
+        date: key,
+        hicriDate: getHijriDateFromGregorian(dates, new Date(key)),
+        imsak: new Date(`${prayer["Imsak"]}`) as Date,
+        gunes: new Date(`${prayer["Güneş"]}`) as Date,
+        ogle: new Date(`${prayer["Öğle"]}`) as Date,
+        ikindi: new Date(`${prayer["İkindi"]}`) as Date,
+        aksam: new Date(`${prayer["Akşam"]}`) as Date,
+        yatsi: new Date(`${prayer["Yatsı"]}`) as Date,
+        nextImsak: (() => {
+          const date = new Date(`${prayerTimes[Object.keys(prayerTimes)[0]]["Imsak"]}`);
+          date.setFullYear(date.getFullYear() + 1);
+          return date;
+        })()
+      }
+    }
   });
 }
 
