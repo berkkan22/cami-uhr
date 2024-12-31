@@ -2,10 +2,10 @@
 export const config = {
   header: false,
   headerNames: false,
-  dateOneLiner: false,
+  dateOneLiner: true,
   camiName: 'Winsen (Luhe) Muradiye',
-  prayerJson: '/winsen_luhe_prayer_times.json',
-  dateJson: '/hijri_dates.json',
+  prayerJson: '/time_data.json',
+  dateJson: '/date_data.json',
   quotes: true,
   ditib: false,
   showSabahNamazi: true,
