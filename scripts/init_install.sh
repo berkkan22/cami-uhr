@@ -51,6 +51,7 @@ git clone https://github.com/berkkan22/cami-uhr.git
 # Copy the WireGuard configuration to /etc/wireguard/wg0.conf
 echo "Copying WireGuard configuration to /etc/wireguard/wg0.conf..."
 sudo cp "$WG_CONFIG_PATH" /etc/wireguard/wg0.conf
+sudo rm "$WG_CONFIG_PATH"
 
 # Set correct permissions for the WireGuard configuration file
 sudo chmod 600 /etc/wireguard/wg0.conf
