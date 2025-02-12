@@ -54,6 +54,9 @@ cd cami-uhr
 echo "Installing npm dependencies..."
 npm install
 
+# Back to the home directory
+cd
+
 # Copy the WireGuard configuration to /etc/wireguard/wg0.conf
 echo "Copying WireGuard configuration to /etc/wireguard/wg0.conf..."
 sudo cp "$WG_CONFIG_PATH" /etc/wireguard/wg0.conf
