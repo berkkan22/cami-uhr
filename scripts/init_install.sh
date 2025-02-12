@@ -59,7 +59,10 @@ GIT_CLONE_OUTPUT=$(git clone https://github.com/berkkan22/cami-uhr.git 2>&1) || 
 
 # Ask user for WireGuard configuration
 echo "Please enter your WireGuard configuration. Press CTRL+D when done:"
-WG_CONFIG_CONTENT=$(cat) # Read multi-line input until CTRL+D
+WG_CONFIG_CONTENT=""
+while IFS= read -r line; do
+    WG_CONFIG_CONTENT+="$line\n"
+done
 
 # Validate input
 if [ -z "$WG_CONFIG_CONTENT" ]; then
