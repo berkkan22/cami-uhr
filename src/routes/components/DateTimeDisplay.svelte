@@ -8,10 +8,10 @@
 </script>
 
 <div class="date-time-container">
-	<div id="islamic-date" class="date">
+	<!-- <div id="islamic-date" class="date">
 		<div class="time-title">{$t('islamicDate')}</div>
 		<div class="time-value" id="islamic-date-value">{currentPrayer.hicriDate}</div>
-	</div>
+	</div> -->
 	<div id="today-date" class="date">
 		<div class="time-title">{$t('todayDate')}</div>
 		<div class="time-value" id="today-date-value">{formatDate(currentPrayer.date)}</div>
