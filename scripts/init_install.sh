@@ -2,11 +2,20 @@
 
 set -e  # Exit immediately if a command fails
 
+# Check if the WireGuard config file exists
+WG_CONFIG_PATH="./wg0.conf"
+
+if [ ! -f "$WG_CONFIG_PATH" ]; then
+    echo "❌ The WireGuard configuration file 'wg0.conf' is missing in the current directory."
+    echo "Please create the WireGuard configuration file and run the script again."
+    exit 1
+fi
+
 echo "Updating system..."
 sudo apt-get update && sudo apt-get upgrade -y
 
 echo "Installing required packages..."
-sudo apt-get install -y git nano tmux wireguard
+sudo apt-get install -y git nano tmux wireguard resolvconf
 
 echo "Installing NVM (Node Version Manager)..."
 curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.40.1/install.sh | bash
@@ -39,16 +48,12 @@ echo "✅ npm installed: $NPM_VERSION"
 echo "Cloning the project repository..."
 git clone https://github.com/berkkan22/cami-uhr.git
 
-# Prompt for WireGuard configuration
-echo "Please enter your WireGuard configuration. Press CTRL+D when done:"
-WG_CONFIG_CONTENT=$(cat)
+# Copy the WireGuard configuration to /etc/wireguard/wg0.conf
+echo "Copying WireGuard configuration to /etc/wireguard/wg0.conf..."
+sudo cp "$WG_CONFIG_PATH" /etc/wireguard/wg0.conf
 
-# Save WireGuard configuration
-WG_CONFIG_PATH="/etc/wireguard/wg0.conf"
-echo "$WG_CONFIG_CONTENT" | sudo tee "$WG_CONFIG_PATH" > /dev/null
-
-# Set correct permissions
-sudo chmod 600 "$WG_CONFIG_PATH"
+# Set correct permissions for the WireGuard configuration file
+sudo chmod 600 /etc/wireguard/wg0.conf
 
 # Check if wg0 is already up
 if sudo wg show wg0 > /dev/null 2>&1; then
@@ -82,9 +87,6 @@ echo "✅ Cron jobs added to root's crontab."
 echo "Checking public IP address..."
 curl -s http://whatismyip.akamai.com && echo
 
-# Display current local IP
-echo "Checking local IP address..."
-hostname -I
-
 echo "🎉 Installation completed successfully!"
+
 echo "Reboot your system to apply changes."
