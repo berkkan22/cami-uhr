@@ -63,7 +63,6 @@ sudo apt install resolvconf -y
 if sudo wg show wg0 > /dev/null 2>&1; then
     echo "✅ WireGuard VPN is already active."
 else
-    # Bring up the WireGuard connection if it's not already active
     echo "Bringing up WireGuard VPN..."
     if sudo wg-quick up wg0; then
         echo "✅ WireGuard VPN activated successfully."
@@ -76,8 +75,6 @@ fi
 # Copy content from cami-uhr/scripts/vpn.sh to /home/pi/vpn.sh
 echo "Copying vpn.sh content..."
 sudo cp ./cami-uhr/scripts/vpn.sh /home/pi/vpn.sh
-
-# Make vpn.sh executable
 sudo chmod +x /home/pi/vpn.sh
 
 # Add cron jobs to root's crontab
@@ -86,6 +83,45 @@ echo "Adding cron jobs to ensure VPN stays connected..."
 (sudo crontab -l 2>/dev/null; echo "@reboot sleep 30 && /home/pi/vpn.sh >> /var/log/wg-check.log 2>&1") | sudo crontab -
 
 echo "✅ Cron jobs added to root's crontab."
+
+# Install Kiosk Mode packages
+echo "Installing kiosk mode dependencies..."
+sudo apt install --no-install-recommends xserver-xorg x11-xserver-utils xinit matchbox-window-manager chromium-browser -y
+sudo apt-get install gldriver-test -y
+sudo apt install unclutter -y
+
+# Create start-kiosk.sh
+echo "Creating start-kiosk.sh..."
+cat << EOF | sudo tee ~/start-kiosk.sh > /dev/null
+#!/bin/bash
+xset -dpms          # Disable display power management
+xset s off          # Disable screen saver
+xset s noblank      # Prevent blank screen
+
+# Hide cursor after 0.1s of inactivity
+unclutter -idle 0.1 -root &
+
+# Start Matchbox Window Manager
+matchbox-window-manager &
+
+# Start Chromium in kiosk mode
+chromium-browser --noerrdialogs --disable-infobars --kiosk "http://your-website.com"
+EOF
+
+# Make start-kiosk.sh executable
+sudo chmod +x ~/start-kiosk.sh
+
+# Configure auto-start on login
+echo "Configuring auto-start for kiosk mode..."
+cat << EOF | sudo tee ~/.bash_profile > /dev/null
+if [ -f ~/.bashrc ]; then
+    source ~/.bashrc
+fi
+
+if [[ -z \$DISPLAY ]] && [[ \$(tty) == /dev/tty1 ]]; then
+    startx ~/start-kiosk.sh
+fi
+EOF
 
 # Display current public IP
 echo "Checking public IP address..."
@@ -97,5 +133,5 @@ hostname -I
 
 
 echo "🎉 Installation completed successfully!"
-
+echo "Run: sudo raspi-config and go to System Options → Boot / Auto Login → Console Autologin."
 echo "Reboot your system to apply changes."
