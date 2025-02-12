@@ -17,6 +17,12 @@ sudo apt-get update && sudo apt-get upgrade -y
 echo "Installing required packages..."
 sudo apt-get install -y git nano tmux wireguard
 
+# Install Kiosk Mode packages
+echo "Installing kiosk mode dependencies..."
+sudo apt install --no-install-recommends xserver-xorg x11-xserver-utils xinit matchbox-window-manager chromium-browser -y
+sudo apt-get install gldriver-test -y
+sudo apt install unclutter -y
+
 echo "Installing NVM (Node Version Manager)..."
 curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.40.1/install.sh | bash
 
@@ -83,12 +89,6 @@ echo "Adding cron jobs to ensure VPN stays connected..."
 (sudo crontab -l 2>/dev/null; echo "@reboot sleep 30 && /home/pi/vpn.sh >> /var/log/wg-check.log 2>&1") | sudo crontab -
 
 echo "✅ Cron jobs added to root's crontab."
-
-# Install Kiosk Mode packages
-echo "Installing kiosk mode dependencies..."
-sudo apt install --no-install-recommends xserver-xorg x11-xserver-utils xinit matchbox-window-manager chromium-browser -y
-sudo apt-get install gldriver-test -y
-sudo apt install unclutter -y
 
 # Create start-kiosk.sh
 echo "Creating start-kiosk.sh..."
