@@ -6,7 +6,7 @@ echo "Updating system..."
 sudo apt-get update && sudo apt-get upgrade -y
 
 echo "Installing required packages..."
-sudo apt-get install -y git nano tmux wireguard resolvconf
+sudo apt-get install -y git nano tmux wireguard
 
 echo "Installing NVM (Node Version Manager)..."
 curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.40.1/install.sh | bash
