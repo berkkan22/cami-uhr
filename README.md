@@ -90,7 +90,7 @@ nano vpn.sh
 ```
 7. Change the privileges of the file
 ```bash
-chmode +x vpn.sh
+chmod +x vpn.sh
 ```
 8. Test if it works
 ```bash
