@@ -48,6 +48,12 @@ echo "✅ npm installed: $NPM_VERSION"
 echo "Cloning the project repository..."
 git clone https://github.com/berkkan22/cami-uhr.git
 
+# Change to project directory
+cd cami-uhr
+
+echo "Installing npm dependencies..."
+npm install
+
 # Copy the WireGuard configuration to /etc/wireguard/wg0.conf
 echo "Copying WireGuard configuration to /etc/wireguard/wg0.conf..."
 sudo cp "$WG_CONFIG_PATH" /etc/wireguard/wg0.conf
@@ -105,7 +111,7 @@ unclutter -idle 0.1 -root &
 matchbox-window-manager &
 
 # Start Chromium in kiosk mode
-chromium-browser --noerrdialogs --disable-infobars --kiosk "http://your-website.com"
+chromium-browser --noerrdialogs --disable-infobars --kiosk "http://localhost:5173"
 EOF
 
 # Make start-kiosk.sh executable
@@ -123,6 +129,16 @@ if [[ -z \$DISPLAY ]] && [[ \$(tty) == /dev/tty1 ]]; then
 fi
 EOF
 
+# Copy content from ./script/run_website.sh to run-prayer-monitor.sh
+echo "Copying run_website.sh content to run-prayer-monitor.sh..."
+sudo cp ./cami-uhr/scripts/run_website.sh /home/pi/run-prayer-monitor.sh
+sudo chmod +x /home/pi/run-prayer-monitor.sh
+
+# Add /home/pi/run-prayer-monitor.sh to .bash_profile
+echo "Adding run-prayer-monitor.sh to .bash_profile..."
+echo "" >> ~/.bash_profile
+echo "/home/pi/run-prayer-monitor.sh" >> ~/.bash_profile
+
 # Display current public IP
 echo "Checking public IP address..."
 curl -s http://whatismyip.akamai.com && echo
@@ -131,7 +147,8 @@ curl -s http://whatismyip.akamai.com && echo
 echo "Checking local IP address..."
 hostname -I
 
-
 echo "🎉 Installation completed successfully!"
 echo "Run: sudo raspi-config and go to System Options → Boot / Auto Login → Console Autologin."
+
+
 echo "Reboot your system to apply changes."
