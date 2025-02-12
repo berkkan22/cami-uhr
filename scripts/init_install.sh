@@ -48,15 +48,6 @@ echo "✅ npm installed: $NPM_VERSION"
 echo "Cloning the project repository..."
 git clone https://github.com/berkkan22/cami-uhr.git
 
-# Change to project directory
-cd cami-uhr
-
-echo "Installing npm dependencies..."
-npm install
-
-# Back to the home directory
-cd
-
 # Copy the WireGuard configuration to /etc/wireguard/wg0.conf
 echo "Copying WireGuard configuration to /etc/wireguard/wg0.conf..."
 sudo cp "$WG_CONFIG_PATH" /etc/wireguard/wg0.conf
@@ -152,6 +143,8 @@ npm install
 # Copy .env.example to .env
 echo "Copying .env.example to .env..."
 cp .env.example .env
+
+cd
 
 # Display current public IP
 echo "Checking public IP address..."
