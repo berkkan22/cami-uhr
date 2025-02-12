@@ -155,15 +155,35 @@ echo "Checking local IP address..."
 hostname -I
 
 echo "🎉 Installation completed successfully!"
-echo "Please add the URLs to the .env file."
-echo "Please add date_data.json and time_data.json to the project directory and update the config as needed."
+echo ""
 
-echo "Run: sudo raspi-config and go to System Options → Boot / Auto Login → Console Autologin."
-echo "Reboot your system to apply changes."
+# Configuration Steps
+echo "1️⃣ Configure the environment:"
+echo "   - Add the required URLs to the .env file."
+echo "   - Place 'date_data.json' and 'time_data.json' in the project directory and update the config as needed."
+echo ""
 
-# Additional instructions for WiFi connection
-echo "To add a WiFi connection from the cami, use the following command:"
-echo "sudo nmcli dev wifi connect \"SSID\" password \"password\""
-echo "Replace \"SSID\" with the name of your WiFi network and \"password\" with the WiFi password."
-echo "To list all available networks, you can use the following command:"
-echo "sudo iw dev wlan0 scan | grep SSID:"
+# System Configuration
+echo "2️⃣ Set up system auto-login:"
+echo "   - Run: sudo raspi-config"
+echo "   - Navigate to: System Options → Boot / Auto Login → Console Autologin"
+echo "   - Reboot your system to apply changes."
+echo ""
+
+# WiFi Setup (if needed)
+echo "3️⃣ Connect to WiFi (optional):"
+echo "   - To connect to a WiFi network, use:"
+echo "     sudo nmcli dev wifi connect \"SSID\" password \"password\""
+echo "     (Replace \"SSID\" and \"password\" accordingly)"
+echo "   - To list available networks, use:"
+echo "     sudo iw dev wlan0 scan | grep SSID:"
+echo ""
+
+# Project-Specific Tasks
+echo "4️⃣ Additional project setup:"
+echo "   - Create a new branch for the mosque and make UI adjustments in that branch."
+echo "   - Duplicate a hadith and use the identifier specified in 'config.ts'."
+echo "   - Create a user in Authentik and assign them to the group defined in 'config.ts'."
+echo ""
+
+echo "✅ All set! Follow the steps above and reboot if required."
