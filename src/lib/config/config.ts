@@ -1,18 +1,18 @@
 
 export const config = {
   header: true,
-  headerNames: false,
-  dateOneLiner: false,
-  camiName: 'Osman Bey',
+  headerNames: true,
+  dateOneLiner: true,
+  camiName: 'DITIB Lüneburg Merkez',
   prayerJson: '/time_data.json',
   dateJson: '/date_data.json',
   quotes: true,
   ditib: true,
-  showSabahNamazi: false,
+  showSabahNamazi: true,
   showAnnouncements: true,
-  changeIslamicDayOnMidnight: false,
+  changeIslamicDayOnMidnight: true,
 
-  camiNameIdentifier: 'test-mosque',
+  camiNameIdentifier: 'lueneburg-merkez-mosque',
   apiUrl: import.meta.env.VITE_API_URL,
   wsUrl: import.meta.env.VITE_WS_URL,
 }

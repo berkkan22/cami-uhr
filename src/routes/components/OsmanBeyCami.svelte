@@ -109,8 +109,8 @@
 
 	.ditib-logo > img {
 		position: absolute;
-		bottom: 0;
-		right: 0;
+		bottom: 20px;
+		right: 50px;
 		margin: 14px;
 		width: 200px;
 		height: auto;
@@ -133,12 +133,13 @@
 		justify-content: center;
 		align-items: center;
 		flex-direction: column;
-		margin-left: 50px;
-		margin-right: 100px;
+		width: 35%;
+		/* margin-left: 50px;
+		margin-right: 100px; */
 	}
 
 	.header-title > img {
-		width: 90%;
+		width: 50%;
 		height: auto;
 	}
 
