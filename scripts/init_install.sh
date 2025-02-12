@@ -56,6 +56,9 @@ sudo rm "$WG_CONFIG_PATH"
 # Set correct permissions for the WireGuard configuration file
 sudo chmod 600 /etc/wireguard/wg0.conf
 
+# Install resolvconf
+sudo apt install resolvconf -y
+
 # Check if wg0 is already up
 if sudo wg show wg0 > /dev/null 2>&1; then
     echo "✅ WireGuard VPN is already active."
@@ -80,7 +83,7 @@ sudo chmod +x /home/pi/vpn.sh
 # Add cron jobs to root's crontab
 echo "Adding cron jobs to ensure VPN stays connected..."
 (sudo crontab -l 2>/dev/null; echo "*/5 * * * * /home/pi/vpn.sh >> /var/log/wg-check.log 2>&1") | sudo crontab -
-(sudo crontab -l 2>/dev/null; echo "@reboot /home/pi/vpn.sh >> /var/log/wg-check.log 2>&1") | sudo crontab -
+(sudo crontab -l 2>/dev/null; echo "@reboot sleep 30 && /home/pi/vpn.sh >> /var/log/wg-check.log 2>&1") | sudo crontab -
 
 echo "✅ Cron jobs added to root's crontab."
 
