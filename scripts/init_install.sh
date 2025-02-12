@@ -139,6 +139,17 @@ echo "Adding run-prayer-monitor.sh to .bash_profile..."
 echo "" >> ~/.bash_profile
 echo "/home/pi/run-prayer-monitor.sh" >> ~/.bash_profile
 
+# Change to project directory
+cd cami-uhr
+
+# Install npm dependencies
+echo "Installing npm dependencies..."
+npm install
+
+# Copy .env.example to .env
+echo "Copying .env.example to .env..."
+cp .env.example .env
+
 # Display current public IP
 echo "Checking public IP address..."
 curl -s http://whatismyip.akamai.com && echo
@@ -148,7 +159,9 @@ echo "Checking local IP address..."
 hostname -I
 
 echo "🎉 Installation completed successfully!"
+echo "Please add the URLs to the .env file."
+echo "Please add date_data.json and time_data.json to the project directory and update the config as needed."
+
 echo "Run: sudo raspi-config and go to System Options → Boot / Auto Login → Console Autologin."
-
-
 echo "Reboot your system to apply changes."
+
