@@ -88,6 +88,11 @@ echo "✅ Cron jobs added to root's crontab."
 echo "Checking public IP address..."
 curl -s http://whatismyip.akamai.com && echo
 
+# Display current local IP
+echo "Checking local IP address..."
+hostname -I
+
+
 echo "🎉 Installation completed successfully!"
 
 echo "Reboot your system to apply changes."
