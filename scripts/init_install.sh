@@ -130,8 +130,8 @@ sudo chmod +x /home/pi/run-prayer-monitor.sh
 
 # Add /home/pi/run-prayer-monitor.sh to .bash_profile
 echo "Adding run-prayer-monitor.sh to .bash_profile..."
-echo "" >> ~/.bash_profile
-echo "/home/pi/run-prayer-monitor.sh" >> ~/.bash_profile
+echo "" | sudo tee -a /home/pi/.bash_profile > /dev/null
+echo "/home/pi/run-prayer-monitor.sh" | sudo tee -a /home/pi/.bash_profile > /dev/null
 
 # Change to project directory
 cd cami-uhr
@@ -161,3 +161,9 @@ echo "Please add date_data.json and time_data.json to the project directory and 
 echo "Run: sudo raspi-config and go to System Options → Boot / Auto Login → Console Autologin."
 echo "Reboot your system to apply changes."
 
+# Additional instructions for WiFi connection
+echo "To add a WiFi connection from the cami, use the following command:"
+echo "sudo nmcli dev wifi connect \"SSID\" password \"password\""
+echo "Replace \"SSID\" with the name of your WiFi network and \"password\" with the WiFi password."
+echo "To list all available networks, you can use the following command:"
+echo "sudo iw dev wlan0 scan | grep SSID:"
