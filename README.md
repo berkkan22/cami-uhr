@@ -38,91 +38,69 @@ Once verified, you can host the built files on any web server or deployment plat
 
 ### Install on Raspberry Pi (Kiosk Mode)
 
-To deploy this project on a Raspberry Pi and run it in kiosk mode. It consists of 3 Steps. First install the project it self. Second step setup the kiosk mode. Third step connect to a VPN instance (e.g. wireguard) so you can ssh into the server without port forwarding.
+To deploy this project on a Raspberry Pi and run it in kiosk mode. 
 
-#### 1. Install the project
+#### Prerequisites
 
-1. **Clone the repository:**
+- Install Raspbian 64-bit **Lite** on an SD card.
+- Plug in the Raspberry Pi and connect it to power.
 
-```bash
-git clone https://github.com/berkkan22/cami-uhr.git
-cd prayer-time-display
+#### Steps
+
+1. **Scan the Network for the Device and Get the IP of the Raspberry Pi**
+
+Use the following command to scan the network and find the IP address of the Raspberry Pi:
+
+```sh
+sudo nmap -sn 192.168.1.0/24 | grep raspberrypi
 ```
 
-2. **Install dependencies:**
+The IP address is the local IP address of the Raspberry Pi on the network.
+
+SSH to the Raspberry Pi
+
+Use the following command to SSH into the Raspberry Pi:
 
 ```bash
-npm install
+ssh pi@IP
 ```
 
-3. **Run the website**
+Replace IP with the actual IP address of the Raspberry Pi.
+
+3. Run the Installation Script
+
+Use the following command to run the installation script:
+
 
 ```bash
-npm run dev
+curl -o- https://raw.githubusercontent.com/berkkan22/cami-uhr/refs/heads/main/scripts/init_install.sh | bash
 ```
 
-#### 2. Setup Kiosk mode 
+4. Follow the Output Instructions
 
-1. **Setup Kisok mode on Raspberry Pi**
-Follow this guide https://www.techox.de/blog/einrichten-des-kiosk-modus-raspberry-pi/
+Follow the instructions provided by the output of the installation script.
 
-2. **Done**
-Now if you plug in the raspi into the TV it should automaticly start in kiosk mode and show the prayer times
+5. Create a User in Authentik
 
-#### 3. Setup VPN connection with wireguard
-I assume you have a running wireguard instance on a server that you can connect to.
+Create a user in Authentik with the appropriate group.
 
-1. Install wireguard on the client (raspi) in order to connect to wireguard
-```bash
-sudo apt install wireguard resolvconf
-```
+6. Add Quotes to the Database for the Mosque
 
-2. Create a new client and download the config file
-3. Rename the config file to `wg0.conf`
-4. Move the file to `/etc/wireguard/`
-5. Test if wireguard connection works
-```bash
-sudo wg-quick up wg0
-```
-6. Create a file `vpn.sh` and copy the content from `scripts\vpn.sh` into the newly created file
-```bash
-nano vpn.sh
-```
-7. Change the privileges of the file
-```bash
-chmod +x vpn.sh
-```
-8. Test if it works
-```bash
-./vpn.sh
-```
-Should get a similar output like this
-```bash
-[#] ip -6 rule add table main suppress_prefixlength 0
-[#] nft -f /dev/fd/63
-[#] ip -4 route add 0.0.0.0/0 dev wg0 table 51820
-[#] ip -4 rule add not fwmark 51820 table 51820
-[#] ip -4 rule add table main suppress_prefixlength 0
-[#] sysctl -q net.ipv4.conf.all.src_valid_mark=1
-[#] nft -f /dev/fd/63
-WireGuard VPN activated successfully.
-VPN is connected.
-WireGuard VPN is now active and connected.
-```
+Add some quotes to the database for the mosque.
 
-9. Create a cron job that check if the VPN the connection every 5 min incase the internet connection brakes then reconnect to it
-```bash
-sudo crontab -e
-```
-```bash
-*/5 * * * * /home/pi/vpn.sh >> /var/log/wg-check.log 2>&1
-```
-This will execute the script every 5 min.
+- Create a New Branch for the Mosque
 
-10. Check which public IP address you have
-```bash
-curl http://whatismyip.akamai.com
-```
+Create a new branch for the mosque and make UI adjustments in that branch.
+
+- Duplicate a Hadith
+
+Duplicate a hadith and use the given name in the config.ts as the identifier.
+
+Create a User in Authentik
+
+- Create a user in Authentik with a group that is used as the identifier in the config.ts.
+
+
 
 ## Environment Variables
 
@@ -172,91 +150,7 @@ This project is used by the following mosques:
 
 
 
----
-
-update:
-sudo apt-get update
-sudo apt-get upgrade -y
-
-sudo apt-get install git -y
-sudo apt-get install tmux -y
-
-bis hier hin alles gut 
-
-install node:
-curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.40.0/install.sh | bash
-
-export NVM_DIR="$HOME/.nvm"
-[ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
-[ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"  # This loads nvm bash_completion
-
-nvm install 20
-node -v
-npm -v
-
-git clone https://github.com/berkkan22/cami-uhr.git
-
-cd cami-uhr
-npm install
-
-
-setup kiosk mode:
-sudo apt-get install --no-install-recommends xserver-xorg x11-xserver-utils xinit openbox xdotool
-
-sudo apt-get install --no-install-recommends chromium-browser
-
-sudo nano /etc/xdg/openbox/autostart
-
-xset -dpms            # turn off display power management system
-xset s noblank        # turn off screen blanking
-xset s off            # turn off screen saver
-
-# Remove exit errors from the config files that could trigger a warning
-sed -i 's/"exited_cleanly":false/"exited_cleanly":true/' ~/.config/chromium/'Local State'
-sed -i 's/"exited_cleanly":false/"exited_cleanly":true/; s/"exit_type":"[^"]\+"/"exit_type":"Normal"/' ~/.config/chromium/Default/Preferences
-
-# Run Chromium in kiosk mode
-chromium-browser  --noerrdialogs --check-for-update-interval=31536000 --disable-infobars --kiosk $KIOSK_URL &
-
-sudo nano /etc/xdg/openbox/environment
-
-export KIOSK_URL=https://DEINE_HA_URL
-
-sudo nano ~/.bash_profile
-[[ -z $DISPLAY && $XDG_VTNR -eq 1 ]] && startx -- -nocursor
-
-
-
- nano run-prayer-monitor.sh
-
- modify the script to execute npm install if needed 
-
- #!/bin/bash
-
-# Variables
-SESSION_NAME="prayer_times"
-COMMAND="source ~/.bashrc && cd /home/pi/cami-uhr && npm run dev"
-
-# Check if tmux session exists
-tmux has-session -t $SESSION_NAME 2>/dev/null
-
-if [ $? != 0 ]; then
-  # If session doesn't exist, create a new one and run the command
-  tmux new-session -d -s $SESSION_NAME
-  tmux send-keys -t $SESSION_NAME "$COMMAND" C-m
-else
-  # If session exists, send the command to the existing session
-  tmux send-keys -t $SESSION_NAME "$COMMAND" C-m
-fi
-
-# Attach to the session (optional)
-# tmux attach -t $SESSION_NAME
-
-chmod +x run-prayer-monitor.sh
-
-/home/pi/run-prayer-monitor.sh
-
-in .bash_profile 
+--
 
 
 sudo iw dev wlan0 scan | grep SSID:
