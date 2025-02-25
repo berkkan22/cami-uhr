@@ -10,6 +10,7 @@ export const config = {
   ditib: true,
   showSabahNamazi: false,
   showAnnouncements: true,
+  changeIslamicDayOnMidnight: false,
 
   camiNameIdentifier: 'test-mosque',
   apiUrl: import.meta.env.VITE_API_URL,

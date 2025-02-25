@@ -68,7 +68,7 @@
 				currentPayerTime = checkWhichPrayerTime(currentPrayer, currentDate);
 
 				// check if it is aksam then change the hijri date to the next day
-				if (currentPayerTime === 'aksam') {
+				if (currentPayerTime === 'aksam' && !config.changeIslamicDayOnMidnight) {
 					currentPrayer.hicriDate = getTomorrowHijriDate(datesRaw);
 				}
 
