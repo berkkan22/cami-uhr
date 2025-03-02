@@ -10,7 +10,7 @@ services:
     ports:
       - "12825:80"
     networks:
-      project_net::
+      project_net:
       intern:
     restart: unless-stopped
 
@@ -23,12 +23,12 @@ services:
     ports:
       - "31428:3000"
     networks:
-      project_net::
+      project_net:
     restart: unless-stopped
 
 
 networks:
-  project_net::
+  project_net:
     external: true
   intern:
     external: true
