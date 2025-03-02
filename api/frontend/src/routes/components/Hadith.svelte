@@ -9,6 +9,7 @@
 	let hadithTurkisch = '';
 	let quelle = '';
 	let hadithList: any[] = [];
+	let deleteOldHadith = -1;
 
 	let isLoading: boolean = false;
 
@@ -32,6 +33,18 @@
 
 		try {
 			const { validAccessToken } = await getValidAccessToken($page.data.session);
+			if (deleteOldHadith !== -1) {
+				console.log('deleting old hadith with id: ', deleteOldHadith);
+				await fetch(`${config.apiUrl}/deleteHadith`, {
+					method: 'POST',
+					headers: {
+						'Content-Type': 'application/json',
+						'X-Token': `${validAccessToken}`
+					},
+					body: JSON.stringify({ id: deleteOldHadith })
+				});
+				deleteOldHadith = -1;
+			}
 			const response = await fetch(`${config.apiUrl}/submitHadith`, {
 				method: 'POST',
 				headers: {
@@ -101,6 +114,31 @@
 		hadithTurkisch = '';
 		quelle = '';
 	}
+
+	function editHadith(hadith) {
+		hadithDeutsch = hadith.deutsch;
+		hadithTurkisch = hadith.turkisch;
+		quelle = hadith.quelle;
+		deleteOldHadith = hadith.id;
+	}
+
+	async function deleteHadith(hadith) {
+		if (!confirm('Hadith löschen?')) {
+			return;
+		}
+
+		const { validAccessToken } = await getValidAccessToken($page.data.session);
+
+		await fetch(`${config.apiUrl}/deleteHadith`, {
+			method: 'POST',
+			headers: {
+				'Content-Type': 'application/json',
+				'X-Token': `${validAccessToken}`
+			},
+			body: JSON.stringify({ id: hadith.id })
+		});
+		showAllHadith();
+	}
 </script>
 
 {#if isLoading}
@@ -133,9 +171,15 @@
 			<ul>
 				{#each hadithList as hadith}
 					<li>
-						<p><strong>Deutsch:</strong> {hadith.deutsch}</p>
-						<p><strong>Türkisch:</strong> {hadith.turkisch}</p>
-						<p><strong>Quelle:</strong> {hadith.quelle}</p>
+						<div class="content">
+							<p><strong>Deutsch:</strong> {hadith.deutsch}</p>
+							<p><strong>Türkisch:</strong> {hadith.turkisch}</p>
+							<p><strong>Quelle:</strong> {hadith.quelle}</p>
+						</div>
+						<div class="action">
+							<button class="edit-button" on:click={() => editHadith(hadith)}> ✏️ </button>
+							<button class="delete-button" on:click={() => deleteHadith(hadith)}> 🗑 </button>
+						</div>
 					</li>
 				{/each}
 			</ul>
@@ -217,6 +261,10 @@
 		padding: 15px;
 		border: 1px solid #ddd;
 		border-radius: 4px;
+		display: flex;
+		flex-direction: row;
+		justify-content: space-between;
+		align-items: center;
 	}
 
 	li p {
@@ -225,6 +273,19 @@
 
 	li p strong {
 		color: #333;
+	}
+
+	.edit-button,
+	.delete-button {
+		background: none;
+		border: none;
+		cursor: pointer;
+		font-size: 1.2em;
+	}
+
+	.delete-button {
+		color: red;
+		font-weight: bold;
 	}
 
 	.loading-overlay {

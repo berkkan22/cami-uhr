@@ -310,6 +310,42 @@ async def submit_data(request: Request, api_key: str = Depends(get_api_key_http)
         )
 
 
+class DeleteHadithRequest(BaseModel):
+    id: int
+
+
+@app.post("/deleteHadith")
+async def delete_hadith(request: DeleteHadithRequest, api_key: str = Depends(get_api_key_http)):
+    try:
+        hadith_id = request.id
+        print(f"Data received: {hadith_id}")
+
+        # Connect to PostgreSQL
+        config = load_config()
+        conn = psycopg2.connect(**config)
+        print("Connected to PostgreSQL database")
+
+        cursor = conn.cursor()
+
+        # Delete the hadith from the database
+        cursor.execute(
+            "DELETE FROM hadiths WHERE id = %s",
+            (hadith_id,)
+        )
+        conn.commit()
+
+        cursor.close()
+        conn.close()
+
+        return {"message": "Hadith deleted successfully"}
+    except Exception as e:
+        logger.error(f"Error deleting hadith: {e}")
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail="Error deleting hadith"
+        )
+
+
 @app.post("/randomHadith")
 async def get_random_hadith(request: Request):
     try:
@@ -371,7 +407,7 @@ async def get_all_hadiths(api_key: str = Depends(get_api_key_http)):
 
         # Query to get all hadiths
         cursor.execute(
-            "SELECT deutsch, turkisch, quelle FROM hadiths WHERE mosque = %s",
+            "SELECT id, deutsch, turkisch, quelle FROM hadiths WHERE mosque = %s",
             (mosque,)
         )
         hadiths = cursor.fetchall()
@@ -379,7 +415,7 @@ async def get_all_hadiths(api_key: str = Depends(get_api_key_http)):
         cursor.close()
         conn.close()
 
-        return {"hadiths": [{"deutsch": h[0], "turkisch": h[1], "quelle": h[2]} for h in hadiths]}
+        return {"hadiths": [{"id": h[0], "deutsch": h[1], "turkisch": h[2], "quelle": h[3]} for h in hadiths]}
     except Exception as e:
         logger.error(f"Error getting all hadiths: {e}")
         raise HTTPException(
