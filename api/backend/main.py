@@ -3,6 +3,7 @@ import os
 import jwt
 import psycopg2
 from pydantic import BaseModel
+from logger_config import get_logger
 from config import load_config
 from fastapi.security.api_key import APIKeyHeader
 from fastapi.middleware.cors import CORSMiddleware
@@ -37,13 +38,7 @@ def check_prerequisites():
         return False
 
 
-logging.basicConfig(
-    level=logging.INFO,
-    format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
-    datefmt='%Y-%m-%d %H:%M:%S', filename='logs.log'
-)
-
-logger = logging.getLogger(__name__)
+logger = get_logger()
 
 
 logger.info("App started")
@@ -222,6 +217,8 @@ async def refresh_token(request: TokenRefreshRequest):
 async def check_user_login(api_key: str = Depends(get_api_key_http)):
     decode = decode_jwt(api_key)
     group = decode.get("groups")
+    mosque = getMosque(api_key)
+    logger.info(f"checkUserLogin triggered by mosque: {mosque}")
     if ("first-login" in group):
         try:
             load_dotenv()
@@ -273,6 +270,7 @@ async def submit_data(request: Request, api_key: str = Depends(get_api_key_http)
         turkisch = data.get("turkisch")
         quelle = data.get("quelle")
         mosque = getMosque(api_key)
+        logger.info(f"submitHadith triggered by mosque: {mosque}")
 
         if not all([deutsch, turkisch, quelle]):
             logger.warning("Missing data in request")
@@ -337,6 +335,9 @@ async def delete_hadith(request: DeleteHadithRequest, api_key: str = Depends(get
         cursor.close()
         conn.close()
 
+        mosque = getMosque(api_key)
+        logger.info(f"deleteHadith triggered by mosque: {mosque}")
+
         return {"message": "Hadith deleted successfully"}
     except Exception as e:
         logger.error(f"Error deleting hadith: {e}")
@@ -351,6 +352,7 @@ async def get_random_hadith(request: Request):
     try:
         data = await request.json()
         mosque = data.get("mosque")
+        logger.info(f"randomHadith triggered by mosque: {mosque}")
 
         # Connect to PostgreSQL
         config = load_config()
@@ -362,7 +364,7 @@ async def get_random_hadith(request: Request):
 
         # Query to get a random hadith
         cursor.execute(
-            "SELECT deutsch, turkisch, quelle FROM hadiths WHERE mosque = %s ORDER BY RANDOM() LIMIT 1",
+            "SELECT deutsch, turkisch, quelle, id FROM hadiths WHERE mosque = %s ORDER BY RANDOM() LIMIT 1",
             (mosque,)
         )
         hadith = cursor.fetchone()
@@ -371,6 +373,8 @@ async def get_random_hadith(request: Request):
         conn.close()
 
         if hadith:
+            logger.info(
+                f"Got random hadith id {hadith[3]} for mosque {mosque}")
             return {"deutsch": hadith[0], "turkisch": hadith[1], "quelle": hadith[2]}
         else:
             logger.warning("No hadith found")
@@ -396,6 +400,7 @@ async def get_random_hadith(request: Request):
 async def get_all_hadiths(api_key: str = Depends(get_api_key_http)):
     try:
         mosque = getMosque(api_key)
+        logger.info(f"getAllHadith triggered by mosque: {mosque}")
 
         # Connect to PostgreSQL
         config = load_config()
@@ -456,6 +461,8 @@ async def get_announcements(request: Request):
                     detail="Missing mosque in request"
                 )
 
+        logger.info(f"get_announcements triggered by mosque: {mosque}")
+
         # print(f"Data received: {mosque}")
         # Connect to PostgreSQL
         config = load_config()
@@ -512,6 +519,9 @@ async def delete_announcement(request: DeleteAnnouncementRequest, api_key: str =
         cursor.close()
         conn.close()
 
+        mosque = getMosque(api_key)
+        logger.info(f"deleteAnnouncement triggered by mosque: {mosque}")
+
         return {"message": "Announcement deleted successfully"}
     except Exception as e:
         logger.error(f"Error deleting announcement: {e}")
@@ -536,7 +546,7 @@ class ListenWebsocket:
 @app.websocket("/ws-listen")
 async def websocket_listen_endpoint(websocket: WebSocket, mosque: str):
     await websocket.accept()
-    print("Client connected to listen")
+    logger.info(f"Client connected to listen for mosque: {mosque}")
     listenWebsocket = ListenWebsocket(websocket=websocket, mosque=mosque)
     listen_connections.append(listenWebsocket)
     try:
@@ -546,15 +556,13 @@ async def websocket_listen_endpoint(websocket: WebSocket, mosque: str):
             await websocket.send_text(f"Echo: {data}")
     except WebSocketDisconnect:
         listen_connections.remove(listenWebsocket)
-        logger.info(f"Length of the listen_connection): {
-                    len(listen_connections)}")
-        logger.info("Client disconnected from listen")
+        logger.info(f"Client disconnected from listen for mosque: {mosque}")
 
 
 @app.websocket("/ws")
 async def websocket_endpoint(websocket: WebSocket, token: str = Depends(get_api_key_ws)):
     await websocket.accept()
-    print("Client connected")
+    logger.info("Client connected")
     myWebsocket = MyWebsocket(websocket=websocket, token=token)
     connections.append(myWebsocket)
     try:

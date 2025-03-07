@@ -30,3 +30,4 @@ __pycache__
 
 /api/backend/database.ini
 /api/backend/logs.log
+/api/backend/app.log
