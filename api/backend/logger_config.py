@@ -5,10 +5,15 @@ import os
 class CustomLogger(logging.Logger):
     def __init__(self, name="backend", level=logging.INFO):
         super().__init__(name, level)
+        
+        # Ensure the log directory exists
+        log_directory = "logs"
+        if not os.path.exists(log_directory):
+            os.makedirs(log_directory)
 
         # Create handlers
         console_handler = logging.StreamHandler()
-        file_handler = logging.FileHandler("app.log")
+        file_handler = logging.FileHandler("logs/logfile.log")
 
         # Custom format to include filename, function name, and line number
         log_format = "%(asctime)s - %(levelname)s - [%(filename)s:%(funcName)s:%(lineno)d] - %(message)s"
