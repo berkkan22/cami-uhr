@@ -17,12 +17,32 @@
 	let isLoading: boolean = false;
 	let announcements: any[] = [];
 	let deleteOldAnnouncement = -1;
+	let slidingTime = 0;
 
 	onMount(async () => {
 		const { validAccessToken } = await getValidAccessToken($page.data.session);
 
 		socket = connectToWebsocket(`${config.wsUrl}/ws?token=${validAccessToken}`);
+		slidingTime = await getSlidingTime();
+		// await tick();
 	});
+
+	async function getSlidingTime() {
+		const { validAccessToken } = await getValidAccessToken($page.data.session);
+		const response = await fetch(`${config.apiUrl}/slidingTime`, {
+			method: 'POST',
+			body: JSON.stringify({ token: validAccessToken })
+		});
+
+		const data = await response.json();
+		console.log(data);
+
+		if (data && data['slidingTime'] !== undefined && data['slidingTime'] !== null) {
+			return data['slidingTime'];
+		}
+
+		return 0;
+	}
 
 	async function handleSubmit(event: Event) {
 		const { validAccessToken } = await getValidAccessToken($page.data.session);
@@ -106,6 +126,41 @@
 		}
 	}
 
+	async function handleSliderTime(action: string) {
+		if (action === 'minus') {
+			if (slidingTime > 1) {
+				slidingTime--;
+			}
+		} else if (action === 'plus') {
+			if (slidingTime < 100) {
+				slidingTime++;
+			}
+		}
+		socket = await checkWebsocketConnection(socket, $page.data.session);
+
+		const data = {
+			type: 'slidingTime',
+			sliding_time: slidingTime
+		};
+
+		// console.log(data);
+		socket.send(JSON.stringify(data));
+		socket.onmessage = function (event) {
+			if (event.data.includes('successful')) {
+				toast.success('Sliding time submitted successfully.', {
+					position: 'bottom-center'
+				});
+				clearInputs();
+			} else if (event.data.includes('failed') || event.data.includes('Error')) {
+				toast.error('Failed to submit sliding time.', {
+					position: 'bottom-center'
+				});
+			}
+			console.log('Message from server ', event.data);
+			isLoading = false;
+		};
+	}
+
 	function editAnnouncement(announcement) {
 		deutsch = announcement[1];
 		tuerkisch = announcement[2];
@@ -140,6 +195,22 @@
 		<div>
 			<label for="endtime">End Time</label>
 			<input type="datetime-local" id="endtime" name="endtime" bind:value={endtime} />
+		</div>
+		<div>
+			<label for="slidingTime">Sliding Time</label>
+			<div class="slider-container">
+				<button type="button" class="slider-button" on:click={() => handleSliderTime('minus')}
+					>-</button
+				>
+				<p class="nu">
+					{#key slidingTime}
+						{slidingTime}
+					{/key}
+				</p>
+				<button type="button" class="slider-button" on:click={() => handleSliderTime('plus')}
+					>+</button
+				>
+			</div>
 		</div>
 		<button type="submit" on:click={handleSubmit}>Submit</button>
 		<button class="second" on:click={showAllAnnouncements}>Zeige alle Ankündigungen</button>
@@ -212,6 +283,26 @@
 
 	button:hover {
 		background-color: #0056b3;
+	}
+
+	.slider-container {
+		display: flex;
+		align-items: center;
+	}
+
+	.slider-button {
+		padding: 4px 15px;
+		border: none;
+		border-radius: 4px;
+		background-color: #007bff;
+		color: white;
+		font-size: 1em;
+		cursor: pointer;
+	}
+
+	.nu {
+		padding: 16px;
+		font-size: 1em;
 	}
 
 	.loading-overlay {

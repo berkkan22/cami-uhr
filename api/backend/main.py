@@ -191,7 +191,7 @@ class TokenRefreshRequest(BaseModel):
 
 @app.post("/refresh-token")
 async def refresh_token(request: TokenRefreshRequest):
-    logger.info(f"Refreshing token: {request.refresh_token}")
+    logger.info(f"Refreshing token:")
     try:
         load_dotenv()
 
@@ -206,7 +206,7 @@ async def refresh_token(request: TokenRefreshRequest):
             logger.error(f"Failed to refresh token error: {response.json()}")
             raise HTTPException(status_code=response.status_code,
                                 detail=f"Failed to refresh token error: {response.json()}")
-        logger.info(f"Token refreshed: {response.json()}")
+        logger.info(f"Token refreshed!")
         return response.json()
     except Exception as e:
         logger.error(f"Failed to refresh token error: {e}, {response.json()}")
@@ -436,6 +436,60 @@ async def get_api_key_ws(token: str = None):
         return token
 
 
+@app.post("/slidingTime")
+async def get_slidingTime(request: Request):
+    try:
+        data = await request.json()
+        mosque = data.get("mosque")
+        if not mosque:
+            # print("Missing mosque in request")
+            token = data.get("token")
+            if not token:
+                raise HTTPException(
+                    status_code=status.HTTP_400_BAD_REQUEST,
+                    detail="Missing token in request"
+                )
+            logger.warning("Missing mosque in request")
+            decode = decode_jwt(token)
+            group = decode.get("groups")
+            for g in group:
+                if "mosque" in g:
+                    mosque = g
+            if not mosque:
+                raise HTTPException(
+                    status_code=status.HTTP_400_BAD_REQUEST,
+                    detail="Missing mosque in request"
+                )
+
+        # print(f"Data received: {mosque}")
+        # Connect to PostgreSQL
+        config = load_config()
+
+        conn = psycopg2.connect(**config)
+        print("Connected to PostgreSQL database")
+
+        cursor = conn.cursor()
+
+        # Query to get siding time
+        cursor.execute(
+            "SELECT * FROM slidingTime WHERE mosque = %s",
+            (mosque,)
+        )
+        slidingTime = cursor.fetchone()
+        print(slidingTime)
+        cursor.close()
+        conn.close()
+
+        return {"slidingTime": slidingTime[1]}
+    except Exception as e:
+        logger.error(f"Error getting siding time: {e}")
+        print(f"Error getting siding time: {e}")
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail="Error getting siding time"
+        )
+
+
 @app.post("/announcements")
 async def get_announcements(request: Request):
     try:
@@ -622,7 +676,58 @@ async def websocket_endpoint(websocket: WebSocket, token: str = Depends(get_api_
                                 logger.info(f"Length of the listen_connection): {
                                             len(listen_connections)}")
                                 await websocket.send_text(f"Connection to mosque {mosque} is not open")
+                elif (json_data.get("type") == "slidingTime"):
+                    await websocket.send_text(f"You send this Announcement: {json_data}")
 
+                    try:
+                        mosque = getMosque(token)
+
+                        # Connect to PostgreSQL
+                        config = load_config()
+
+                        conn = psycopg2.connect(**config)
+                        print("Connected to PostgreSQL database")
+
+                        cursor = conn.cursor()
+
+                        cursor.execute(
+                            """
+                            INSERT INTO slidingTime (sliding_time, mosque)
+                            VALUES (%s, %s)
+                            ON CONFLICT (mosque)
+                            DO UPDATE SET sliding_time = EXCLUDED.sliding_time
+                            """,
+                            (
+                                json_data.get("sliding_time"),
+                                mosque
+                            )
+                        )
+                        conn.commit()
+
+                        cursor.close()
+                        conn.close()
+
+                        await websocket.send_text(f"Saving sliding_time to DB done")
+
+                    except Exception as e:
+                        logger.error(f"Error saving sliding_time to DB: {e}")
+                        await websocket.send_text(f"Error saving sliding_time to DB {e}")
+
+                    for connection in listen_connections:
+                        if connection.mosque == mosque:
+                            if connection.websocket.application_state == WebSocketState.CONNECTED:
+                                logger.info(
+                                    f"Sending sliding_time to mosque: {mosque}")
+                                await connection.websocket.send_text(f"{data}")
+                                logger.info("Done")
+                                await websocket.send_text(f"Send sliding_time to mosque: {mosque} successful")
+
+                            else:
+                                logger.warning(f"Connection to mosque {
+                                               mosque} is not open")
+                                logger.info(f"Length of the listen_connection): {
+                                            len(listen_connections)}")
+                                await websocket.send_text(f"Connection to mosque {mosque} is not open")
                 else:
                     logger.error(f"Invalid type: {json_data}")
                     await websocket.send_text(f"Invalid type: {json_data}")
