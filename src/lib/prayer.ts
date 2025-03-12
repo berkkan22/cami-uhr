@@ -1,4 +1,6 @@
 import { config } from "./config/config";
+import fs from "fs";
+
 
 
 export interface Prayers {
@@ -195,32 +197,67 @@ export function convertToQuotes(quotes): Quote[] {
   });
 }
 
-export async function getRandomQuote(): any {
-  try {
-    const response = await fetch(`${config.apiUrl}/randomHadith`, {
-      method: 'POST',
-      body: JSON.stringify({ mosque: config.camiNameIdentifier }),
-    });
+export async function getRandomQuote(retries = 10): Promise<any> {
+  let retryDelay = 2 * 1000; // Start with 2 seconds
 
-    if (!response.ok) {
-      if (response.status === 500) {
-        console.error('Server error:', response);
-      } else {
-        console.error('Network response was not ok');
+  for (let attempt = 1; attempt <= retries; attempt++) {
+    try {
+      const response = await fetch(`${config.apiUrl}/randomHadith`, {
+        method: "POST",
+        body: JSON.stringify({ mosque: config.camiNameIdentifier }),
+      });
+
+      if (!response.ok) {
+        console.error(`Attempt ${attempt}: Network response was not ok`);
+        logError(`Attempt ${attempt}: Network response was not ok (${response.status})`);
       }
-      return null;
-    }
 
-    const data = await response.json();
-    console.log(data);
+      const data = await response.json();
+      if (!data || Object.keys(data).length === 0) {
+        console.error(`Attempt ${attempt}: Received empty response`);
+        logError(`Attempt ${attempt}: Received empty response`);
+      }
 
-    return {
-      quoteDe: data.deutsch,
-      quoteTr: data.turkisch,
-      author: data.quelle
+      return {
+        quoteDe: data.deutsch,
+        quoteTr: data.turkisch,
+        author: data.quelle
+      };
+    } catch (error) {
+      console.error(`Attempt ${attempt} failed:`, error);
+      logError(`Attempt ${attempt} failed: ${error}`);
+
+      if (attempt < retries) {
+        if (attempt % 3 === 0) {
+          retryDelay = 10 * 60 * 1000; // After every 3rd failure, wait 10 minutes
+        } else if (attempt % 2 === 0) {
+          retryDelay = 5 * 60 * 1000; // Every 2nd failure, wait 5 minutes
+        } else {
+          retryDelay *= 2; // Otherwise, double the delay
+        }
+
+        console.log(`Waiting ${retryDelay / 1000} seconds before retrying...`);
+        logError(`Waiting ${retryDelay / 1000} seconds before retrying...`);
+        await new Promise((resolve) => setTimeout(resolve, retryDelay));
+      } else {
+        console.error("All retry attempts failed.");
+        logError(`All retry attempts failed.`);
+        return null;
+      }
     }
+  }
+}
+
+
+// Function to log errors locally
+export async function logError(message: string) {
+  try {
+    await fetch("/log", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ message }),
+    });
   } catch (error) {
-    console.error('Error fetching quotes:', error);
-    return null;
+    console.error("Failed to send log:", error);
   }
 }
