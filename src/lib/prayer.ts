@@ -229,13 +229,9 @@ export async function getRandomQuote(retries = 10): Promise<any> {
 
       if (attempt < retries) {
         if (attempt % 3 === 0) {
-          retryDelay = 10 * 60 * 1000; // After every 3rd failure, wait 10 minutes
-        } else if (attempt % 2 === 0) {
-          retryDelay = 5 * 60 * 1000; // Every 2nd failure, wait 5 minutes
-        } else {
-          retryDelay *= 2; // Otherwise, double the delay
-        }
+          retryDelay = 5 * 60 * 1000; // After every 3rd failure, wait 10 minutes
 
+        }
         console.log(`Waiting ${retryDelay / 1000} seconds before retrying...`);
         logError(`Waiting ${retryDelay / 1000} seconds before retrying...`);
         await new Promise((resolve) => setTimeout(resolve, retryDelay));
