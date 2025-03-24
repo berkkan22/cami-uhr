@@ -27,9 +27,44 @@
 	let remainingTime: string;
 	let currentTime: string;
 
-	let quaotOfTheDay: Quote;
-
 	$locale = 'De';
+
+	let quaotOfTheDay: Quote;
+	let isFetchingQuote = false;
+	let attemptCount = 0;
+	let intervalTime = 1000; // Initial interval time in milliseconds
+	function fetchQuote() {
+		if (!isFetchingQuote) {
+			isFetchingQuote = true;
+			getRandomQuote().then((quote) => {
+				console.log(`[${new Date().toISOString()}] fetching quote`);
+				if (quote !== null && quote !== undefined) {
+					quaotOfTheDay = quote;
+					clearInterval(quoteInterval);
+				} else {
+					attemptCount++;
+					adjustIntervalTime();
+				}
+				isFetchingQuote = false;
+			});
+		}
+	}
+
+	function adjustIntervalTime() {
+		if (attemptCount % 100 < 3) {
+			intervalTime = 1000; // Set interval time to 1 second for the first 3 attempts
+		} else if (attemptCount % 100 >= 3 && attemptCount % 100 < 6) {
+			intervalTime = 5000; // Set interval time to 5 seconds for the next 3 attempts
+		} else if (attemptCount % 100 >= 6 && attemptCount % 100 < 9) {
+			intervalTime = 10000; // Set interval time to 10 seconds for the next 3 attempts
+		} else if (attemptCount % 100 >= 9) {
+			intervalTime = 30000; // Set interval time to 30 seconds for the remaining attempts
+		}
+		clearInterval(quoteInterval);
+		quoteInterval = setInterval(fetchQuote, intervalTime);
+	}
+
+	let quoteInterval = setInterval(fetchQuote, intervalTime);
 
 	onMount(async () => {
 		prayerTimesRaw = await fetchPrayerTimes(config.prayerJson);
@@ -57,7 +92,26 @@
 		remainingTime = '00:00:00';
 		currentTime = currentDate.toLocaleTimeString('de-DE');
 
-		quaotOfTheDay = await getRandomQuote();
+		if (quaotOfTheDay === null || quaotOfTheDay === undefined) {
+			fetchQuote();
+			// let isFetchingQuote = false;
+			// const quoteInterval = setInterval(async () => {
+			// 	if (!isFetchingQuote) {
+			// 		isFetchingQuote = true;
+			// 		getRandomQuote().then((quote) => {
+			// 			console.log(`[${new Date().toISOString()}] fetching quote`);
+			// 			if (quote !== null && quote !== undefined) {
+			// 				quaotOfTheDay = quote;
+			// 			}
+			// 			isFetchingQuote = false;
+			// 			if (quote !== null && quote !== undefined) {
+			// 				console.log('clearing interval');
+			// 				clearInterval(quoteInterval);
+			// 			}
+			// 		});
+			// 	}
+			// }, 1000);
+		}
 
 		setInterval(async () => {
 			currentDate = new Date(Date.now() + timeOffset * convertMS);
@@ -79,7 +133,24 @@
 					currentDate.getSeconds() === 0
 				) {
 					currentPrayer = res.find((prayer) => prayer.date === convertToLocalIsoDate(currentDate));
-					quaotOfTheDay = await getRandomQuote();
+					fetchQuote();
+					// let isFetchingQuote = false;
+					// const quoteInterval2 = setInterval(async () => {
+					// 	if (!isFetchingQuote) {
+					// 		isFetchingQuote = true;
+					// 		getRandomQuote().then((quote) => {
+					// 			console.log(`[${new Date().toISOString()}] fetching quote 2`);
+					// 			if (quote !== null && quote !== undefined) {
+					// 				quaotOfTheDay = quote;
+					// 			}
+					// 			isFetchingQuote = false;
+					// 			if (quote !== null && quote !== undefined) {
+					// 				console.log('clearing interval');
+					// 				clearInterval(quoteInterval2);
+					// 			}
+					// 		});
+					// 	}
+					// }, 10000);
 				}
 			}
 		}, 1000);

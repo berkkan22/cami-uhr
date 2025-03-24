@@ -197,50 +197,37 @@ export function convertToQuotes(quotes): Quote[] {
   });
 }
 
-export async function getRandomQuote(retries = 10): Promise<any> {
-  let retryDelay = 2 * 1000; // Start with 2 seconds
+export async function getRandomQuote(): Promise<any> {
+  try {
+    const response = await fetch(`${config.apiUrl}/randomHadith`, {
+      method: "POST",
+      body: JSON.stringify({ mosque: config.camiNameIdentifier }),
+    });
 
-  for (let attempt = 1; attempt <= retries; attempt++) {
-    try {
-      const response = await fetch(`${config.apiUrl}/randomHadith`, {
-        method: "POST",
-        body: JSON.stringify({ mosque: config.camiNameIdentifier }),
-      });
-
-      if (!response.ok) {
-        console.error(`Attempt ${attempt}: Network response was not ok`);
-        logError(`Attempt ${attempt}: Network response was not ok (${response.status})`);
-      }
-
-      const data = await response.json();
-      if (!data || Object.keys(data).length === 0) {
-        console.error(`Attempt ${attempt}: Received empty response`);
-        logError(`Attempt ${attempt}: Received empty response`);
-      }
-
-      return {
-        quoteDe: data.deutsch,
-        quoteTr: data.turkisch,
-        author: data.quelle
-      };
-    } catch (error) {
-      console.error(`Attempt ${attempt} failed:`, error);
-      logError(`Attempt ${attempt} failed: ${error}`);
-
-      if (attempt < retries) {
-        if (attempt % 3 === 0) {
-          retryDelay = 5 * 60 * 1000; // After every 3rd failure, wait 10 minutes
-
-        }
-        console.log(`Waiting ${retryDelay / 1000} seconds before retrying...`);
-        logError(`Waiting ${retryDelay / 1000} seconds before retrying...`);
-        await new Promise((resolve) => setTimeout(resolve, retryDelay));
-      } else {
-        console.error("All retry attempts failed.");
-        logError(`All retry attempts failed.`);
-        return null;
-      }
+    if (!response.ok) {
+      // console.error(`Attempt ${attempt}: Network response was not ok`);
+      // logError(`Attempt ${attempt}: Network response was not ok (${response.status})`);
+      return null;
     }
+
+    const data = await response.json();
+    if (!data || Object.keys(data).length === 0) {
+      // console.error(`Attempt ${attempt}: Received empty response`);
+      // logError(`Attempt ${attempt}: Received empty response`);
+      return null;
+    }
+
+    return {
+      quoteDe: data.deutsch,
+      quoteTr: data.turkisch,
+      author: data.quelle
+    };
+  } catch (error) {
+    // console.error(`Attempt ${attempt} failed:`, error);
+    logError(`# failed: ${error}`);
+    return null;
+
+
   }
 }
 
