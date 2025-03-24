@@ -1,7 +1,7 @@
 export default {
   De: {
     "language": "Deutsch",
-    "title": "{{name}} Moschee",
+    "title": "{{name}} Moschee Schwarzenbek",
     "imsak": "Fadschr",
     "gunes": "Schuruk",
     "sabah": "Morgendsgebet",
@@ -18,7 +18,7 @@ export default {
   },
   Tr: {
     "language": "Türkçe",
-    "title": "{{name}} Cami",
+    "title": "{{name}} Cami Schwarzenbek",
     "imsak": "İmsak",
     "gunes": "Güneş",
     "sabah": "Sabah Namazı",
