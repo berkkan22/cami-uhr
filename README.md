@@ -100,7 +100,10 @@ Create a User in Authentik
 
 - Create a user in Authentik with a group that is used as the identifier in the config.ts.
 
-
+7. If you have dual screen (mirroring) then past this command in the .bash_profile
+```bash
+DISPLAY=:0 xrandr --output HDMI-2 --same-as HDMI-1
+```
 
 ## Environment Variables
 
