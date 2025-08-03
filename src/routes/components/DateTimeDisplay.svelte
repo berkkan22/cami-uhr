@@ -48,6 +48,7 @@
 			transform 0.3s ease,
 			margin 0.3s ease;
 		margin-bottom: 60px;
+		font-weight: bold;
 	}
 
 	.time-title {
@@ -57,12 +58,12 @@
 	}
 
 	.time-value {
-		font-size: 8rem;
+		font-size: 6rem;
 	}
 
 	#current-time > .time-value {
 		font-weight: bold;
-		font-size: 8rem;
+		font-size: 6rem;
 	}
 
 	#current-time > .time-title {
@@ -76,8 +77,8 @@
 	}
 
 	#next-prayer-time > .time-value {
-		font-size: 8rem;
-		color: #89001c;
+		font-size: 6rem;
+		/* color: #89001c; */
 		font-weight: bold;
 	}
 </style>
