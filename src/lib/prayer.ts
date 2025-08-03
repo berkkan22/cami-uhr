@@ -201,12 +201,13 @@ export async function getRandomQuote(): Promise<any> {
   try {
     const response = await fetch(`${config.apiUrl}/randomHadith`, {
       method: "POST",
+      headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ mosque: config.camiNameIdentifier }),
     });
 
     if (!response.ok) {
       // console.error(`Attempt ${attempt}: Network response was not ok`);
-      // logError(`Attempt ${attempt}: Network response was not ok (${response.status})`);
+      logError(`Network response was not ok (${response.status})`);
       return null;
     }
 
