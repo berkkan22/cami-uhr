@@ -20,7 +20,7 @@ class TurkishMonth(Enum):
 
 
 # Replace 'your_file.xlsx' with the path to your Excel file
-file_path = '../static/winsenluhe.xlsx'
+file_path = '../scripts/Luneburg.xlsx'
 
 # Read the Excel file
 df = pd.read_excel(file_path)
