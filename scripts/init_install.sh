@@ -19,7 +19,7 @@ sudo apt-get install -y git nano tmux wireguard
 
 # Install Kiosk Mode packages
 echo "Installing kiosk mode dependencies..."
-sudo apt install --no-install-recommends xserver-xorg x11-xserver-utils xinit matchbox-window-manager chromium-browser -y
+sudo apt install --no-install-recommends xserver-xorg x11-xserver-utils xinit matchbox-window-manager chromium -y
 sudo apt-get install gldriver-test -y
 sudo apt install unclutter -y
 
